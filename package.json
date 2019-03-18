@@ -1,0 +1,26 @@
+{
+  "name": "digest",
+  "version": "1.0.0",
+  "description": "The Digest Web Application",
+  "main": "gulpfile.js",
+  "dependencies": {
+    "axios": "^0.18.0"
+  },
+  "devDependencies": {
+    "autoprefixer": "^9.4.4",
+    "gulp": "^4.0.0",
+    "gulp-concat": "^2.6.1",
+    "gulp-postcss": "^8.0.0",
+    "gulp-rename": "^1.4.0",
+    "gulp-sass": "^4.0.2"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "Mitchell-Romney\\Digest"
+  },
+  "author": "Mitchell Romney",
+  "license": "ISC"
+}

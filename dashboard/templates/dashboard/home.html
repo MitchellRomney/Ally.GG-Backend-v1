@@ -1,1 +1,66 @@
-{% extends dashboard/base.html %}
+{% extends 'dashboard/base.html' %}
+
+{% block content %}
+  {% if user.is_authenticated %}
+    <div class="fetchChallengers">
+      <form role="form" action="" method="post">
+        {% csrf_token %}
+        <button name="action" value="fetchChallengers" type="submit">Fetch Challengers</button>
+      </form>
+      <form role="form" action="" method="post">
+        {% csrf_token %}
+        <input type="text" name="summonerName">
+        <button name="action" value="addSummoner" type="submit">Add Summoner</button>
+      </form>
+    </div>
+  {% endif %}
+  <div id="challengers">
+    <button v-on:click="updateSummoners">Update</button>
+    <p>[[ updated ]]</p>
+    <div class="loader" v-if="loading">
+      <p>Loading...</p>
+    </div>
+    <table v-else>
+      <tr>
+        <th scope="col">Summoner Name</th>
+        <th scope="col">Wins</th>
+        <th scope="col">Losses</th>
+        <th scope="col">League Points</th>
+      </tr>
+      <tr v-for="summoner in results">
+        <th scope="row"><a :href="'summoners/' + summoner.summonerName">[[ summoner.summonerName ]]</a></th>
+        <td>[[ summoner.soloQ_wins ]]</td>
+        <td>[[ summoner.soloQ_losses ]]</td>
+        <td>[[ summoner.soloQ_leaguePoints ]]</td>
+      </tr>
+    </table>
+  </div>
+
+<script>
+new Vue({
+  delimiters: ['[[', ']]'],
+  el: '#challengers',
+  data: {
+    results: [],
+    updated: '',
+    loading: true
+  },
+  methods: {
+    getSummoners(){
+      axios.get('/api/summoners').then(response => {
+        this.results = response.data.results
+        this.loading = false
+      })
+    },
+    updateSummoners: function (event) {
+      this.getSummoners()
+      this.updated = 'Updated'
+    }
+  },
+  mounted() {
+    this.getSummoners()
+  }
+})
+
+</script>
+{% endblock content %}

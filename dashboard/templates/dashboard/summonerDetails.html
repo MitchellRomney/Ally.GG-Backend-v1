@@ -1,0 +1,34 @@
+{% extends 'leaguedigested/base.html' %}
+
+{% block content %}
+<div id="profile">
+  <img v-bind:src="profileIconUrl">
+  <h1>[[ summoner.summonerName ]]</h1>
+  <h2><strong>Current Rank: </strong>[[ summoner.soloQ_tier ]] [[ summoner.soloQ_rank ]]</h2>
+</div>
+
+
+<script>
+new Vue({
+  delimiters: ['[[', ']]'],
+  el: '#profile',
+  data: {
+    summoner: [],
+    profileIconUrl: '',
+    loading: true
+  },
+  methods: {
+    getSummoners(){
+      axios.get('/api/summoners/{{ summonerName }}').then(response => {
+        this.summoner = response.data
+        this.loading = false
+        this.profileIconUrl = 'http://ddragon.leagueoflegends.com/cdn/9.5.1/img/profileicon/' + response.data.profileIconId + '.png'
+      })
+    }
+  },
+  mounted() {
+    this.getSummoners()
+  }
+})
+</script>
+{% endblock content %}
