@@ -46,11 +46,25 @@ new Vue({
     loading: true
   },
   methods: {
-    getSummoners(){
-      axios.get('/api/summoners').then(response => {
-        this.results = response.data.results
-        this.loading = false
-      })
+    async getSummoners(){
+
+      // Setup variables and grab first page.
+      const results = [];
+      page = 1
+      let op = await axios.get('/api/summoners?page=' + page);
+      next = op.data.next
+      results.push(op.data.results)
+
+      // If there is more than 1 page, loop through them and append the results to the array.
+      while (next != null){
+        const extra = [];
+        page += 1;
+        op = await axios.get('/api/summoners?page=' + page);
+        next = op.data.next;
+        [].push.apply(results[0], op.data.results);
+      }
+      this.results = results[0];
+      this.loading = false;
     },
     updateSummoners: function (event) {
       this.getSummoners()

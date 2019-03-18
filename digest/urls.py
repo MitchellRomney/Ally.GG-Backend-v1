@@ -15,6 +15,8 @@ urlpatterns = [
 
     path('summoners/<summonerName>/', dashboard.summonerDetails, name='summonerDetails'),
 
+    path('admin/', admin.site.urls),
+
     path('api/', include(router.urls)),
 
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),

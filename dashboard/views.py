@@ -41,7 +41,7 @@ def summonerDetails(request, summonerName):
 
     print(summonerName)
 
-    return render(request, 'leaguedigested/summonerDetails.html', {
+    return render(request, 'dashboard/summonerDetails.html', {
     'summonerName': summonerName,
     })
 

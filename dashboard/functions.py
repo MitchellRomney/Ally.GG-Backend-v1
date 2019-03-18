@@ -75,13 +75,14 @@ def addSummoners(summoners, context):
             existingSummoner = Summoner.objects.get(summonerName=summoners)
         except Summoner.DoesNotExist:
             summonerInfo = fetchRiotAPI('OC1', 'summoner', 'v4', 'summoners', 'by-name', summoners)
+            print(summonerInfo)
             rankedInfo = fetchRiotAPI('OC1', 'league', 'v4', 'positions', 'by-summoner', summonerInfo['id'])
             print(rankedInfo)
-            print(summonerInfo)
+
             newSummoner = Summoner(
                 # Ids
-                summonerName=rankedInfo[0]['summonerName'],
-                summonerId=rankedInfo[0]['summonerId'],
+                summonerName=summonerInfo['name'],
+                summonerId=summonerInfo['id'],
                 puuid = summonerInfo['puuid'],
                 accountId = summonerInfo['accountId'],
 
@@ -90,23 +91,25 @@ def addSummoners(summoners, context):
                 profileIconId=summonerInfo['profileIconId'],
                 summonerLevel=summonerInfo['summonerLevel'],
 
-                # SoloQ
-                soloQ_leagueId=rankedInfo[0]['leagueId'],
-                soloQ_leagueName=rankedInfo[0]['leagueName'],
-                soloQ_tier=rankedInfo[0]['tier'],
-                soloQ_hotStreak=rankedInfo[0]['hotStreak'],
-                soloQ_wins=rankedInfo[0]['wins'],
-                soloQ_losses=rankedInfo[0]['losses'],
-                soloQ_veteran=rankedInfo[0]['veteran'],
-                soloQ_rank=rankedInfo[0]['rank'],
-                soloQ_inactive=rankedInfo[0]['inactive'],
-                soloQ_freshBlood=rankedInfo[0]['freshBlood'],
-                soloQ_leaguePoints=rankedInfo[0]['leaguePoints'],
-
                 # System
                 date_created=timezone.now(),
                 date_updated=timezone.now(),
             )
+
+            if rankedInfo != []:
+                # SoloQ
+                newSummoner.soloQ_leagueId=rankedInfo[0]['leagueId'],
+                newSummoner.soloQ_leagueName=rankedInfo[0]['leagueName'],
+                newSummoner.soloQ_tier=rankedInfo[0]['tier'],
+                newSummoner.soloQ_hotStreak=rankedInfo[0]['hotStreak'],
+                newSummoner.soloQ_wins=rankedInfo[0]['wins'],
+                newSummoner.soloQ_losses=rankedInfo[0]['losses'],
+                newSummoner.soloQ_veteran=rankedInfo[0]['veteran'],
+                newSummoner.soloQ_rank=rankedInfo[0]['rank'],
+                newSummoner.soloQ_inactive=rankedInfo[0]['inactive'],
+                newSummoner.soloQ_freshBlood=rankedInfo[0]['freshBlood'],
+                newSummoner.soloQ_leaguePoints=rankedInfo[0]['leaguePoints'],
+                
             newSummoner.save()
             print('New Summoner Created.')
 
