@@ -1,0 +1,41 @@
+@import "summoner";
+
+html, body {
+  width: 100vw;
+  margin: 0px;
+  overflow-x: hidden;
+}
+
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+a {
+  text-decoration: none;
+}
+
+.resp-img {
+  max-width: 100%;
+  margin: auto;
+}
+
+#wrapper {
+  display: grid;
+  grid-template: 80px auto 100px / repeat(12, 1fr);
+  grid-template-areas:
+  "nav nav nav nav nav nav nav nav nav nav nav nav"
+  ". main main main main main main main main main main ."
+  "footer footer footer footer footer footer footer footer footer footer footer footer";
+  min-height: 100vh;
+  #nav {
+    grid-area: nav;
+    background-color: pink;
+  }
+  #page-content-wrapper {
+    grid-area: main;
+  }
+  #footer {
+    grid-area: footer;
+    background-color: yellow;
+  }
+}
