@@ -5,6 +5,10 @@
   <img v-bind:src="profileIconUrl">
   <h1>[[ summoner.summonerName ]]</h1>
   <h2><strong>Current Rank: </strong>[[ summoner.soloQ_tier ]] [[ summoner.soloQ_rank ]]</h2>
+  <form role="form" action="" method="post">
+    {% csrf_token %}
+    <button name="action" value="updateSummoner" type="submit">Update</button>
+  </form>
 </div>
 
 

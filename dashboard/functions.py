@@ -98,18 +98,18 @@ def addSummoners(summoners, context):
 
             if rankedInfo != []:
                 # SoloQ
-                newSummoner.soloQ_leagueId=rankedInfo[0]['leagueId'],
-                newSummoner.soloQ_leagueName=rankedInfo[0]['leagueName'],
-                newSummoner.soloQ_tier=rankedInfo[0]['tier'],
-                newSummoner.soloQ_hotStreak=rankedInfo[0]['hotStreak'],
-                newSummoner.soloQ_wins=rankedInfo[0]['wins'],
-                newSummoner.soloQ_losses=rankedInfo[0]['losses'],
-                newSummoner.soloQ_veteran=rankedInfo[0]['veteran'],
-                newSummoner.soloQ_rank=rankedInfo[0]['rank'],
-                newSummoner.soloQ_inactive=rankedInfo[0]['inactive'],
-                newSummoner.soloQ_freshBlood=rankedInfo[0]['freshBlood'],
-                newSummoner.soloQ_leaguePoints=rankedInfo[0]['leaguePoints'],
-                
+                newSummoner.soloQ_leagueId=rankedInfo[0]['leagueId']
+                newSummoner.soloQ_leagueName=rankedInfo[0]['leagueName']
+                newSummoner.soloQ_tier=rankedInfo[0]['tier']
+                newSummoner.soloQ_hotStreak=rankedInfo[0]['hotStreak']
+                newSummoner.soloQ_wins=rankedInfo[0]['wins']
+                newSummoner.soloQ_losses=rankedInfo[0]['losses']
+                newSummoner.soloQ_veteran=rankedInfo[0]['veteran']
+                newSummoner.soloQ_rank=rankedInfo[0]['rank']
+                newSummoner.soloQ_inactive=rankedInfo[0]['inactive']
+                newSummoner.soloQ_freshBlood=rankedInfo[0]['freshBlood']
+                newSummoner.soloQ_leaguePoints=rankedInfo[0]['leaguePoints']
+
             newSummoner.save()
             print('New Summoner Created.')
 

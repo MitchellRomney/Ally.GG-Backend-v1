@@ -39,7 +39,8 @@ def summonerDetails(request, summonerName):
     except Summoner.DoesNotExist:
         return HttpResponseRedirect('/digested')
 
-    print(summonerName)
+    if request.POST.get('action', False) == 'updateSummoner':
+        updateSummoner(summoner.puuid)
 
     return render(request, 'dashboard/summonerDetails.html', {
     'summonerName': summonerName,
