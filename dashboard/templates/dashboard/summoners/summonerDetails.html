@@ -1,0 +1,72 @@
+{% extends 'dashboard/base.html' %}
+
+{% block content %}
+<div id="profile">
+  <div id="summonerInfo">
+    <div class="avatar">
+      <img :src="'http://ddragon.leagueoflegends.com/cdn/9.5.1/img/profileicon/' + summoner.profileIconId + '.png'">
+    </div>
+    <div class="updateButtons">
+      <form role="form" action="" method="post">
+        {% csrf_token %}
+        <button name="action" value="updateSummoner" type="submit">Update</button>
+        <button name="action" value="fetchMatches" type="submit">Fetch 10 Matches</button>
+      </form>
+      <h6><strong>Last Updated: </strong>[[ last_updated ]]</h6>
+    </div>
+    <div class="statistics">
+      <h1>[[ summoner.summonerName ]]</h1>
+      <h2><strong>Level: </strong>[[ summoner.summonerLevel ]]</h2>
+      <h2>Solo Queue</h2>
+      <h3><strong>Rank: </strong>[[ summoner.soloQ_tier ]] [[ summoner.soloQ_rank ]] - [[ summoner.soloQ_leaguePoints ]]</h3>
+      <h3><strong>Wins: </strong>[[ summoner.soloQ_wins ]]</h3>
+      <h3><strong>Losses: </strong>[[ summoner.soloQ_losses ]]</h3>
+    </div>
+  </div>
+  <div id="matches">
+    <div class="match" v-for="match in match_list">
+      <h4>[[ match.match_players[0].summonerName ]]</h4>
+    </div>
+  </div>
+</div>
+<script>
+new Vue({
+  delimiters: ['[[', ']]'],
+  el: '#profile',
+  data: {
+    summoner: [],
+    match_list: [],
+    last_updated: ''
+  },
+  methods: {
+    getSummonerInfo(){
+      axios.get('/api/summoners/{{ summonerName }}').then(response => {
+        this.summoner = response.data
+        this.last_updated = moment(response.data.date_updated).fromNow()
+      })
+    },
+    getMatchInfo(){
+      axios.get('/api/match_players/{{ summonerName }}/').then(response => {
+        promises = [];
+        response.data.slice(-10).forEach(match => {
+          myUrl = '/api/matches/' + match.gameId;
+          promises.push(axios.get(myUrl))
+        });
+        axios.all(promises).then(results => {
+          list = [];
+          results.forEach(function(game){
+            list.push(game.data)
+          })
+          this.match_list = list;
+        });
+      })
+      console.log(this)
+    }
+  },
+  mounted() {
+    this.getSummonerInfo()
+    this.getMatchInfo()
+  }
+})
+</script>
+{% endblock content %}

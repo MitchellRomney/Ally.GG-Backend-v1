@@ -5,44 +5,47 @@ from django.contrib.auth import authenticate, login
 from rest_framework import viewsets
 from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
-from dashboard.serializers import UserSerializer, SummonerSerializer
+from dashboard.serializers import UserSerializer, SummonerSerializer, MatchSerializer, MatchPlayerSerializer
 from django.contrib.auth.models import User
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 import requests
 
 def home(request):
-    if not request.user.is_authenticated:
-        username = request.POST.get('username')
-        password = request.POST.get('password')
-        user = authenticate(request, username=username, password=password)
-        if user is not None:
-            login(request, user)
-        else:
-            return render(request, 'dashboard/home.html')
-    else:
-        if request.method == 'POST':
-            if request.POST['action'] == 'fetchChallengers':
-                fetch = fetchRiotAPI('OC1', 'league', 'v4', 'challengerleagues', 'by-queue', 'RANKED_SOLO_5x5')
-                addSummoners(fetch, 'Challengers')
-            elif request.POST['action'] == 'updateSummoner':
-                updateSummoner(request.POST.get('puuid'))
-            elif request.POST['action'] == 'addSummoner':
-                addSummoners(request.POST.get('summonerName'), 'Summoner')
 
-        return render(request, 'dashboard/home.html', {
-        'summoners': Summoner.objects.all().order_by('-soloQ_leaguePoints'),
-        })
+    summonerCount = Summoner.objects.all().count()
+
+    print(summonerCount)
+
+    return render(request, 'dashboard/home.html', {
+    'summonerCount': summonerCount,
+    })
+
+def summoners(request):
+    if request.method == 'POST':
+        if request.POST['action'] == 'fetchChallengers':
+            fetch = fetchRiotAPI('OC1', 'league', 'v4', 'challengerleagues', 'by-queue', 'RANKED_SOLO_5x5')
+            addSummoners(fetch, 'Challengers')
+        elif request.POST['action'] == 'updateSummoner':
+            updateSummoner(request.POST.get('puuid'))
+        elif request.POST['action'] == 'addSummoner':
+            addSummoners(request.POST.get('summonerName'), 'Summoner')
+
+    return render(request, 'dashboard/summoners/summoners.html', {
+    'summoners': Summoner.objects.all().order_by('-soloQ_leaguePoints'),
+    })
 
 def summonerDetails(request, summonerName):
     try:
-        summoner = Summoner.objects.get(summonerName=summonerName)
+        summoner = Summoner.objects.get(summonerName__iexact=summonerName)
     except Summoner.DoesNotExist:
         return HttpResponseRedirect('/digested')
 
     if request.POST.get('action', False) == 'updateSummoner':
         updateSummoner(summoner.puuid)
+    elif request.POST.get('action', False) == 'fetchMatches':
+        fetchMatches(summoner.puuid, 10)
 
-    return render(request, 'dashboard/summonerDetails.html', {
+    return render(request, 'dashboard/summoners/summonerDetails.html', {
     'summonerName': summonerName,
     })
 
@@ -61,7 +64,27 @@ class SummonerViewSet(viewsets.ModelViewSet):
     serializer_class = SummonerSerializer
 
     def retrieve(self, request, pk=None):
-        queryset = Summoner.objects.filter(summonerName=pk)
-        summoner = get_object_or_404(queryset, summonerName=pk)
+        queryset = Summoner.objects.filter(summonerName__iexact=pk)
+        print(queryset)
+        summoner = get_object_or_404(queryset, summonerName__iexact=pk)
         serializer = SummonerSerializer(summoner, context={'request': request})
+        return Response(serializer.data)
+
+class MatchViewSet(viewsets.ModelViewSet):
+    queryset = Match.objects.all().order_by('timestamp')
+    serializer_class = MatchSerializer
+
+    def retrieve(self, request, pk=None):
+        queryset = Match.objects.filter(gameId=pk)
+        match = get_object_or_404(queryset, gameId=pk)
+        serializer = MatchSerializer(match, context={'request': request})
+        return Response(serializer.data)
+
+class MatchPlayerViewSet(viewsets.ModelViewSet):
+    queryset = Match_Player.objects.all().order_by('match')
+    serializer_class = MatchPlayerSerializer
+
+    def retrieve(self, request, pk=None):
+        queryset = Match_Player.objects.filter(summonerName__iexact=pk)
+        serializer = MatchPlayerSerializer(queryset, many=True, context={'request': request})
         return Response(serializer.data)

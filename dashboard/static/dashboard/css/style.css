@@ -1,3 +1,12 @@
+#profile {
+  display: grid;
+  grid-template: auto auto/repeat(6, 1fr);
+  grid-template-areas: "summonerInfo summonerInfo summonerInfo summonerInfo summonerInfo summonerInfo" "matches matches matches matches matches matches"; }
+  #profile #summonerInfo {
+    grid-area: summonerInfo; }
+  #profile #matches {
+    grid-area: matches; }
+
 html, body {
   width: 100vw;
   margin: 0px;

@@ -1,0 +1,21 @@
+#profile {
+  display: grid;
+  grid-template: auto auto / 1fr;
+  grid-template-areas:
+    "summonerInfo summonerInfo summonerInfo summonerInfo summonerInfo summonerInfo"
+    "matches matches matches matches matches matches";
+  #summonerInfo {
+    grid-area: summonerInfo;
+    display: grid;
+    grid-template: auto auto / repeat(6, 1fr);
+    grid-template-areas:
+    "stats stats stats stats stats avatar"
+    "stats stats stats stats stats buttons";
+    .updateButtons {
+      grid-area: buttons;
+    }
+  }
+  #matches {
+    grid-area: matches;
+  }
+}

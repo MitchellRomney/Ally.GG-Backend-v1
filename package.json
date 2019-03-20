@@ -4,7 +4,8 @@
   "description": "The Digest Web Application",
   "main": "gulpfile.js",
   "dependencies": {
-    "axios": "^0.18.0"
+    "axios": "^0.18.0",
+    "moment": "^2.24.0"
   },
   "devDependencies": {
     "autoprefixer": "^9.4.4",

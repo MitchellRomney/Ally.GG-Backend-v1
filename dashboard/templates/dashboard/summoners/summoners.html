@@ -1,0 +1,80 @@
+{% extends 'dashboard/base.html' %}
+
+{% block content %}
+  {% if user.is_authenticated %}
+    <div class="fetchChallengers">
+      <form role="form" action="" method="post">
+        {% csrf_token %}
+        <button name="action" value="fetchChallengers" type="submit">Fetch Challengers</button>
+      </form>
+      <form role="form" action="" method="post">
+        {% csrf_token %}
+        <input type="text" name="summonerName">
+        <button name="action" value="addSummoner" type="submit">Add Summoner</button>
+      </form>
+    </div>
+  {% endif %}
+  <div id="challengers">
+    <button v-on:click="updateSummoners">Update</button>
+    <p>[[ updated ]]</p>
+    <div class="loader" v-if="loading">
+      <p>Loading...</p>
+    </div>
+    <table v-else>
+      <tr>
+        <th scope="col">Summoner Name</th>
+        <th scope="col">Wins</th>
+        <th scope="col">Losses</th>
+        <th scope="col">League Points</th>
+      </tr>
+      <tr v-for="summoner in results">
+        <th scope="row"><a :href="summoner.summonerName">[[ summoner.summonerName ]]</a></th>
+        <td>[[ summoner.soloQ_wins ]]</td>
+        <td>[[ summoner.soloQ_losses ]]</td>
+        <td>[[ summoner.soloQ_leaguePoints ]]</td>
+      </tr>
+    </table>
+  </div>
+
+<script>
+new Vue({
+  delimiters: ['[[', ']]'],
+  el: '#challengers',
+  data: {
+    results: [],
+    updated: '',
+    loading: true
+  },
+  methods: {
+    async getSummoners(){
+
+      // Setup variables and grab first page.
+      const results = [];
+      page = 1
+      let op = await axios.get('/api/summoners?page=' + page);
+      next = op.data.next
+      results.push(op.data.results)
+
+      // If there is more than 1 page, loop through them and append the results to the array.
+      while (next != null){
+        const extra = [];
+        page += 1;
+        op = await axios.get('/api/summoners?page=' + page);
+        next = op.data.next;
+        [].push.apply(results[0], op.data.results);
+      }
+      this.results = results[0];
+      this.loading = false;
+    },
+    updateSummoners: function (event) {
+      this.getSummoners()
+      this.updated = 'Updated'
+    }
+  },
+  mounted() {
+    this.getSummoners()
+  }
+})
+
+</script>
+{% endblock content %}

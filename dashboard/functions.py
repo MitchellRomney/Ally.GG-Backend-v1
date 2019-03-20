@@ -1,7 +1,8 @@
-from dashboard.models import Summoner
+from dashboard.models import Summoner, Match, Match_Team, Match_Player
 from django.http import HttpResponse, JsonResponse
 from django.conf import settings
 from django.utils import timezone
+from itertools import islice
 from datetime import datetime
 import requests, json
 
@@ -142,3 +143,223 @@ def updateSummoner(puuid):
     summoner.date_updated = timezone.now()
 
     summoner.save()
+
+def fetchMatches(puuid, amount):
+    summoner = Summoner.objects.get(puuid=puuid)
+    print('Fetching Summoner Matches: ' + summoner.summonerName)
+
+    matches = fetchRiotAPI('OC1', 'match', 'v4', 'matchlists', 'by-account', summoner.accountId)
+    for match in islice(matches['matches'], 0, 10):
+
+        try:
+            existingMatch = Match.objects.get(gameId=match['gameId'])
+        except Match.DoesNotExist:
+            print('Creating Match: ' + str(match['gameId']))
+
+            matchInfo = fetchRiotAPI('OC1', 'match', 'v4', 'matches', match['gameId'])
+
+            newMatch = Match(
+                gameId = match['gameId'],
+                platformId = match['platformId'],
+                queueId = match['queue'],
+                seasonId = match['season'],
+                mapId = matchInfo['mapId'],
+
+                gameMode = matchInfo['gameMode'],
+                gameType = matchInfo['gameType'],
+                gameVersion = matchInfo['gameVersion'],
+                gameDuration = matchInfo['gameDuration'],
+                timestamp = match['timestamp'],
+            )
+
+            newMatch.save()
+
+            # Create the Teams
+
+            for team in matchInfo['teams']:
+                print(team)
+
+                win = False if team['win'] == 'Fail' else True
+
+                newTeam = Match_Team(
+                    match = newMatch,
+
+                    # General
+                    win = win,
+                    teamId = team['teamId'],
+
+                    # Summoners Rift
+                    firstDragon = team['firstDragon'],
+                    firstInhibitor = team['firstInhibitor'],
+                    firstRiftHerald = team['firstRiftHerald'],
+                    firstBaron = team['firstBaron'],
+                    baronKills = team['baronKills'],
+                    riftHeraldKills = team['riftHeraldKills'],
+                    firstBlood = team['firstBlood'],
+                    firstTower = team['firstTower'],
+                    inhibitorKills = team['inhibitorKills'],
+                    towerKills = team['towerKills'],
+                    dragonKills = team['dragonKills'],
+
+                    # Other
+                    dominionVictoryScore = team['dominionVictoryScore'],
+                    vilemawKills = team['vilemawKills'],
+                )
+
+                newTeam.save()
+                print('New Team Created - [' + str(newTeam) + ']')
+
+            # Create the Player info for the match.
+            for participantInfo in matchInfo['participantIdentities']:
+
+                participantTeam = 100 if participantInfo['participantId'] <= 5 else 200
+
+                for participant in matchInfo['participants']:
+                    if participant['participantId'] == participantInfo['participantId']:
+                        newPlayer = Match_Player(
+                            # Key IDs & Participant Identity
+                            match = newMatch,
+                            currentPlatformId = participantInfo['player']['currentPlatformId'],
+                            platformId = participantInfo['player']['platformId'],
+                            matchHistoryUri = participantInfo['player']['matchHistoryUri'],
+                            participantId = participantInfo['participantId'],
+                            summonerName = participantInfo['player']['summonerName'],
+
+                            teamId = participantTeam,
+
+                            # General Player Information
+                            spell1Id = participant['spell1Id'],
+                            spell2Id = participant['spell2Id'],
+                            championId = participant['championId'],
+
+                            # Stats
+                                ## Minions
+                                totalMinionsKilled = participant['stats']['totalMinionsKilled'],
+                                neutralMinionsKilled = participant['stats']['neutralMinionsKilled'],
+                                neutralMinionsKilledTeamJungle = participant['stats']['neutralMinionsKilledTeamJungle'],
+                                neutralMinionsKilledEnemyJungle = participant['stats']['neutralMinionsKilledEnemyJungle'],
+
+                                ## Vision
+                                visionScore = participant['stats']['visionScore'],
+                                sightWardsBoughtInGame = participant['stats']['sightWardsBoughtInGame'],
+                                visionWardsBoughtInGame = participant['stats']['visionWardsBoughtInGame'],
+                                wardsKilled = participant['stats']['wardsKilled'],
+                                wardsPlaced = participant['stats']['wardsPlaced'],
+
+                                ## Damage Dealt
+                                totalDamageDealt = participant['stats']['totalDamageDealt'],
+                                totalDamageDealtToChampions = participant['stats']['totalDamageDealtToChampions'],
+                                physicalDamageDealt = participant['stats']['physicalDamageDealt'],
+                                physicalDamageDealtToChampions = participant['stats']['physicalDamageDealtToChampions'],
+                                magicDamageDealt = participant['stats']['magicDamageDealt'],
+                                magicDamageDealtToChampions = participant['stats']['magicDamageDealtToChampions'],
+                                trueDamageDealt = participant['stats']['trueDamageDealt'],
+                                trueDamageDealtToChampions = participant['stats']['trueDamageDealtToChampions'],
+                                largestCriticalStrike = participant['stats']['largestCriticalStrike'],
+
+                                ## Damage Taken
+                                totalDamageTaken = participant['stats']['totalDamageTaken'],
+                                physicalDamageTaken = participant['stats']['physicalDamageTaken'],
+                                magicalDamageTaken = participant['stats']['magicalDamageTaken'],
+                                trueDamageTaken = participant['stats']['trueDamageTaken'],
+                                damageSelfMitigated = participant['stats']['damageSelfMitigated'],
+
+                                # Objectives
+                                turretKills = participant['stats']['turretKills'],
+                                inhibitorKills = participant['stats']['inhibitorKills'],
+                                damageDealtToTurrets = participant['stats']['damageDealtToTurrets'],
+                                damageDealtToObjectives = participant['stats']['damageDealtToObjectives'],
+                                firstInhibitorKill = participant['stats']['firstInhibitorKill'] if hasattr(participant['stats'], 'firstInhibitorKill') else False,
+                                firstInhibitorAssist = participant['stats']['firstInhibitorAssist'] if hasattr(participant['stats'], 'firstInhibitorAssist') else False,
+                                firstTowerAssist = participant['stats']['firstTowerAssist'] if hasattr(participant['stats'], 'firstTowerAssist') else False,
+                                firstTowerKill = participant['stats']['firstTowerKill'] if hasattr(participant['stats'], 'firstTowerKill') else False,
+
+                                ## Kills
+                                kills = participant['stats']['kills'],
+                                assists = participant['stats']['assists'],
+                                killingSprees = participant['stats']['killingSprees'],
+                                unrealKills = participant['stats']['unrealKills'],
+                                doubleKills = participant['stats']['doubleKills'],
+                                tripleKills = participant['stats']['tripleKills'],
+                                quadraKills = participant['stats']['quadraKills'],
+                                pentaKills = participant['stats']['pentaKills'],
+                                largestMultiKill = participant['stats']['largestMultiKill'],
+                                largestKillingSpree = participant['stats']['largestKillingSpree'],
+                                firstBloodKill = participant['stats']['firstBloodKill'] if hasattr(participant['stats'], 'firstBloodKill') else False,
+                                firstBloodAssist = participant['stats']['firstBloodAssist'] if hasattr(participant['stats'], 'firstBloodAssist') else False,
+
+                                # Crowd Control
+                                timeCCingOthers = participant['stats']['timeCCingOthers'],
+                                totalTimeCrowdControlDealt = participant['stats']['totalTimeCrowdControlDealt'],
+
+                                # Health
+                                totalUnitsHealed = participant['stats']['totalUnitsHealed'],
+                                totalHeal = participant['stats']['totalHeal'],
+                                deaths = participant['stats']['deaths'],
+
+                                # Perks
+                                perk0 = participant['stats']['perk0'],
+                                perk1 = participant['stats']['perk1'],
+                                perk2 = participant['stats']['perk2'],
+                                perk3 = participant['stats']['perk3'],
+                                perk4 = participant['stats']['perk4'],
+                                perk5 = participant['stats']['perk5'],
+                                statPerk0 = participant['stats']['statPerk0'],
+                                statPerk1 = participant['stats']['statPerk1'],
+                                statPerk2 = participant['stats']['statPerk1'],
+                                perk0Var1 = participant['stats']['perk0Var1'],
+                                perk0Var2 = participant['stats']['perk0Var2'],
+                                perk0Var3 = participant['stats']['perk0Var3'],
+                                perk1Var1 = participant['stats']['perk1Var1'],
+                                perk1Var2 = participant['stats']['perk1Var2'],
+                                perk1Var3 = participant['stats']['perk1Var3'],
+                                perk2Var1 = participant['stats']['perk2Var1'],
+                                perk2Var2 = participant['stats']['perk2Var2'],
+                                perk2Var3 = participant['stats']['perk2Var3'],
+                                perk3Var1 = participant['stats']['perk3Var1'],
+                                perk3Var2 = participant['stats']['perk3Var2'],
+                                perk3Var3 = participant['stats']['perk3Var3'],
+                                perk4Var1 = participant['stats']['perk4Var1'],
+                                perk4Var2 = participant['stats']['perk4Var2'],
+                                perk4Var3 = participant['stats']['perk4Var3'],
+                                perk5Var1 = participant['stats']['perk5Var1'],
+                                perk5Var2 = participant['stats']['perk5Var2'],
+                                perk5Var3 = participant['stats']['perk5Var3'],
+                                perkPrimaryStyle = participant['stats']['perkPrimaryStyle'],
+                                perkSubStyle = participant['stats']['perkSubStyle'],
+
+                                # Player Score
+                                playerScore0 = participant['stats']['playerScore0'],
+                                playerScore1 = participant['stats']['playerScore1'],
+                                playerScore2 = participant['stats']['playerScore2'],
+                                playerScore3 = participant['stats']['playerScore3'],
+                                playerScore4 = participant['stats']['playerScore4'],
+                                playerScore5 = participant['stats']['playerScore5'],
+                                playerScore6 = participant['stats']['playerScore6'],
+                                playerScore7 = participant['stats']['playerScore7'],
+                                playerScore8 = participant['stats']['playerScore8'],
+                                playerScore9 = participant['stats']['playerScore9'],
+                                objectivePlayerScore = participant['stats']['objectivePlayerScore'],
+                                combatPlayerScore = participant['stats']['combatPlayerScore'],
+                                totalPlayerScore = participant['stats']['totalPlayerScore'],
+                                totalScoreRank = participant['stats']['totalScoreRank'],
+
+                                # Items
+                                item0 = participant['stats']['item0'],
+                                item1 = participant['stats']['item1'],
+                                item2 = participant['stats']['item2'],
+                                item3 = participant['stats']['item3'],
+                                item4 = participant['stats']['item4'],
+                                item5 = participant['stats']['item5'],
+                                item6 = participant['stats']['item6'],
+
+                                # Other
+                                longestTimeSpentLiving = participant['stats']['longestTimeSpentLiving'],
+                                goldEarned = participant['stats']['goldEarned'],
+                                goldSpent = participant['stats']['goldSpent'],
+                                win = participant['stats']['win'],
+                                champLevel = participant['stats']['champLevel'],
+                        )
+
+                        newPlayer.save()
+                        print('New Match Player Created: ' + newPlayer.summonerName)

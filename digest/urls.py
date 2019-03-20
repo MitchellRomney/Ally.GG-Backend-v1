@@ -9,9 +9,13 @@ from rest_framework import routers, serializers, viewsets
 router = routers.DefaultRouter()
 router.register(r'users', dashboard.UserViewSet)
 router.register(r'summoners', dashboard.SummonerViewSet)
+router.register(r'matches', dashboard.MatchViewSet)
+router.register(r'match_players', dashboard.MatchPlayerViewSet)
 
 urlpatterns = [
-    path('', dashboard.home,name='home'),
+    path('', dashboard.home, name='home'),
+
+    path('summoners/', dashboard.summoners, name='summoners'),
 
     path('summoners/<summonerName>/', dashboard.summonerDetails, name='summonerDetails'),
 
