@@ -1,4 +1,6 @@
 {% load static %}
+{% load render_bundle from webpack_loader %}
+
 <!doctype html>
 <html>
 
@@ -15,11 +17,15 @@
 
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.1/css/all.css" integrity="sha384-gfdkjb5BdAXd+lj+gudLWI+BXq4IuLW5IT+brZEZsLFm++aCMlF1V92rMkPaX4PP" crossorigin="anonymous">
   <link rel="stylesheet" href="{% static 'dashboard/css/style.css' %}" />
+  <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,700" rel="stylesheet">
+
   <script src="https://unpkg.com/vue"></script>
   <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-  <script src="{% static 'dashboard/js/all.js' %}"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+  <script src="{% static 'dashboard/js/all.js' %}"></script>
+  {% render_bundle 'main' %}
+
   <link rel="shortcut icon" type="image/png" href="{% static 'dashboard/images/favicon.ico' %}" />
 
   {% block header %}{% endblock header %}
@@ -28,14 +34,55 @@
 <body>
   <div id="wrapper">
     <nav id="nav">
-      <a href="/">Home</a>
+      <div class="profile">
+        <div class="avatar">
+          <img src="http://ddragon.leagueoflegends.com/cdn/9.5.1/img/profileicon/3890.png" class="img-responsive" alt="">
+        </div>
+        <h3>{{ profile.user.username }}</h3>
+      </div>
+      <div class="sidebar-wrapper">
+        <div class="sidebar-menu">
+          <ul>
+            <li>
+              <a href="/">
+                <i class="fa fa-home"></i>
+                <span>Home</span>
+              </a>
+            </li>
+            <li>
+              <a href="/summoners/">
+                <i class="fa fa-home"></i>
+                <span>Summoner List</span>
+              </a>
+            </li>
+            {% if mySummoners %}
+            <li class="sidebar-dropdown">
+              <a href="#">
+                <i class="fa fa-tachometer-alt"></i>
+                <span>My Summoners</span>
+              </a>
+              <div class="sidebar-submenu">
+                <ul>
+                  {% for summoner in mySummoners %}
+                  <li>
+                    <a href="/summoners/{{ summoner.summonerName }}">{{ summoner.summonerName }}
+                    </a>
+                  </li>
+                  {% endfor %}
+                </ul>
+              </div>
+            </li>
+            {% endif %}
+          </ul>
+        </div>
+      </div>
     </nav>
-
     <div id="page-content-wrapper">
       {% block content %}{% endblock content %}
     </div>
 
     <footer id="footer">
+      <span>Footer</span>
     </footer>
   </div>
 </body>

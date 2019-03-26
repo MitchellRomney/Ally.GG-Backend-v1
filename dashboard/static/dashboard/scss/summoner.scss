@@ -1,21 +1,53 @@
 #profile {
   display: grid;
-  grid-template: auto auto / 1fr;
+  grid-template: auto / repeat(12, 1fr);
   grid-template-areas:
-    "summonerInfo summonerInfo summonerInfo summonerInfo summonerInfo summonerInfo"
-    "matches matches matches matches matches matches";
+    "matches matches matches matches matches matches matches matches . summonerInfo summonerInfo summonerInfo";
+  min-height: 100vh;
   #summonerInfo {
     grid-area: summonerInfo;
-    display: grid;
-    grid-template: auto auto / repeat(6, 1fr);
-    grid-template-areas:
-    "stats stats stats stats stats avatar"
-    "stats stats stats stats stats buttons";
     .updateButtons {
-      grid-area: buttons;
+      text-align: center;
+    }
+    .avatar, .loader {
+      height: 128px;
     }
   }
   #matches {
     grid-area: matches;
+    .match {
+      width: 100%;
+      height: 150px;
+      background-color: lightblue;
+      margin-bottom: 25px;
+      display: grid;
+      grid-template: auto / repeat(3, 1fr);
+      grid-template-areas:
+      "stats champ players";
+      &:last-child {
+        margin-bottom: 0px;
+      }
+      .stats {
+        grid-area: stats;
+      }
+      .champ-info {
+        grid-area: champ;
+      }
+      .players {
+        grid-area: players;
+        display: grid;
+        grid-template: repeat(5, 20px) / repeat(2, 1fr);
+        grid-auto-flow: column;
+        font-size: 0.8rem;
+      }
+    }
+  }
+  .summonerInfo_loader {
+    grid-area: summonerInfo;
+    display: flex;
+  }
+  .matches_loader {
+    grid-area: matches;
+    display: flex;
   }
 }

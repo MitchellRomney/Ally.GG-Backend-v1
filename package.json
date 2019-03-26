@@ -5,15 +5,27 @@
   "main": "gulpfile.js",
   "dependencies": {
     "axios": "^0.18.0",
+    "browserify": "^16.2.3",
+    "epic-spinners": "^1.0.4",
     "moment": "^2.24.0"
   },
   "devDependencies": {
+    "@babel/core": "^7.4.0",
+    "@babel/preset-env": "^7.4.1",
     "autoprefixer": "^9.4.4",
+    "babel": "^6.23.0",
+    "babel-loader": "^8.0.5",
+    "css-loader": "^2.1.1",
     "gulp": "^4.0.0",
     "gulp-concat": "^2.6.1",
     "gulp-postcss": "^8.0.0",
     "gulp-rename": "^1.4.0",
-    "gulp-sass": "^4.0.2"
+    "gulp-sass": "^4.0.2",
+    "vue-loader": "^15.7.0",
+    "vue-template-compiler": "^2.6.10",
+    "webpack": "^4.29.6",
+    "webpack-bundle-tracker": "^0.4.2-beta",
+    "webpack-cli": "^3.3.0"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

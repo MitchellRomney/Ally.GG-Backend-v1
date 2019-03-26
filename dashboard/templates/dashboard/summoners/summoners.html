@@ -1,53 +1,74 @@
 {% extends 'dashboard/base.html' %}
 
 {% block content %}
-  {% if user.is_authenticated %}
-    <div class="fetchChallengers">
-      <form role="form" action="" method="post">
-        {% csrf_token %}
-        <button name="action" value="fetchChallengers" type="submit">Fetch Challengers</button>
-      </form>
-      <form role="form" action="" method="post">
-        {% csrf_token %}
-        <input type="text" name="summonerName">
-        <button name="action" value="addSummoner" type="submit">Add Summoner</button>
-      </form>
+  <div id="errors">
+    <transition name="fade">
+      <div class="error-wrapper" v-if="isError" v-cloak>
+        <div class="alert">
+          <span><i class="fas fa-exclamation-triangle"></i> [[ errorMessage ]]</span>
+        </div>
+      </div>
+    </transition>
+  </div>
+  <div id="summoners" v-bind:class="{ error: isError }">
+    {% if user.is_authenticated %}
+      <div class="actions">
+        <input type="text" value="" v-model="addSummonerName" />
+        <button v-on:click="addSummoner">Add Summoner</button>
+        <span v-if="ajaxRequest" v-cloak>Please Wait ...</span>
+      </div>
+    {% endif %}
+    <div class="summoners_loader loader" v-if="mastersLoading">
+      <div class="half-circle-spinner">
+        <div class="circle circle-1"></div>
+        <div class="circle circle-2"></div>
+      </div>
     </div>
-  {% endif %}
-  <div id="challengers">
-    <button v-on:click="updateSummoners">Update</button>
-    <p>[[ updated ]]</p>
-    <div class="loader" v-if="loading">
-      <p>Loading...</p>
-    </div>
-    <table v-else>
-      <tr>
-        <th scope="col">Summoner Name</th>
-        <th scope="col">Wins</th>
-        <th scope="col">Losses</th>
-        <th scope="col">League Points</th>
-      </tr>
-      <tr v-for="summoner in results">
-        <th scope="row"><a :href="summoner.summonerName">[[ summoner.summonerName ]]</a></th>
-        <td>[[ summoner.soloQ_wins ]]</td>
-        <td>[[ summoner.soloQ_losses ]]</td>
-        <td>[[ summoner.soloQ_leaguePoints ]]</td>
-      </tr>
-    </table>
+    <h2>Masters</h2>
+    <transition name="fade">
+      <table v-if="!mastersLoading" v-cloak>
+        <tr>
+          <th scope="col">Summoner Name</th>
+          <th scope="col">Wins</th>
+          <th scope="col">Losses</th>
+          <th scope="col">League Points</th>
+        </tr>
+        <tr v-for="summoner in masters">
+          <th scope="row"><a :href="summoner.summonerName">[[ summoner.summonerName ]]</a></th>
+          <td>[[ summoner.soloQ_wins ]]</td>
+          <td>[[ summoner.soloQ_losses ]]</td>
+          <td>[[ summoner.soloQ_leaguePoints ]]</td>
+        </tr>
+      </table>
+    </transition>
   </div>
 
 <script>
-new Vue({
+var errorVm = new Vue({
   delimiters: ['[[', ']]'],
-  el: '#challengers',
+  el: '#errors',
+  data: {
+    isError: false,
+    errorMessage: '',
+  }
+});
+
+var vm = new Vue({
+  delimiters: ['[[', ']]'],
+  el: '#summoners',
   data: {
     results: [],
-    updated: '',
-    loading: true
+    postResults: [],
+    addSummonerName: '',
+    isLoading: true,
+    ajaxRequest: false,
+    isError: false,
+    mastersLoading: true,
+    masters: [],
   },
   methods: {
     async getSummoners(){
-
+      this.isLoading = true;
       // Setup variables and grab first page.
       const results = [];
       page = 1
@@ -62,19 +83,60 @@ new Vue({
         op = await axios.get('/api/summoners?page=' + page);
         next = op.data.next;
         [].push.apply(results[0], op.data.results);
+
+        // TODO: Fix this with pagination buttons.
+        if (page == 10){
+          break
+        }
       }
       this.results = results[0];
-      this.loading = false;
+      this.isLoading = false;
     },
-    updateSummoners: function (event) {
-      this.getSummoners()
-      this.updated = 'Updated'
+    async getHighElo(){
+      let results = await axios.get('/api/summoners?tier=master');
+      console.log(results)
+      this.masters = results.data['results'];
+      this.mastersLoading = false;
+    },
+    addSummoner: function(event) {
+      axios.defaults.xsrfCookieName = 'csrftoken'
+      axios.defaults.xsrfHeaderName = 'X-CSRFToken'
+      this.ajaxRequest = true;
+      axios.post('/api/summoners/', {
+        value: this.addSummonerName,
+        method: 'SummonerName',
+      })
+      .then(function (response) {
+        vm.ajaxRequest = false;
+        if (response.data['isError']){
+          vm.isError = true;
+          errorVm.isError = true;
+          errorVm.errorMessage = response.data['errorMessage'];
+          setTimeout(function(){
+            errorVm.isError = false;
+          }, 3000);
+          setTimeout(function(){
+            vm.isError = false;
+          }, 3200);
+        } else {
+          vm.getHighElo()
+          vm.isError = false;
+          errorVm.isError = false;
+        }
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
     }
   },
   mounted() {
-    this.getSummoners()
+    this.getHighElo()
   }
 })
+
+window.onerror = function(message, source, lineno, colno, error) {
+  console.log('Exception: ', error)
+}
 
 </script>
 {% endblock content %}

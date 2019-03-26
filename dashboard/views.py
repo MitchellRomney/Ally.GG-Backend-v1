@@ -1,52 +1,78 @@
 from django.shortcuts import render
-from dashboard.models import Summoner
-from dashboard.functions import *
+from dashboard.models import *
+from dashboard.functions.general import *
+from dashboard.functions.summoners import *
+from dashboard.functions.champions import *
 from django.contrib.auth import authenticate, login
-from rest_framework import viewsets
+from rest_framework import viewsets, generics
 from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
-from dashboard.serializers import UserSerializer, SummonerSerializer, MatchSerializer, MatchPlayerSerializer
+from dashboard.serializers import *
 from django.contrib.auth.models import User
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 import requests
 
-def home(request):
-
+def home(request, reason=None):
+    mySummoners = None
     summonerCount = Summoner.objects.all().count()
 
-    print(summonerCount)
+    # Sidebar Information
+    isProfile = Profile.objects.all().filter(user=request.user) if request.user.is_authenticated == True else False
+
+    if isProfile:
+        profile = Profile.objects.get(user=request.user)
+        mySummoners = Summoner.objects.filter(user_profile=profile)
+    else:
+        profile = None
 
     return render(request, 'dashboard/home.html', {
     'summonerCount': summonerCount,
+    'profile': profile,
+    'mySummoners': mySummoners,
     })
 
 def summoners(request):
-    if request.method == 'POST':
-        if request.POST['action'] == 'fetchChallengers':
-            fetch = fetchRiotAPI('OC1', 'league', 'v4', 'challengerleagues', 'by-queue', 'RANKED_SOLO_5x5')
-            addSummoners(fetch, 'Challengers')
-        elif request.POST['action'] == 'updateSummoner':
-            updateSummoner(request.POST.get('puuid'))
-        elif request.POST['action'] == 'addSummoner':
-            addSummoners(request.POST.get('summonerName'), 'Summoner')
+    mySummoners = None
+
+    # Sidebar Information
+    isProfile = Profile.objects.all().filter(user=request.user) if request.user.is_authenticated == True else False
+
+    if isProfile:
+        profile = Profile.objects.get(user=request.user)
+        mySummoners = Summoner.objects.filter(user_profile=profile)
+    else:
+        profile = None
 
     return render(request, 'dashboard/summoners/summoners.html', {
     'summoners': Summoner.objects.all().order_by('-soloQ_leaguePoints'),
+    'profile': profile,
+    'mySummoners': mySummoners,
     })
 
 def summonerDetails(request, summonerName):
-    try:
-        summoner = Summoner.objects.get(summonerName__iexact=summonerName)
-    except Summoner.DoesNotExist:
-        return HttpResponseRedirect('/digested')
+    mySummoners = None
+    functionResponse = None;
 
-    if request.POST.get('action', False) == 'updateSummoner':
-        updateSummoner(summoner.puuid)
-    elif request.POST.get('action', False) == 'fetchMatches':
-        fetchMatches(summoner.puuid, 10)
+    # Sidebar Information
+    isProfile = Profile.objects.all().filter(user=request.user) if request.user.is_authenticated == True else False
+
+    if isProfile:
+        profile = Profile.objects.get(user=request.user)
+        mySummoners = Summoner.objects.filter(user_profile=profile)
+    else:
+        profile = None
+
+    isSummoner = Summoner.objects.filter(summonerName__iexact=summonerName).count()
+    if isSummoner == 1:
+        summoner = Summoner.objects.get(summonerName__iexact=summonerName)
+    else:
+        return HttpResponseRedirect('/')
 
     return render(request, 'dashboard/summoners/summonerDetails.html', {
     'summonerName': summonerName,
+    'profile': profile,
+    'mySummoners': mySummoners,
+    'functionResponse': functionResponse,
     })
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -60,19 +86,81 @@ class UserViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
 class SummonerViewSet(viewsets.ModelViewSet):
-    queryset = Summoner.objects.all().order_by('-soloQ_leaguePoints')
+    queryset = Summoner.objects.all().order_by('summonerName')
     serializer_class = SummonerSerializer
 
+    def get_queryset(self):
+        queryset = Summoner.objects.all()
+        tier = self.request.query_params.get('tier', None)
+        if tier is not None:
+            queryset = queryset.filter(soloQ_tier__iexact=tier)
+            print(queryset)
+        return queryset
+
+    def create(self, request):
+        add = addSummoner(request.data['method'], request.data['value'])
+        if add['isError'] != True:
+            summoner = Summoner.objects.get(summonerId=add['summonerId'])
+            update = updateSummoner(summoner.puuid)
+            return JsonResponse(add, status=201)
+        else:
+            return JsonResponse(add)
+
     def retrieve(self, request, pk=None):
-        queryset = Summoner.objects.filter(summonerName__iexact=pk)
-        print(queryset)
-        summoner = get_object_or_404(queryset, summonerName__iexact=pk)
-        serializer = SummonerSerializer(summoner, context={'request': request})
-        return Response(serializer.data)
+        summoner = Summoner.objects.get(summonerName__iexact=pk)
+        isUpdate = self.request.query_params.get('isUpdate')
+
+        response = {}
+        if isUpdate == 'True':
+            updateSummoner(summoner.puuid)
+            latestMatches = fetchMatchList(summoner.puuid)
+            print(latestMatches)
+            if 'isError' in latestMatches:
+                if latestMatches['isError']:
+                    return JsonResponse(latestMatches)
+            newMatches = []
+            for match in latestMatches:
+                existingMatch = Match.objects.filter(gameId=match['gameId'])
+                if existingMatch.count() == 0:
+                    newMatches.append(match)
+
+            updatedSummoner = Summoner.objects.get(summonerName__iexact=pk)
+            serializer = SummonerSerializer(updatedSummoner, context={'request': request})
+            response['newMatches'] = newMatches
+            response['summonerInfo'] = serializer.data
+            return Response(response)
+        else:
+            serializer = SummonerSerializer(summoner, context={'request': request})
+            response['summonerInfo'] = serializer.data
+            return Response(response)
 
 class MatchViewSet(viewsets.ModelViewSet):
     queryset = Match.objects.all().order_by('timestamp')
-    serializer_class = MatchSerializer
+    serializer_class = MatchListSerializer
+
+    def create(self, request):
+        existingMatch = Match.objects.filter(gameId=request.data['gameId'])
+        if existingMatch.count() == 0:
+            print('Fetching Match.')
+
+            fetch = fetchMatch(request.data['gameId'])
+
+            if fetch['ignore']:
+                return Response(fetch)
+
+            queryset = Match.objects.filter(gameId=request.data['gameId'])
+            match = get_object_or_404(queryset, gameId=request.data['gameId'])
+            serializer = MatchSerializer(match, context={'request': request})
+
+            if match:
+                matchClean = checkMatchIntegrity(match)
+
+            response = {};
+            response = fetch;
+            response['newMatch'] = serializer.data;
+            return Response(response)
+        else:
+            return Response('Existing game')
 
     def retrieve(self, request, pk=None):
         queryset = Match.objects.filter(gameId=pk)
@@ -81,10 +169,29 @@ class MatchViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
 class MatchPlayerViewSet(viewsets.ModelViewSet):
-    queryset = Match_Player.objects.all().order_by('match')
+    queryset = Player.objects.all().order_by('match')
     serializer_class = MatchPlayerSerializer
 
     def retrieve(self, request, pk=None):
-        queryset = Match_Player.objects.filter(summonerName__iexact=pk)
-        serializer = MatchPlayerSerializer(queryset, many=True, context={'request': request})
+        isSummoner = Summoner.objects.all().filter(summonerName__iexact=pk)
+        if isSummoner != 0:
+            summoner = Summoner.objects.get(summonerName__iexact=pk)
+            queryset = Player.objects.filter(summoner=summoner.summonerId).order_by('match__gameId')
+            serializer = MatchPlayerSerializer(queryset, many=True, context={'request': request})
+            return Response(serializer.data)
+
+class ChampionViewSet(viewsets.ModelViewSet):
+    queryset = Champion.objects.all().order_by('champId')
+    serializer_class = ChampionSerializer
+
+    def create(self, request):
+        isUpdate = request.data['isUpdate']
+        print(isUpdate)
+        if isUpdate == True:
+            response = updateChampions('9.6.1')
+        return Response(response)
+
+    def retrieve(self, request, pk=None):
+        queryset = Champion.objects.filter(champId__iexact=pk)
+        serializer = ChampionSerializer(queryset, many=True, context={'request': request})
         return Response(serializer.data)

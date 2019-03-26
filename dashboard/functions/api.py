@@ -1,0 +1,30 @@
+from dashboard.functions.general import *
+from dashboard.functions.champions import *
+from dashboard.functions.summoners import *
+from dashboard.functions.errors import *
+from django.conf import settings
+import requests, json
+
+def fetchRiotAPI(server, endpoint, version, path, extra='?'):
+
+    if extra != '?':
+        extra += '&'
+
+    url = 'https://' + server + '.api.riotgames.com/lol/' + endpoint + '/' + version + '/' + path + extra + 'api_key=' + settings.RIOT_API_KEY
+    loadJson = json.loads(json.dumps(requests.get(url).json()))
+
+    print('[RIOT API]: ' + url )
+    return loadJson
+
+def fetchDDragonAPI(version, type, option1, option2=None, language='en_US',):
+
+    target = ''
+    if (option2):
+        target += '/' + str(option2)
+
+    url = 'https://ddragon.leagueoflegends.com/cdn/' + version + '/' + type + '/' + language + '/' + option1 + target + '?api_key=' + settings.RIOT_API_KEY
+    loadJson = json.loads(json.dumps(requests.get(url).json()))
+
+    print('[RIOT API]: ' + url )
+
+    return loadJson

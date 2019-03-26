@@ -10,7 +10,9 @@ router = routers.DefaultRouter()
 router.register(r'users', dashboard.UserViewSet)
 router.register(r'summoners', dashboard.SummonerViewSet)
 router.register(r'matches', dashboard.MatchViewSet)
-router.register(r'match_players', dashboard.MatchPlayerViewSet)
+router.register(r'Players', dashboard.MatchPlayerViewSet)
+router.register(r'champions', dashboard.ChampionViewSet)
+
 
 urlpatterns = [
     path('', dashboard.home, name='home'),

@@ -1,53 +1,76 @@
 from django.contrib.auth.models import User
-from dashboard.models import Summoner, Match, Match_Team, Match_Player
+from dashboard.models import *
 from rest_framework import serializers
+from datetime import datetime
+import time, timeago
 
+class MatchSummonerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Summoner
+        fields = ('summonerName',)
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('url', 'username', 'email', 'is_staff')
 
-class SummonerSerializer(serializers.ModelSerializer):
+class ChampionSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Summoner
+        model = Champion
         fields = (
-            # IDs
-            'summonerName',
-            'summonerId',
-            'puuid',
-            'accountId',
+            'version',
+            'champId',
+            'name',
+            'key',
+            'title',
+            'blurb',
+            'info_attack',
+            'info_defense',
+            'info_magic',
+            'info_difficulty',
 
-            # General
-            'server',
-            'profileIconId',
-            'summonerLevel',
-            'user',
+            # Images
+            'image_full',
+            'image_sprite',
+            'image_group',
+            'image_x',
+            'image_y',
+            'image_w',
+            'image_h',
 
-            # SoloQ
-            'soloQ_leagueId',
-            'soloQ_leagueName',
-            'soloQ_tier',
-            'soloQ_hotStreak',
-            'soloQ_wins',
-            'soloQ_losses',
-            'soloQ_veteran',
-            'soloQ_rank',
-            'soloQ_inactive',
-            'soloQ_freshBlood',
-            'soloQ_leaguePoints',
-
-            # System
-            'date_created',
-            'date_updated'
-            )
+            # Stats & Info
+            'tags',
+            'partype',
+            'stats_hp',
+            'stats_hpperlevel',
+            'stats_mp',
+            'stats_mpperlevel',
+            'stats_movespeed',
+            'stats_armor',
+            'stats_armorperlevel',
+            'stats_spellblock',
+            'stats_spellblockperlevel',
+            'stats_attackrange',
+            'stats_hpregen',
+            'stats_hpregenperlevel',
+            'stats_mpregen',
+            'stats_mpregenperlevel',
+            'stats_crit',
+            'stats_critperlevel',
+            'stats_attackdamage',
+            'stats_attackdamageperlevel',
+            'stats_attackspeedperlevel',
+            'stats_attackspeed',
+        )
 
 class MatchPlayerSerializer(serializers.ModelSerializer):
 
     gameId = serializers.ReadOnlyField(source='match.gameId')
+    summoner = MatchSummonerSerializer()
+    champion = ChampionSerializer()
 
     class Meta:
-        model = Match_Player
+        model = Player
         fields = (
             # Key IDs & Participant Identity
             'match',
@@ -56,14 +79,14 @@ class MatchPlayerSerializer(serializers.ModelSerializer):
             'platformId',
             'matchHistoryUri',
             'participantId',
-            'summonerName',
+            'summoner',
 
-            'teamId',
+            'team',
 
             # General Player Information
             'spell1Id',
             'spell2Id',
-            'championId',
+            'champion',
 
             # Stats
                 ## Minions
@@ -196,7 +219,7 @@ class MatchPlayerSerializer(serializers.ModelSerializer):
 
 class MatchTeamSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Match_Team
+        model = Team
         fields = (
             'match',
 
@@ -222,9 +245,9 @@ class MatchTeamSerializer(serializers.ModelSerializer):
             'vilemawKills',
         )
 
-class MatchSerializer(serializers.ModelSerializer):
-    match_team = MatchTeamSerializer(many=True, read_only=True)
-    match_players = MatchPlayerSerializer(many=True, read_only=True)
+class MatchListSerializer(serializers.ModelSerializer):
+    # def get_timestamp(self, obj):
+    #     return timeago.format(datetime.fromtimestamp(obj.timestamp/1000.), datetime.now())
 
     class Meta:
         model = Match
@@ -240,6 +263,75 @@ class MatchSerializer(serializers.ModelSerializer):
             'gameDuration',
             'timestamp',
             'date_created',
-            'match_team',
-            'match_players',
         )
+
+class MatchSerializer(serializers.ModelSerializer):
+    Team = MatchTeamSerializer(many=True, read_only=True)
+    Players = MatchPlayerSerializer(many=True, read_only=True)
+
+    timestamp = serializers.SerializerMethodField()
+
+    def get_timestamp(self, obj):
+        return timeago.format(datetime.fromtimestamp(obj.timestamp/1000.), datetime.now())
+
+    class Meta:
+        model = Match
+        fields = (
+            'platformId',
+            'gameId',
+            'queueId',
+            'seasonId',
+            'mapId',
+            'gameMode',
+            'gameType',
+            'gameVersion',
+            'gameDuration',
+            'timestamp',
+            'date_created',
+            'Team',
+            'Players',
+        )
+
+class SummonerSerializer(serializers.ModelSerializer):
+    Matches = MatchListSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Summoner
+        fields = (
+            # IDs
+            'user_profile',
+            'summonerName',
+            'summonerId',
+            'puuid',
+            'accountId',
+
+            # General
+            'server',
+            'profileIconId',
+            'summonerLevel',
+
+            # SoloQ
+            'soloQ_leagueId',
+            'soloQ_leagueName',
+            'soloQ_tier',
+            'soloQ_hotStreak',
+            'soloQ_wins',
+            'soloQ_losses',
+            'soloQ_veteran',
+            'soloQ_rank',
+            'soloQ_inactive',
+            'soloQ_freshBlood',
+            'soloQ_leaguePoints',
+
+            # Matches
+            'Matches',
+
+            # System
+            'date_created',
+            'date_updated',
+            )
+
+    def to_representation(self, instance):
+        response = super().to_representation(instance)
+        response["Matches"] = sorted(response["Matches"], key=lambda x: x["timestamp"])
+        return response
