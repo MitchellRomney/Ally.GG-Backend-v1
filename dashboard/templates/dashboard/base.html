@@ -33,13 +33,27 @@
 
 <body>
   <div id="wrapper">
-    <nav id="nav">
+    <div id="top-nav">
       <div class="profile">
-        <div class="avatar">
-          <img src="http://ddragon.leagueoflegends.com/cdn/9.5.1/img/profileicon/3890.png" class="img-responsive" alt="">
+        <div class="notifications">
+          <i class="fas fa-bell"></i>
         </div>
-        <h3>{{ profile.user.username }}</h3>
+        <div class="avatar">
+          <img class="resp-img" src="http://ddragon.leagueoflegends.com/cdn/9.5.1/img/profileicon/3890.png" class="img-responsive" alt="">
+        </div>
+        <div class="user">
+          <h3>{{ profile.user.username }}</h3>
+          <a href="#"><span><i class="fas fa-circle"></i>Online</span></a>
+        </div>
+        <div class="acc-options">
+          <a href="#"><i class="fa fa-caret-down"></i></a>
+          <ul class="options-dropdown">
+            <li><a href="#">Sub Item 1</a></li>
+          </ul>
+        </div>
       </div>
+    </div>
+    <nav id="sidebar">
       <div class="sidebar-wrapper">
         <div class="sidebar-menu">
           <ul>
@@ -51,14 +65,14 @@
             </li>
             <li>
               <a href="/summoners/">
-                <i class="fa fa-home"></i>
+                <i class="fa fa-users"></i>
                 <span>Summoner List</span>
               </a>
             </li>
             {% if mySummoners %}
             <li class="sidebar-dropdown">
-              <a href="#">
-                <i class="fa fa-tachometer-alt"></i>
+              <a class="dropdown-title" href="#">
+                <i class="fa fa-user-check"></i>
                 <span>My Summoners</span>
               </a>
               <div class="sidebar-submenu">

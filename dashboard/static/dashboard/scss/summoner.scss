@@ -1,29 +1,44 @@
 #profile {
   display: grid;
-  grid-template: auto / repeat(12, 1fr);
+  grid-template: 250px auto / repeat(12, 1fr);
   grid-template-areas:
-    "matches matches matches matches matches matches matches matches . summonerInfo summonerInfo summonerInfo";
+    "summonerInfo summonerInfo summonerInfo summonerInfo summonerInfo summonerInfo summonerInfo summonerInfo summonerInfo summonerInfo summonerInfo summonerInfo"
+    "matches matches matches matches matches matches matches matches matches matches matches matches";
   min-height: 100vh;
   #summonerInfo {
     grid-area: summonerInfo;
+    display: flex;
     .updateButtons {
       text-align: center;
     }
     .avatar, .loader {
       height: 128px;
     }
+    .statistics {
+      margin-left: 50px;
+    }
   }
   #matches {
     grid-area: matches;
+    margin-top: 50px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
     .match {
       width: 100%;
       height: 150px;
-      background-color: lightblue;
-      margin-bottom: 25px;
+      background-color: white;
+      // margin-bottom: 25px;
       display: grid;
-      grid-template: auto / repeat(3, 1fr);
+      grid-template: auto / 1fr 2fr 1fr 20px;
+      grid-gap: 0px 10px;
       grid-template-areas:
-      "stats champ players";
+      "stats players champ result";
+      align-items: center;
+      background-size: cover;
+      padding-left: 20px;
+      color: $palette-primary;
+      // border-radius: 10px;
+      // box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.5);
+      background-blend-mode: difference;
       &:last-child {
         margin-bottom: 0px;
       }
@@ -32,6 +47,18 @@
       }
       .champ-info {
         grid-area: champ;
+        display: flex;
+        justify-content: center;
+        .avatar {
+          height: 125px;
+          width: 125px;
+          border-radius: 50%;
+          overflow: hidden;
+          border: solid 5px white;
+          img {
+            transform: scale(1.2,1.2);
+          }
+        }
       }
       .players {
         grid-area: players;
@@ -39,6 +66,35 @@
         grid-template: repeat(5, 20px) / repeat(2, 1fr);
         grid-auto-flow: column;
         font-size: 0.8rem;
+        padding: 10px;
+        grid-gap: 0px 10px;
+        // text-shadow: 0px 0px 20px rgba(0, 0, 0, 1);
+        .player {
+          text-align: right;
+          &:nth-child(n+6){
+            text-align: left;
+          }
+        }
+        a {
+          color: $palette-primary;
+        }
+      }
+      .result {
+        grid-area: result;
+        height: 100%;
+        width: 100%;
+      }
+      &.win {
+        background-color: rgba(56, 202, 115, 0.2);
+        .result {
+          background-color: rgba(56, 202, 115, 0.8);
+        }
+      }
+      &.lose {
+        background-color: rgba(213, 84, 83, 0.2);
+        .result {
+          background-color: rgba(213, 84, 83, 0.8);
+        }
       }
     }
   }

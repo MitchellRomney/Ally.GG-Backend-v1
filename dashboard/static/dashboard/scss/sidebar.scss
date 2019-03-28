@@ -1,13 +1,14 @@
-#nav {
+#sidebar {
   grid-area: nav;
-  background-color: $maastricht-blue;
-  color: white;
+  background-color: white;
+  color: $palette-primary;
   width: 16.66%;
   position: fixed;
   bottom: 0;
-  top: 0;
+  top: 100px;
+  z-index: 1000;
   a {
-    color: white;
+    color: $palette-primary;
   }
   .profile {
     .avatar {
@@ -23,6 +24,7 @@
     }
   }
   .sidebar-wrapper {
+    padding: 50px 30px;
     ul {
       list-style-type: none;
       padding: 0;
@@ -32,15 +34,18 @@
       padding-bottom: 10px;
       ul {
         li {
+          height: 60px;
           a {
-            display: inline-block;
+            display: flex;
+            align-items: center;
             width: 100%;
             text-decoration: none;
             position: relative;
             padding: 8px 30px 8px 20px;
+            opacity: 0.8;
             i {
               margin-right: 10px;
-              font-size: 12px;
+              font-size: 1.5rem;
               width: 30px;
               height: 30px;
               line-height: 30px;
@@ -64,7 +69,7 @@
         }
       }
       .sidebar-dropdown {
-        a {
+        .dropdown-title {
           &:after {
             font-family: "Font Awesome 5 Free";
             font-weight: 900;
@@ -89,7 +94,7 @@
             padding: 5px 0;
           }
           li {
-            padding-left: 25px;
+            padding-left: 50px;
             font-size: 13px;
             a {
               .label, .badge {

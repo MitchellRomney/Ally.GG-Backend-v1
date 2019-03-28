@@ -66,10 +66,10 @@ def fetchMatch(gameId):
 
             if existingSummoner.count() == 0:
                 addResponse = addSummoner('SummonerId', player['player']['summonerId'])
-                if addResponse['isError']:
-                    if addResponse['errorMessage'] == 'Summoner already exists.':
+                if addResponse['isError']: # If there is an error.
+                    if addResponse['errorMessage'] == 'Summoner already exists.': # If that error is just that it already exists.
                         summoner = Summoner.objects.get(summonerId=player['player']['summonerId'])
-                    else:
+                    else: # Else, serious error. Report it to the user.
                         return {'isError': True, 'errorMessage': addResponse['errorMessage'], 'ignore': False}
                 else:
                     summoner = Summoner.objects.get(summonerId=player['player']['summonerId'])

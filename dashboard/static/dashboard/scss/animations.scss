@@ -13,7 +13,7 @@
   .rhombus {
     height: 30px;
     width: 30px;
-    background-color: #ff1d5e;
+    background-color: $palette-accent;
     left: calc(30px * 4);
     position: absolute;
     margin: 0 auto;
@@ -109,12 +109,12 @@
 }
 
 .half-circle-spinner .circle.circle-1 {
-  border-top-color: #ff1d5e;
+  border-top-color: $palette-accent;
   animation: half-circle-spinner-animation 1s infinite;
 }
 
 .half-circle-spinner .circle.circle-2 {
-  border-bottom-color: #ff1d5e;
+  border-bottom-color: $palette-accent;
   animation: half-circle-spinner-animation 1s infinite alternate;
 }
 

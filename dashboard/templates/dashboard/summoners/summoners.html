@@ -10,7 +10,7 @@
       </div>
     </transition>
   </div>
-  <div id="summoners" v-bind:class="{ error: isError }">
+  <div id="summoners" class="panel" v-bind:class="{ error: isError }">
     {% if user.is_authenticated %}
       <div class="actions">
         <input type="text" value="" v-model="addSummonerName" />

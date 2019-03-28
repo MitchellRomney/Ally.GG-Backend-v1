@@ -168,9 +168,21 @@ class MatchViewSet(viewsets.ModelViewSet):
         serializer = MatchSerializer(match, context={'request': request})
         return Response(serializer.data)
 
-class MatchPlayerViewSet(viewsets.ModelViewSet):
+class PlayerViewSet(viewsets.ModelViewSet):
     queryset = Player.objects.all().order_by('match')
     serializer_class = MatchPlayerSerializer
+
+    def get_queryset(self):
+        queryset = Player.objects.all()
+        matchId = self.request.query_params.get('match', None)
+        summonerId = self.request.query_params.get('player', None)
+        if matchId is not None and summonerId is not None:
+            match = Match.objects.get(gameId=matchId)
+            print(match)
+            summoner = Summoner.objects.get(summonerId=summonerId)
+            print(summoner)
+            queryset = queryset.filter(match=match, summoner=summoner)
+        return queryset
 
     def retrieve(self, request, pk=None):
         isSummoner = Summoner.objects.all().filter(summonerName__iexact=pk)
