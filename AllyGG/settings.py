@@ -94,7 +94,6 @@ STATIC_URL = '/static/'
 STATIC_ROOT = 'staticfiles'
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'dashboard/static'),
-    os.path.join(BASE_DIR, 'assets'),
 )
 
 LOGIN_REDIRECT_URL = "home"
