@@ -44,7 +44,6 @@ def addSummoner(method, value):
 
                 # System
                 date_created=timezone.now(),
-                date_updated=timezone.now(),
             )
         except IntegrityError:
             existingSummoner = Summoner.objects.get(summonerId=summonerInfo['id'])

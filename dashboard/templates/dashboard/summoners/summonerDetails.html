@@ -27,7 +27,8 @@
           <img class="resp-img" :src="'http://ddragon.leagueoflegends.com/cdn/9.6.1/img/profileicon/' + summoner.profileIconId + '.png'">
           <div class="updateButtons">
             <button v-on:click="updateSummoner">Update</button>
-            <h6><strong>Last Updated: </strong>[[ last_updated ]]</h6>
+            <h6 v-if="last_updated"><strong>Last Updated: </strong>[[ last_updated ]]</h6>
+            <h6 v-else>Data hasn't been fetched yet.</h6>
           </div>
       </div>
       <div class="statistics">
@@ -60,6 +61,7 @@
         >
           <div class="stats">
             <h4>Match - [[ match.gameId ]]</h4>
+            <h4>[[ match.gameType ]]</h4>
             <h4>[[ match.timestamp ]]</h4>
           </div>
           <div class="champ-info">
@@ -147,7 +149,7 @@ var vm = new Vue({
     getSummonerInfo(){
       axios.get('/api/summoners/{{ summonerName }}').then(summonerResponse => {
         vm.summoner = summonerResponse.data['summonerInfo']
-        vm.last_updated = moment(summonerResponse.data['summonerInfo'].date_updated).fromNow()
+        vm.last_updated = summonerResponse.data['summonerInfo'].date_updated ? moment(summonerResponse.data['summonerInfo'].date_updated).fromNow() : false;
         vm.playerLoading = false;
         vm.getMatchInfo(summonerResponse.data['summonerInfo']['Matches'], summonerResponse.data['summonerInfo']);
       })

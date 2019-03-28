@@ -99,7 +99,7 @@ class Summoner(models.Model):
 
     # System
     date_created = models.DateTimeField(auto_now_add=True, blank=False)
-    date_updated = models.DateTimeField(blank=False)
+    date_updated = models.DateTimeField(null=True)
 
     def __str__(self):
         return self.summonerName
