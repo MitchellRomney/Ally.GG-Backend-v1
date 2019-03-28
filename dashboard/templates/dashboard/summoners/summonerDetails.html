@@ -1,7 +1,7 @@
 {% extends 'dashboard/base.html' %}
 
 {% block title %}
-{{ SummonerName }} Summoner Statistics - League of Legends // {{ block.super }}
+{{ summonerName }} Summoner Statistics - League of Legends // {{ block.super }}
 {% endblock title %}
 
 {% block content %}
@@ -24,7 +24,7 @@
   <transition name="fade">
     <div id="summonerInfo" class="panel" v-if="!playerLoading" v-cloak>
       <div class="avatar">
-          <img class="resp-img" :src="'http://ddragon.leagueoflegends.com/cdn/9.5.1/img/profileicon/' + summoner.profileIconId + '.png'">
+          <img class="resp-img" :src="'http://ddragon.leagueoflegends.com/cdn/9.6.1/img/profileicon/' + summoner.profileIconId + '.png'">
           <div class="updateButtons">
             <button v-on:click="updateSummoner">Update</button>
             <h6><strong>Last Updated: </strong>[[ last_updated ]]</h6>
