@@ -17,7 +17,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'dashboard',
     'rest_framework',
-    'webpack_loader',
 ]
 
 MIDDLEWARE = [
@@ -30,7 +29,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'digest.urls'
+ROOT_URLCONF = 'AllyGG.urls'
 
 TEMPLATES = [
     {
@@ -48,7 +47,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'digest.wsgi.application'
+WSGI_APPLICATION = 'AllyGG.wsgi.application'
 
 DATABASES = {
     'default': {
@@ -94,13 +93,6 @@ STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'dashboard/static'),
     os.path.join(BASE_DIR, 'assets'),
 )
-
-WEBPACK_LOADER = {
-    'DEFAULT': {
-        'BUNDLE_DIR_NAME': 'bundles/',
-        'STATS_FILE': os.path.join(BASE_DIR, 'webpack-stats.json'),
-    }
-}
 
 LOGIN_REDIRECT_URL = "home"
 LOGOUT_REDIRECT_URL = "home"
