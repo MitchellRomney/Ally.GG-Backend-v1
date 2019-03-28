@@ -1,5 +1,9 @@
 {% extends 'dashboard/base.html' %}
 
+{% block title %}
+Summoner Stats, Find Allies, Message Friends - {{ block.super }}
+{% endblock title %}
+
 {% block content %}
   <div id="errors">
     <transition name="fade">
@@ -18,22 +22,22 @@
         <span v-if="ajaxRequest" v-cloak>Please Wait ...</span>
       </div>
     {% endif %}
-    <div class="summoners_loader loader" v-if="mastersLoading">
+    <div class="summoners_loader loader" v-if="topPlayersLoading">
       <div class="half-circle-spinner">
         <div class="circle circle-1"></div>
         <div class="circle circle-2"></div>
       </div>
     </div>
-    <h2>Masters</h2>
+    <h2>Top Players</h2>
     <transition name="fade">
-      <table v-if="!mastersLoading" v-cloak>
+      <table v-if="!topPlayersLoading" v-cloak>
         <tr>
           <th scope="col">Summoner Name</th>
           <th scope="col">Wins</th>
           <th scope="col">Losses</th>
           <th scope="col">League Points</th>
         </tr>
-        <tr v-for="summoner in masters">
+        <tr v-for="summoner in topPlayers">
           <th scope="row"><a :href="summoner.summonerName">[[ summoner.summonerName ]]</a></th>
           <td>[[ summoner.soloQ_wins ]]</td>
           <td>[[ summoner.soloQ_losses ]]</td>
@@ -63,8 +67,8 @@ var vm = new Vue({
     isLoading: true,
     ajaxRequest: false,
     isError: false,
-    mastersLoading: true,
-    masters: [],
+    topPlayersLoading: true,
+    topPlayers: [],
   },
   methods: {
     async getSummoners(){
@@ -93,10 +97,10 @@ var vm = new Vue({
       this.isLoading = false;
     },
     async getHighElo(){
-      let results = await axios.get('/api/summoners?tier=master');
+      let results = await axios.get('/api/summoners?tier=CHALLENGER&tier=GRANDMASTER&tier=MASTER');
       console.log(results)
-      this.masters = results.data['results'];
-      this.mastersLoading = false;
+      this.topPlayers = results.data['results'];
+      this.topPlayersLoading = false;
     },
     addSummoner: function(event) {
       axios.defaults.xsrfCookieName = 'csrftoken'

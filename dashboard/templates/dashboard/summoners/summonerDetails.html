@@ -1,5 +1,9 @@
 {% extends 'dashboard/base.html' %}
 
+{% block title %}
+{{ SummonerName }} Summoner Statistics - League of Legends // {{ block.super }}
+{% endblock title %}
+
 {% block content %}
 <div id="errors">
   <transition name="fade">

@@ -91,9 +91,10 @@ class SummonerViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         queryset = Summoner.objects.all()
-        tier = self.request.query_params.get('tier', None)
+        tier = self.request.query_params.getlist('tier', None)
         if tier is not None:
-            queryset = queryset.filter(soloQ_tier__iexact=tier)
+            print(tier)
+            queryset = queryset.filter(soloQ_tier__in=tier)
             print(queryset)
         return queryset
 
