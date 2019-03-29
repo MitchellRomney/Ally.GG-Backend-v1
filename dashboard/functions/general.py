@@ -47,6 +47,8 @@ def fetchMatch(gameId):
             print(Fore.CYAN + 'Match is Co-Op vs AI, skipping.' + Style.RESET_ALL)
             return {'isError': False, 'errorMessage': None, 'ignore': True}
 
+        timestamp = datetime.fromtimestamp(matchInfo['gameCreation']/1000.)
+
         newMatch = Match.objects.create(
             gameId = matchInfo['gameId'],
             platformId = matchInfo['platformId'],
@@ -58,7 +60,7 @@ def fetchMatch(gameId):
             gameType = matchInfo['gameType'],
             gameVersion = matchInfo['gameVersion'],
             gameDuration = matchInfo['gameDuration'],
-            timestamp = matchInfo['gameCreation'],
+            timestamp = timestamp,
         )
 
         for player in matchInfo['participantIdentities']:

@@ -34,10 +34,12 @@
       <div class="statistics">
         <h1><span>[[ summoner.summonerName ]]</span></h1>
         <h2><strong>Level: </strong>[[ summoner.summonerLevel ]]</h2>
-        <h2>Solo Queue</h2>
-        <h3><strong>Rank: </strong>[[ summoner.soloQ_tier ]] [[ summoner.soloQ_rank ]] - [[ summoner.soloQ_leaguePoints ]]</h3>
-        <h3><strong>Wins: </strong>[[ summoner.soloQ_wins ]]</h3>
-        <h3><strong>Losses: </strong>[[ summoner.soloQ_losses ]]</h3>
+        <div v-if="last_updated">
+          <h2>Solo Queue</h2>
+          <h3><strong>Rank: </strong>[[ summoner.soloQ_tier ]] [[ summoner.soloQ_rank ]] - [[ summoner.soloQ_leaguePoints ]]</h3>
+          <h3><strong>Wins: </strong>[[ summoner.soloQ_wins ]]</h3>
+          <h3><strong>Losses: </strong>[[ summoner.soloQ_losses ]]</h3>
+        </div>
       </div>
     </div>
   </transition>
@@ -61,7 +63,7 @@
         >
           <div class="stats">
             <h4>Match - [[ match.gameId ]]</h4>
-            <h4>[[ match.gameType ]]</h4>
+            <h4>[[ match.queue ]]</h4>
             <h4>[[ match.timestamp ]]</h4>
           </div>
           <div class="champ-info">

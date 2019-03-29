@@ -2,6 +2,7 @@ from django.contrib.auth.models import User
 from dashboard.models import *
 from rest_framework import serializers
 from datetime import datetime
+from django.utils import timezone
 import time, timeago
 
 class MatchSummonerSerializer(serializers.ModelSerializer):
@@ -266,22 +267,25 @@ class MatchListSerializer(serializers.ModelSerializer):
         )
 
 class MatchSerializer(serializers.ModelSerializer):
+    queue = serializers.CharField(source='get_queueId_display')
+    season = serializers.CharField(source='get_seasonId_display')
+    map = serializers.CharField(source='get_mapId_display')
     Team = MatchTeamSerializer(many=True, read_only=True)
     Players = MatchPlayerSerializer(many=True, read_only=True)
 
     timestamp = serializers.SerializerMethodField()
 
     def get_timestamp(self, obj):
-        return timeago.format(datetime.fromtimestamp(obj.timestamp/1000.), datetime.now())
+        return timeago.format(obj.timestamp, timezone.now())
 
     class Meta:
         model = Match
         fields = (
             'platformId',
             'gameId',
-            'queueId',
-            'seasonId',
-            'mapId',
+            'queue',
+            'season',
+            'map',
             'gameMode',
             'gameType',
             'gameVersion',

@@ -7,6 +7,7 @@ class TeamInline(admin.TabularInline):
 
 class PlayerInline(admin.TabularInline):
     model = Player
+    list_display = ('summonerName',)
 
 class SummonerInline(admin.TabularInline):
     model = Summoner
@@ -47,8 +48,8 @@ class MatchAdmin(admin.ModelAdmin):
 
     inlines = [
         TeamInline,
-        PlayerInline
         ]
+        
     search_fields = ('gameId',)
 
 class ChampionAdmin(admin.ModelAdmin):
