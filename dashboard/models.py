@@ -70,7 +70,6 @@ class Champion(models.Model):
     def __str__(self):
         return self.champId
 
-
 class Summoner(models.Model):
     # IDs
     user_profile = models.ForeignKey(Profile, related_name="Summoners", on_delete=models.SET_NULL, null=True, blank=True)
@@ -87,7 +86,18 @@ class Summoner(models.Model):
     # SoloQ
     soloQ_leagueId = models.CharField(max_length=255, blank=True)
     soloQ_leagueName = models.CharField(max_length=255, blank=True)
-    soloQ_tier = models.CharField(max_length=255, blank=True)
+    TIERS = (
+        ('CHALLENGER', 'Challenger'),
+        ('GRANDMASTER', 'Grandmaster'),
+        ('MASTER', 'Master'),
+        ('DIAMOND', 'Diamond'),
+        ('PLATINUM', 'Platinum'),
+        ('GOLD', 'Gold'),
+        ('SILVER', 'Silver'),
+        ('BRONZE', 'Bronze'),
+        ('IRON', 'Iron'),
+    )
+    soloQ_tier = models.CharField(max_length=20, choices=TIERS, null=True, blank=True)
     soloQ_hotStreak = models.BooleanField(default=False)
     soloQ_wins = models.BigIntegerField(null=True, blank=True, default=0)
     soloQ_losses = models.BigIntegerField(null=True, blank=True, default=0)

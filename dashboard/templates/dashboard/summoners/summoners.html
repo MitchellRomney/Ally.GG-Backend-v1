@@ -33,12 +33,14 @@ Summoner Stats, Find Allies, Message Friends - {{ block.super }}
       <table v-if="!topPlayersLoading" v-cloak>
         <tr>
           <th scope="col">Summoner Name</th>
+          <th scope="col">Tier</th>
           <th scope="col">Wins</th>
           <th scope="col">Losses</th>
           <th scope="col">League Points</th>
         </tr>
         <tr v-for="summoner in topPlayers">
           <th scope="row"><a :href="summoner.summonerName">[[ summoner.summonerName ]]</a></th>
+          <td>[[ summoner.soloQ_tier ]]</td>
           <td>[[ summoner.soloQ_wins ]]</td>
           <td>[[ summoner.soloQ_losses ]]</td>
           <td>[[ summoner.soloQ_leaguePoints ]]</td>
@@ -97,9 +99,23 @@ var vm = new Vue({
       this.isLoading = false;
     },
     async getHighElo(){
-      let results = await axios.get('/api/summoners?tier=CHALLENGER&tier=GRANDMASTER&tier=MASTER');
-      console.log(results)
-      this.topPlayers = results.data['results'];
+      this.isLoading = true;
+      // Setup variables and grab first page.
+      const results = [];
+      page = 1
+      let op = await axios.get('/api/summoners?tier=CHALLENGER&tier=GRANDMASTER&tier=MASTER&page=' + page);
+      next = op.data.next
+      results.push(op.data.results)
+
+      // If there is more than 1 page, loop through them and append the results to the array.
+      while (next != null){
+        const extra = [];
+        page += 1;
+        op = await axios.get('/api/summoners?tier=CHALLENGER&tier=GRANDMASTER&tier=MASTER&page=' + page);
+        next = op.data.next;
+        [].push.apply(results[0], op.data.results);
+      }
+      this.topPlayers = results[0];
       this.topPlayersLoading = false;
     },
     addSummoner: function(event) {
