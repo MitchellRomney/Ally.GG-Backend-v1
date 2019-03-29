@@ -22,6 +22,7 @@ class SummonerAdmin(admin.ModelAdmin):
     inlines = [
         MatchInline
     ]
+    search_fields = ('summonerName',)
 
 class ProfileAdmin(admin.ModelAdmin):
     model = Profile
@@ -30,12 +31,15 @@ class ProfileAdmin(admin.ModelAdmin):
     inlines = [
         SummonerInline
         ]
+    search_fields = ('user',)
 
 class TeamAdmin(admin.ModelAdmin):
     model = Team
 
 class PlayerAdmin(admin.ModelAdmin):
     model = Player
+
+    search_fields = ('match__gameId', 'summoner__summonerName')
 
 class MatchAdmin(admin.ModelAdmin):
     model = Match
@@ -45,10 +49,12 @@ class MatchAdmin(admin.ModelAdmin):
         TeamInline,
         PlayerInline
         ]
+    search_fields = ('gameId',)
 
 class ChampionAdmin(admin.ModelAdmin):
     model = Champion
     list_display = ('name', 'key', 'version')
+    search_fields = ('name',)
 
 admin.site.register(Profile, ProfileAdmin)
 admin.site.register(Summoner, SummonerAdmin)
