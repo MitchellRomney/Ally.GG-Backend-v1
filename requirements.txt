@@ -13,3 +13,4 @@ django-filter
 psycopg2==2.7.3.2
 django-webpack-loader==0.6.0
 timeago==1.0.9
+colorama==0.4.1
