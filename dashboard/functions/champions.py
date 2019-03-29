@@ -5,6 +5,7 @@ from django.http import HttpResponse, JsonResponse
 from django.conf import settings
 from django.utils import timezone
 from itertools import islice
+from colorama import Fore, Back, Style
 from datetime import datetime
 import requests, json
 
@@ -64,7 +65,7 @@ def updateChampions(version):
 
             newChampion.save()
 
-            print('New champion added: ' + value['name'])
+            print(Fore.GREEN + 'New champion added: ' + Style.RESET_ALL + value['name'])
 
         else: # If champion DOES exist already, update itself.
             existingChampion = Champion.objects.get(key=value['key'])
@@ -115,7 +116,7 @@ def updateChampions(version):
                 exsitingChampion.stats_attackspeedperlevel = value['stats']['attackspeedperlevel']
                 exsitingChampion.stats_attackspeed = value['stats']['attackspeed']
 
-                print('Champion updated: ' + existingChampion.name)
+                print(Fore.YELLOW + 'Champion updated: ' + Style.RESET_ALL + existingChampion.name)
 
             else:
-                print('Champion already up to date: ' + existingChampion.name)
+                print(Fore.CYAN + 'Champion already up to date: ' + Style.RESET_ALL + existingChampion.name)

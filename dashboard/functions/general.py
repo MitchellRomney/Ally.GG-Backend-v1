@@ -7,22 +7,22 @@ from django.conf import settings
 from django.utils import timezone
 from itertools import islice
 from datetime import datetime
+from colorama import Fore, Back, Style
 import requests, json
 
 def checkMatchIntegrity(match):
     players = Player.objects.filter(match=match)
     teams = Team.objects.filter(match=match)
     if players.count() != 10 or teams.count() != 2:
-        print('Match ' + str(match.gameId) + ' is missing ' + str(10-players.count()) + ' players.')
+        # print('Match ' + str(match.gameId) + ' is missing ' + str(10-players.count()) + ' players.')
         match.delete()
-        print('Deleted match.')
         return False
     else:
         return True
 
 def fetchMatchList(puuid):
     summoner = Summoner.objects.get(puuid=puuid)
-    print('Fetching Summoner Matches: ' + summoner.summonerName)
+    print(Fore.YELLOW + 'Fetching Summoner Matches: ' + Style.RESET_ALL + summoner.summonerName)
 
     matches = fetchRiotAPI('OC1', 'match', 'v4', 'matchlists/by-account/' + summoner.accountId, '?endIndex=10')
     if 'status' in matches:
@@ -33,18 +33,18 @@ def fetchMatchList(puuid):
 def fetchMatch(gameId):
     existingMatchCount = Match.objects.filter(gameId=gameId).count()
     if existingMatchCount == 0:
-        print('Building Match: ' + str(gameId))
+        print(Fore.YELLOW + 'Building Match: ' + Style.RESET_ALL + str(gameId))
 
         matchInfo = fetchRiotAPI('OC1', 'match', 'v4', 'matches/' + str(gameId))
 
         if 'status' in matchInfo:
-            print('[ERROR]: ' + matchInfo['status']['message'] + '.')
+            print(Fore.RED + '[ERROR]: ' + Style.RESET_ALL +     matchInfo['status']['message'] + '.')
             return {'isError': True, 'errorMessage': matchInfo['status']['message'], 'ignore': False}
 
         # TODO: Add functionality for Co-Op vs AI games.
         # Checking for Co-Op vs AI queue ID.
         if matchInfo['queueId'] == 850:
-            print('Match is Co-Op vs AI, skipping.')
+            print(Fore.CYAN + 'Match is Co-Op vs AI, skipping.' + Style.RESET_ALL)
             return {'isError': False, 'errorMessage': None, 'ignore': True}
 
         newMatch = Match.objects.create(
@@ -109,7 +109,7 @@ def fetchMatch(gameId):
             )
 
             newTeam.save()
-            print('New Team Created - [' + str(newTeam) + ']')
+            print(Fore.GREEN + 'New Team Created:' + Style.RESET_ALL + str(newTeam))
 
         # Create the Player info for the match.
         for participantInfo in matchInfo['participantIdentities']:
@@ -278,15 +278,6 @@ def fetchMatch(gameId):
 
                     newPlayer.save()
 
-                    print('New Match Player Created: ' + str(newPlayer.summoner))
+                    print(Fore.GREEN + 'New Match Player Created: ' + Style.RESET_ALL + str(newPlayer.summoner))
 
     return {'isError': False, 'errorMessage': None, 'ignore': False}
-
-
-def fixMatches():
-    allMatches = Match.objects.all()
-    for match in allMatches:
-        players = Player.objects.all().filter(match=match)
-        if players.count() != 10:
-            match.delete()
-            print('Deleted Broken Match: ' + str(match.gameId))

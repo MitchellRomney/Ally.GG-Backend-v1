@@ -10,6 +10,7 @@ from rest_framework.response import Response
 from dashboard.serializers import *
 from django.contrib.auth.models import User
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
+from colorama import Fore, Back, Style
 import requests
 
 def home(request, reason=None):
@@ -93,9 +94,7 @@ class SummonerViewSet(viewsets.ModelViewSet):
         queryset = Summoner.objects.all()
         tier = self.request.query_params.getlist('tier', None)
         if tier is not None:
-            print(tier)
             queryset = queryset.filter(soloQ_tier__in=tier).order_by('soloQ_tier','-soloQ_leaguePoints')
-            print(queryset)
         return queryset
 
     def create(self, request):
@@ -115,7 +114,6 @@ class SummonerViewSet(viewsets.ModelViewSet):
         if isUpdate == 'True':
             updateSummoner(summoner.puuid)
             latestMatches = fetchMatchList(summoner.puuid)
-            print(latestMatches)
             if 'isError' in latestMatches:
                 if latestMatches['isError']:
                     return JsonResponse(latestMatches)
@@ -142,10 +140,7 @@ class MatchViewSet(viewsets.ModelViewSet):
     def create(self, request):
         existingMatch = Match.objects.filter(gameId=request.data['gameId'])
         if existingMatch.count() == 0:
-            print('Fetching Match.')
-
             fetch = fetchMatch(request.data['gameId'])
-
             if fetch['ignore']:
                 return Response(fetch)
 
@@ -179,9 +174,7 @@ class PlayerViewSet(viewsets.ModelViewSet):
         summonerId = self.request.query_params.get('player', None)
         if matchId is not None and summonerId is not None:
             match = Match.objects.get(gameId=matchId)
-            print(match)
             summoner = Summoner.objects.get(summonerId=summonerId)
-            print(summoner)
             queryset = queryset.filter(match=match, summoner=summoner)
         return queryset
 
@@ -199,7 +192,6 @@ class ChampionViewSet(viewsets.ModelViewSet):
 
     def create(self, request):
         isUpdate = request.data['isUpdate']
-        print(isUpdate)
         if isUpdate == True:
             response = updateChampions('9.6.1')
         return Response(response)

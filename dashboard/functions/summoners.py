@@ -9,6 +9,7 @@ from django.core import serializers
 from django.utils import timezone
 from itertools import islice
 from datetime import datetime
+from colorama import Fore, Back, Style
 import requests, json
 
 # Add Summoner Response:
@@ -22,7 +23,7 @@ def addSummoner(method, value):
         summonerInfo = fetchRiotAPI('OC1', 'summoner', 'v4', 'summoners/by-name/' + value)
 
     if 'status' in summonerInfo:
-        print('[ERROR]: ' + summonerInfo['status']['message'] + '.')
+        print(Fore.RED + '[ERROR]: ' + Style.RESET_ALL + summonerInfo['status']['message'] + '.')
         return {'isError': True, 'errorMessage': summonerInfo['status']['message'], 'summonerId': None}
 
     existingSummoner = Summoner.objects.filter(summonerId=summonerInfo['id'])
@@ -49,7 +50,7 @@ def addSummoner(method, value):
             existingSummoner = Summoner.objects.get(summonerId=summonerInfo['id'])
             return {'isError': True, 'errorMessage': 'Summoner already exists.', 'summonerId': newSummoner.summonerId}
 
-        print('New Summoner Created: ' + newSummoner.summonerName)
+        print(Fore.GREEN + 'New Summoner Created: ' + Style.RESET_ALL + newSummoner.summonerName)
         return {'isError': False, 'errorMessage': '', 'summonerId': newSummoner.summonerId}
 
     existingSummoner = Summoner.objects.get(summonerId=summonerInfo['id'])
@@ -57,11 +58,11 @@ def addSummoner(method, value):
 
 def updateSummoner(puuid):
     summoner = Summoner.objects.get(puuid=puuid)
-    print('Updating Summoner: ' + summoner.summonerName)
+    print(Fore.YELLOW + 'Updating Summoner: ' + Style.RESET_ALL + summoner.summonerName)
 
     summonerInfo = fetchRiotAPI('OC1', 'summoner', 'v4', 'summoners/by-puuid/' + puuid)
     if 'status' in summonerInfo:
-        print('[ERROR]: ' + summonerInfo['status']['message'] + '.')
+        print(Fore.RED + '[ERROR]: ' + Style.RESET_ALL + summonerInfo['status']['message'] + '.')
         return {'isError': True, 'errorMessage': summonerInfo['status']['message'] }
 
     summoner.summonerName = summonerInfo['name'] if summoner.summonerName != summonerInfo['name'] else summoner.summonerName
@@ -70,7 +71,7 @@ def updateSummoner(puuid):
 
     rankedInfo = fetchRiotAPI('OC1', 'league', 'v4', 'positions/by-summoner/' + summoner.summonerId)
     if 'status' in rankedInfo:
-        print('[ERROR]: ' + rankedInfo['status']['message'] + '.')
+        print(Fore.RED + '[ERROR]: ' + Style.RESET_ALL + rankedInfo['status']['message'] + '.')
         return {'isError': True, 'errorMessage': rankedInfo['status']['message'] }
 
     for queue in rankedInfo:
