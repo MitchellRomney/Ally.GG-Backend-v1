@@ -273,10 +273,10 @@ class MatchSerializer(serializers.ModelSerializer):
     Team = MatchTeamSerializer(many=True, read_only=True)
     Players = MatchPlayerSerializer(many=True, read_only=True)
 
-    timestamp = serializers.SerializerMethodField()
+    # timestamp = serializers.SerializerMethodField()
 
-    def get_timestamp(self, obj):
-        return timeago.format(obj.timestamp, timezone.now())
+    # def get_timestamp(self, obj):
+    #     return timeago.format(obj.timestamp, timezone.now())
 
     class Meta:
         model = Match

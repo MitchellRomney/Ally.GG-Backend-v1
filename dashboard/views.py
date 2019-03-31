@@ -11,6 +11,7 @@ from dashboard.serializers import *
 from django.contrib.auth.models import User
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from colorama import Fore, Back, Style
+from datetime import datetime
 import requests
 
 def home(request, reason=None):
@@ -107,12 +108,13 @@ class SummonerViewSet(viewsets.ModelViewSet):
             return JsonResponse(add)
 
     def retrieve(self, request, pk=None):
+        # TODO: If no summoner is found by name, return error and display custom page.
         summoner = Summoner.objects.get(summonerName__iexact=pk)
         isUpdate = self.request.query_params.get('isUpdate')
 
         response = {}
         if isUpdate == 'True':
-            updateSummoner(summoner.puuid)
+            updatedSummonerId = updateSummoner(summoner.puuid)
             latestMatches = fetchMatchList(summoner.puuid)
             if 'isError' in latestMatches:
                 if latestMatches['isError']:
@@ -121,9 +123,14 @@ class SummonerViewSet(viewsets.ModelViewSet):
             for match in latestMatches:
                 existingMatch = Match.objects.filter(gameId=match['gameId'])
                 if existingMatch.count() == 0:
+                    match['timestamp'] = datetime.fromtimestamp(match['timestamp']/1000.)
                     newMatches.append(match)
 
-            updatedSummoner = Summoner.objects.get(summonerName__iexact=pk)
+            updatedSummoner = Summoner.objects.get(summonerId=updatedSummonerId)
+
+            if updatedSummoner.summonerName != pk:
+                return HttpResponseRedirect('/summoners/' + updatedSummoner.summonerName)
+                
             serializer = SummonerSerializer(updatedSummoner, context={'request': request})
             response['newMatches'] = newMatches
             response['summonerInfo'] = serializer.data
@@ -173,6 +180,7 @@ class PlayerViewSet(viewsets.ModelViewSet):
         matchId = self.request.query_params.get('match', None)
         summonerId = self.request.query_params.get('player', None)
         if matchId is not None and summonerId is not None:
+            print(matchId)
             match = Match.objects.get(gameId=matchId)
             summoner = Summoner.objects.get(summonerId=summonerId)
             queryset = queryset.filter(match=match, summoner=summoner)

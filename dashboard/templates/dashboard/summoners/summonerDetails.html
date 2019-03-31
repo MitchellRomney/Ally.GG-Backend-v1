@@ -52,6 +52,13 @@
   </div>
   <transition name="fade">
     <div id="matches" v-if="!matchLoading" v-cloak>
+      <div class="loader" v-if="newGamesLoading">
+        <div class="half-circle-spinner">
+          <span>[[ remaining_games ]] games loading.</span>
+          <div class="circle circle-1"></div>
+          <div class="circle circle-2"></div>
+        </div>
+      </div>
       <transition-group name="fade">
         <div
           class="match"
@@ -103,8 +110,10 @@ var vm = new Vue({
   data: {
     summoner: [],
     match_list: [],
+    remaining_games: 0,
     last_updated: '',
     matchLoading: true,
+    newGamesLoading: false,
     playerLoading: true,
     isEmpty: false,
     isError: false,
@@ -138,13 +147,13 @@ var vm = new Vue({
             if (updateResponse.data['newMatches'].length == 0){
               vm.matchLoading = false;
             } else {
-              updateResponse.data['newMatches'].forEach(async function (match){
-                if (vm.isError != true){
-                  createResponse = await vm.createNewMatch(match['gameId'], updateResponse.data['summonerInfo'])
-                }
-              })
+              updateResponse.data['newMatches'].reverse();
+              console.log(updateResponse.data['newMatches']);
+              vm.remaining_games = updateResponse.data['newMatches'].length;
+              vm.createNewMatches(updateResponse.data['newMatches']);
             }
           })
+          console.log('after');
         }
       })
     },
@@ -174,10 +183,10 @@ var vm = new Vue({
         vm.matchLoading = false;
       });
     },
-    async createNewMatch(gameId, summoner=null){
+    async createNewMatches(newMatchArray){
       try {
         await axios.post('/api/matches/', {
-          'gameId': gameId,
+          'gameId': newMatchArray[0]['gameId'],
         }).then(response => {
           if (response.data['isError']){
             errorVm.isError = true;
@@ -190,20 +199,45 @@ var vm = new Vue({
             setTimeout(function(){
               vm.isError = false;
             }, 3200);
-            console.log(response.data)
+            return false;
           } else if (response.data['ignore']){
-            console.log('Match ignored.')
             vm.matchLoading = false;
+            return false;
           } else {
-            console.log('New Match Added');
-            console.log(response.data)
-            axios.get('/api/players/?match=' + response.data['newMatch']['gameId'] + '&player=' + summoner.summonerId).then(playerResponse => {
-              console.log(response.data['newMatch'])
-              console.log(playerResponse.data['results'][0])
-              console.log(summoner)
-              response.data['newMatch']['summonerPrime'] = playerResponse.data['results'][0]
-              vm.match_list.unshift(response.data['newMatch'])
-              vm.matchLoading = false;
+            axios.get('/api/players/?match=' + newMatchArray[0]['gameId'] + '&player=' + vm.summoner.summonerId).then(playerResponse => {
+              console.log(response.data);
+              response.data['newMatch']['summonerPrime'] = playerResponse.data['results'][0];
+              for (var key in vm.match_list){
+                console.log('Key:');
+                console.log(key);
+                if(vm.match_list[key].timestamp < response.data['newMatch'].timestamp){
+                  console.log('New match found it\'s spot.');
+                  vm.matchLoading = false;
+                  vm.match_list.splice(key, 0, response.data['newMatch']);
+                  newMatchArray.shift();
+                  console.log('NewMatchArray:');
+                  console.log(newMatchArray);
+                  vm.remaining_games = newMatchArray.length;
+                  if(newMatchArray.length > 0){
+                    vm.newGamesLoading = true;
+                    vm.createNewMatches(newMatchArray);
+                    break;
+                  } else {
+                    vm.newGamesLoading = false;
+                    break;
+                  }
+                } else if ((key+1) == vm.match_list.length) {
+                  vm.match_list.push(response.data['newMatch']);
+                  vm.matchLoading = false;
+                  if(newMatchArray.length > 0){
+                    vm.newGamesLoading = true;
+                    vm.createNewMatches(newMatchArray);
+                    break;
+                  } else {
+                    vm.newGamesLoading = false;
+                  }
+                }
+              }
             })
           }
         });

@@ -7,6 +7,7 @@ from django.http import HttpResponse, JsonResponse
 from django.conf import settings
 from django.core import serializers
 from django.utils import timezone
+from django.db import IntegrityError
 from itertools import islice
 from datetime import datetime
 from colorama import Fore, Back, Style
@@ -93,4 +94,4 @@ def updateSummoner(puuid):
 
     summoner.save()
 
-    return JsonResponse({'message': 'Summoner Updated!','summonerName': summoner.summonerName, 'isError': False})
+    return JsonResponse({'message': 'Summoner Updated!','summonerId': summoner.summonerId, 'isError': False})
