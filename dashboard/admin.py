@@ -18,8 +18,8 @@ class MatchInline(admin.TabularInline):
 
 class SummonerAdmin(admin.ModelAdmin):
     model = Summoner
-    list_display = ('summonerName',)
-    readonly_fields = ('summonerId', 'accountId', 'puuid',)
+    list_display = ('summonerName', 'date_created', 'date_updated')
+    readonly_fields = ('summonerId', 'accountId', 'puuid', 'date_created', 'date_updated')
     inlines = [
         MatchInline
     ]
@@ -49,7 +49,7 @@ class MatchAdmin(admin.ModelAdmin):
     inlines = [
         TeamInline,
         ]
-        
+
     search_fields = ('gameId',)
 
 class ChampionAdmin(admin.ModelAdmin):
