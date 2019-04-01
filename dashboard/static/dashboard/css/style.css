@@ -2,13 +2,18 @@
   display: grid;
   grid-template: 250px auto/repeat(12, 1fr);
   grid-template-areas: "summonerInfo summonerInfo summonerInfo summonerInfo summonerInfo summonerInfo summonerInfo summonerInfo summonerInfo summonerInfo summonerInfo summonerInfo" "matches matches matches matches matches matches matches matches matches matches matches matches";
-  min-height: 100vh; }
+  width: 100%; }
   #profile #summonerInfo {
     grid-area: summonerInfo;
-    display: flex; }
+    display: flex;
+    width: 100%;
+    height: 250px;
+    position: relative; }
+    #profile #summonerInfo.loading {
+      justify-content: center; }
     #profile #summonerInfo .updateButtons {
       text-align: center; }
-    #profile #summonerInfo .avatar, #profile #summonerInfo .loader {
+    #profile #summonerInfo .avatar {
       height: 128px; }
     #profile #summonerInfo .statistics {
       margin-left: 50px; }
@@ -73,14 +78,16 @@
         #profile #matches .match.lose .result {
           background-color: rgba(213, 84, 83, 0.8); }
   #profile .summonerInfo_loader {
-    grid-area: summonerInfo;
-    display: flex; }
+    position: absolute;
+    height: 100%;
+    margin: -40px; }
   #profile .matches_loader {
     grid-area: matches;
+    margin-top: 50px;
     display: flex; }
 
 .fade-enter-active, .fade-leave-active {
-  transition: opacity .5s; }
+  transition: opacity .21s; }
 
 .fade-enter, .fade-leave-to {
   opacity: 0; }
@@ -362,7 +369,7 @@ ul {
   margin: 0; }
 
 [v-cloak] {
-  display: none; }
+  display: none !important; }
 
 .resp-img {
   max-width: 100%;
@@ -371,7 +378,9 @@ ul {
 
 .loader {
   display: flex;
-  align-items: center; }
+  align-items: center;
+  width: 100%;
+  margin: auto; }
 
 #wrapper {
   display: grid;
@@ -456,7 +465,8 @@ ul {
           font-size: 1.4rem; }
   #wrapper #page-content-wrapper {
     grid-area: main;
-    padding: 25px 0px; }
+    padding: 25px 0px;
+    width: 100%; }
     #wrapper #page-content-wrapper .panel {
       background-color: white;
       padding: 40px;

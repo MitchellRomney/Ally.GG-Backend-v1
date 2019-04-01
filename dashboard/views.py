@@ -71,7 +71,7 @@ def summonerDetails(request, summonerName):
         return HttpResponseRedirect('/')
 
     return render(request, 'dashboard/summoners/summonerDetails.html', {
-    'summonerName': summonerName,
+    'summonerName': summoner.summonerName,
     'profile': profile,
     'mySummoners': mySummoners,
     'functionResponse': functionResponse,
@@ -114,7 +114,12 @@ class SummonerViewSet(viewsets.ModelViewSet):
 
         response = {}
         if isUpdate == 'True':
-            updatedSummonerId = updateSummoner(summoner.puuid)
+            response = updateSummoner(summoner.puuid)
+            newSummonerId = response['summonerId']
+            updatedSummoner = Summoner.objects.get(summonerId=newSummonerId)
+            if updatedSummoner.summonerName.lower() != pk.lower():
+                return HttpResponseRedirect('/summoners/' + updatedSummoner.summonerName)
+
             latestMatches = fetchMatchList(summoner.puuid)
             if 'isError' in latestMatches:
                 if latestMatches['isError']:
@@ -126,11 +131,6 @@ class SummonerViewSet(viewsets.ModelViewSet):
                     match['timestamp'] = datetime.fromtimestamp(match['timestamp']/1000.)
                     newMatches.append(match)
 
-            updatedSummoner = Summoner.objects.get(summonerId=updatedSummonerId)
-
-            if updatedSummoner.summonerName != pk:
-                return HttpResponseRedirect('/summoners/' + updatedSummoner.summonerName)
-                
             serializer = SummonerSerializer(updatedSummoner, context={'request': request})
             response['newMatches'] = newMatches
             response['summonerInfo'] = serializer.data
@@ -180,7 +180,6 @@ class PlayerViewSet(viewsets.ModelViewSet):
         matchId = self.request.query_params.get('match', None)
         summonerId = self.request.query_params.get('player', None)
         if matchId is not None and summonerId is not None:
-            print(matchId)
             match = Match.objects.get(gameId=matchId)
             summoner = Summoner.objects.get(summonerId=summonerId)
             queryset = queryset.filter(match=match, summoner=summoner)

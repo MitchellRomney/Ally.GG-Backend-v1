@@ -94,4 +94,4 @@ def updateSummoner(puuid):
 
     summoner.save()
 
-    return JsonResponse({'message': 'Summoner Updated!','summonerId': summoner.summonerId, 'isError': False})
+    return {'message': 'Summoner Updated!','summonerId': summoner.summonerId, 'isError': False}

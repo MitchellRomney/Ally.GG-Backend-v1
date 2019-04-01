@@ -32,7 +32,9 @@ ul {
   margin: 0;
 }
 
-[v-cloak] { display: none; }
+[v-cloak] {
+    display: none !important;
+}
 
 .resp-img {
   max-width: 100%;
@@ -43,6 +45,8 @@ ul {
 .loader {
   display: flex;
   align-items: center;
+  width: 100%;
+  margin: auto;
 }
 
 #wrapper {
@@ -144,6 +148,7 @@ ul {
   #page-content-wrapper {
     grid-area: main;
     padding: 25px 0px;
+    width: 100%;
     .panel {
       background-color: white;
       padding: 40px;
