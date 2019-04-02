@@ -22,31 +22,56 @@ Summoner Stats, Find Allies, Message Friends - {{ block.super }}
         <span v-if="ajaxRequest" v-cloak>Please Wait ...</span>
       </div>
     {% endif %}
-    <div class="summoners_loader loader" v-if="topPlayersLoading">
-      <div class="half-circle-spinner">
-        <div class="circle circle-1"></div>
-        <div class="circle circle-2"></div>
+    <div class="tables">
+      <div class="topPlayers">
+        <div class="summoners_loader loader" v-if="topPlayersLoading">
+          <div class="half-circle-spinner">
+            <div class="circle circle-1"></div>
+            <div class="circle circle-2"></div>
+          </div>
+        </div>
+        <h2 v-if="!topPlayersLoading" v-cloak>Top Players</h2>
+        <transition name="fade">
+          <table v-if="!topPlayersLoading" v-cloak>
+            <tr>
+              <th scope="col">Summoner Name</th>
+              <th scope="col">Tier</th>
+              <th scope="col">Wins</th>
+              <th scope="col">Losses</th>
+              <th scope="col">League Points</th>
+            </tr>
+            <tr v-for="summoner in topPlayers">
+              <th scope="row"><a :href="summoner.summonerName">[[ summoner.summonerName ]]</a></th>
+              <td>[[ summoner.soloQ_tier ]]</td>
+              <td>[[ summoner.soloQ_wins ]]</td>
+              <td>[[ summoner.soloQ_losses ]]</td>
+              <td>[[ summoner.soloQ_leaguePoints ]]</td>
+            </tr>
+          </table>
+        </transition>
+      </div>
+      <div class="latestPlayers">
+        <div class="summoners_loader loader" v-if="latestPlayersLoading">
+          <div class="half-circle-spinner">
+            <div class="circle circle-1"></div>
+            <div class="circle circle-2"></div>
+          </div>
+        </div>
+        <h2 v-if="!latestPlayersLoading" v-cloak>Latest Updated Players</h2>
+        <transition name="fade">
+          <table v-if="!latestPlayersLoading" v-cloak>
+            <tr>
+              <th scope="col">Summoner Name</th>
+              <th scope="col">Last Updated</th>
+            </tr>
+            <tr v-for="summoner in latestPlayers">
+              <th scope="row"><a :href="summoner.summonerName">[[ summoner.summonerName ]]</a></th>
+              <td>[[ summoner.date_updated ]]</td>
+            </tr>
+          </table>
+        </transition>
       </div>
     </div>
-    <h2>Top Players</h2>
-    <transition name="fade">
-      <table v-if="!topPlayersLoading" v-cloak>
-        <tr>
-          <th scope="col">Summoner Name</th>
-          <th scope="col">Tier</th>
-          <th scope="col">Wins</th>
-          <th scope="col">Losses</th>
-          <th scope="col">League Points</th>
-        </tr>
-        <tr v-for="summoner in topPlayers">
-          <th scope="row"><a :href="summoner.summonerName">[[ summoner.summonerName ]]</a></th>
-          <td>[[ summoner.soloQ_tier ]]</td>
-          <td>[[ summoner.soloQ_wins ]]</td>
-          <td>[[ summoner.soloQ_losses ]]</td>
-          <td>[[ summoner.soloQ_leaguePoints ]]</td>
-        </tr>
-      </table>
-    </transition>
   </div>
 
 <script>
@@ -66,40 +91,15 @@ var vm = new Vue({
     results: [],
     postResults: [],
     addSummonerName: '',
-    isLoading: true,
     ajaxRequest: false,
     isError: false,
     topPlayersLoading: true,
     topPlayers: [],
+    latestPlayers: [],
+    latestPlayersLoading: true,
   },
   methods: {
-    async getSummoners(){
-      this.isLoading = true;
-      // Setup variables and grab first page.
-      const results = [];
-      page = 1
-      let op = await axios.get('/api/summoners?page=' + page);
-      next = op.data.next
-      results.push(op.data.results)
-
-      // If there is more than 1 page, loop through them and append the results to the array.
-      while (next != null){
-        const extra = [];
-        page += 1;
-        op = await axios.get('/api/summoners?page=' + page);
-        next = op.data.next;
-        [].push.apply(results[0], op.data.results);
-
-        // TODO: Fix this with pagination buttons.
-        if (page == 10){
-          break
-        }
-      }
-      this.results = results[0];
-      this.isLoading = false;
-    },
     async getHighElo(){
-      this.isLoading = true;
       // Setup variables and grab first page.
       const results = [];
       page = 1
@@ -117,6 +117,14 @@ var vm = new Vue({
       }
       this.topPlayers = results[0];
       this.topPlayersLoading = false;
+    },
+    async getLatestPlayers(){
+      let op = await axios.get('/api/summoners?order_by=date_updated');
+      for(key in op.data.results){
+        op.data.results[key].date_updated = moment(op.data.results[key].date_updated).fromNow()
+        this.latestPlayers.push(op.data.results[key])
+      }
+      this.latestPlayersLoading = false;
     },
     addSummoner: function(event) {
       axios.defaults.xsrfCookieName = 'csrftoken'
@@ -151,6 +159,7 @@ var vm = new Vue({
   },
   mounted() {
     this.getHighElo()
+    this.getLatestPlayers()
   }
 })
 

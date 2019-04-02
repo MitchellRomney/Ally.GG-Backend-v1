@@ -1,3 +1,10 @@
+#summoners .tables {
+  display: grid;
+  grid-template: auto / 1fr 1fr;
+  grid-gap: 20px;
+  margin-top: 50px;
+  justify-items: center; }
+
 #profile {
   display: grid;
   grid-template: 250px auto/repeat(12, 1fr);
