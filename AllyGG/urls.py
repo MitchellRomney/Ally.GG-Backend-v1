@@ -4,6 +4,8 @@ from django.conf.urls import url
 from django.views.generic import TemplateView, RedirectView
 from dashboard import views as dashboard
 from django.contrib.auth.models import User
+from django.conf.urls.static import static
+from django.conf import settings
 from rest_framework import routers, serializers, viewsets
 
 router = routers.DefaultRouter()
@@ -29,4 +31,4 @@ urlpatterns = [
 
     url(r'^s3direct/', include('s3direct.urls')),
 
-]
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
