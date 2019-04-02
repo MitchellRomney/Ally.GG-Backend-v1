@@ -403,10 +403,14 @@ ul {
     border-bottom: rgba(0, 0, 0, 0.05) solid 5px;
     display: grid;
     grid-template: auto/repeat(12, 1fr);
-    grid-template-areas: ". . . . . . . . . profile profile .";
+    grid-template-areas: "logo logo . . . . . . . profile profile .";
     position: fixed;
     height: 100px;
     width: 100%; }
+    #wrapper #top-nav .logo {
+      grid-area: logo;
+      padding: 30px;
+      height: 100px; }
     #wrapper #top-nav .profile {
       grid-area: profile;
       display: flex;

@@ -66,10 +66,15 @@ ul {
     display: grid;
     grid-template: auto / repeat(12, 1fr);
     grid-template-areas:
-    ". . . . . . . . . profile profile .";
+    "logo logo . . . . . . . profile profile .";
     position: fixed;
     height: 100px;
     width: 100%;
+    .logo {
+      grid-area: logo;
+      padding: 30px;
+      height: 100px;
+    }
     .profile {
       grid-area: profile;
       display: flex;

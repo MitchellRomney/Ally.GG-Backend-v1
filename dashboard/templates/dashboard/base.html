@@ -31,12 +31,19 @@
   {% if request.user.is_authenticated %}
   <div id="wrapper">
     <div id="top-nav">
+      <div class="logo">
+        <img class="resp-img" src="{% static 'dashboard/images/logo.png' %}" alt="Ally.GG">
+      </div>
       <div class="profile">
         <div class="notifications">
           <i class="fas fa-bell"></i>
         </div>
         <div class="avatar">
-          <img class="resp-img" src="http://ddragon.leagueoflegends.com/cdn/9.5.1/img/profileicon/3890.png" class="img-responsive" alt="">
+          {% if profile.avatar %}
+            <img class="resp-img" src="{{ profile.avatar }}" alt="{{ profile.user.username }}">
+          {% else %}
+            <img class="resp-img" src="{% static 'dashboard/images/placeholder.png' %}" alt="{{ profile.user.username }}">
+          {% endif %}
         </div>
         <div class="user">
           <h3>{{ profile.user.username }}</h3>

@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from s3direct.fields import S3DirectField
 from datetime import datetime
 import json
 
@@ -8,6 +9,7 @@ class Profile(models.Model):
     first_name = models.CharField(max_length=255, blank=True)
     last_name = models.CharField(max_length=255, blank=True)
     email = models.CharField(max_length=255, blank=False)
+    avatar = S3DirectField(dest='profiles', null=True, blank=True)
 
     date_created = models.DateTimeField(auto_now_add=True, blank=False)
     date_modified = models.DateTimeField(auto_now=True, blank=False)
