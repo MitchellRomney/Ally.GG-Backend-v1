@@ -19,7 +19,7 @@ AWS_SECRET_ACCESS_KEY = os.environ['AWS_SECRET_ACCESS_KEY']
 
 AWS_STORAGE_BUCKET_NAME = os.environ['S3_BUCKET_NAME']
 
-AWS_S3_REGION_NAME = 'ap-southeast-2'
+AWS_S3_REGION_NAME = 'us-east-2'
 
 AWS_S3_ENDPOINT_URL = 'https://s3-ap-southeast-2.amazonaws.com'
 
