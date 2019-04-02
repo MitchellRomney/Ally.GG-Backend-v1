@@ -11,7 +11,8 @@ class PlayerInline(admin.TabularInline):
 
 class SummonerInline(admin.TabularInline):
     model = Summoner
-    readonly_fields = ('summonerId', 'accountId', 'puuid', 'date_updated')
+    fields = ['summonerName', 'summonerId']
+    extra = 0
 
 class MatchInline(admin.TabularInline):
     model = Match.players.through
@@ -29,9 +30,6 @@ class ProfileAdmin(admin.ModelAdmin):
     model = Profile
     list_display = ('user', 'first_name', 'last_name', 'email', 'date_created', 'date_modified')
     readonly_fields = ('date_created', 'date_modified')
-    inlines = [
-        SummonerInline
-        ]
     search_fields = ('user',)
 
 class TeamAdmin(admin.ModelAdmin):
