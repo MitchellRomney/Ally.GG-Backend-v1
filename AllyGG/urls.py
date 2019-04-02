@@ -31,4 +31,6 @@ urlpatterns = [
 
     url(r'^s3direct/', include('s3direct.urls')),
 
+    url(r'^accounts/', include('registration.backends.simple.urls')),
+
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

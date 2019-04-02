@@ -52,7 +52,7 @@
         <div class="acc-options">
           <a href="#"><i class="fa fa-caret-down"></i></a>
           <ul class="options-dropdown">
-            <li><a href="#">Logout</a></li>
+            <li><a href="{% url 'auth_logout' %}">Logout</a></li>
           </ul>
         </div>
       </div>
@@ -104,7 +104,14 @@
     </footer>
   </div>
   {% else %}
-  <span>Not logged in.</span>
+  <div id="landing">
+    <div class="logo">
+      <img class="resp-img" src="{% static 'dashboard/images/logo.png' %}" alt="Ally.GG">
+      <div class="blurb">
+        <span>Coming Soon.</span>
+      </div>
+    </div>
+  </div>
   {% endif %}
 </body>
 
