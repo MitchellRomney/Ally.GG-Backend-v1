@@ -18,7 +18,10 @@ def home(request, reason=None):
     mySummoners = None
     summonerCount = Summoner.objects.all().count()
     matchCount = Match.objects.all().count()
-    globalSettings = Setting.objects.get(name='Global')
+
+    globalSettingsCount = Setting.objects.filter(name='Global').count()
+    if globalSettingsCount == 1:
+        globalSettings = Setting.objects.get(name='Global')
 
     # Sidebar Information
     isProfile = Profile.objects.all().filter(user=request.user) if request.user.is_authenticated == True else False
@@ -32,7 +35,7 @@ def home(request, reason=None):
     return render(request, 'dashboard/home.html', {
     'summonerCount': summonerCount,
     'matchCount': matchCount,
-    'version': globalSettings.latestVersion,
+    'version': globalSettings.latestVersion=None,
     'profile': profile,
     'mySummoners': mySummoners,
     })
