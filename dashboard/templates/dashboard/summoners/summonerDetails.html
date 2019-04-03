@@ -1,7 +1,7 @@
 {% extends 'dashboard/base.html' %}
 
 {% block title %}
-{{ summonerName }} Summoner Statistics - League of Legends // {{ block.super }}
+{{ summoner.summonerName }} Summoner Statistics - League of Legends // {{ block.super }}
 {% endblock title %}
 
 {% block content %}
@@ -128,7 +128,7 @@ var vm = new Vue({
       axios.defaults.xsrfHeaderName = 'X-CSRFToken'
       vm.matchLoading = true;
       vm.playerLoading = true;
-      await axios.get('/api/summoners/{{ summonerName }}?isUpdate=True')
+      await axios.get('/api/summoners/{{ summoner.summonerName }}?isUpdate=True')
       .then(async function (updateResponse) {
         console.log(updateResponse)
         if (updateResponse.data['isError']){
@@ -149,7 +149,7 @@ var vm = new Vue({
           vm.summoner = updateResponse.data['summonerInfo']
           vm.last_updated = moment(updateResponse.data['summonerInfo'].date_updated).fromNow()
           vm.playerLoading = false;
-          await axios.get('/api/summoners/{{ summonerName }}').then(response => {
+          await axios.get('/api/summoners/{{ summoner.summonerName }}').then(response => {
             if (updateResponse.data['newMatches'].length == 0){
               vm.matchLoading = false;
             } else {
@@ -162,7 +162,7 @@ var vm = new Vue({
       })
     },
     getSummonerInfo(){
-      axios.get('/api/summoners/{{ summonerName }}').then(summonerResponse => {
+      axios.get('/api/summoners/{{ summoner.summonerName }}').then(summonerResponse => {
         vm.summoner = summonerResponse.data['summonerInfo']
         vm.last_updated = summonerResponse.data['summonerInfo'].date_updated ? moment(summonerResponse.data['summonerInfo'].date_updated).fromNow() : false;
         vm.playerLoading = false;

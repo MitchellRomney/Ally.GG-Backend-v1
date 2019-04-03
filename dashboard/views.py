@@ -14,8 +14,15 @@ from colorama import Fore, Back, Style
 from datetime import datetime
 import requests
 
-def home(request, reason=None):
+def home(request):
     return render(request, 'dashboard/home.html', {
+    })
+
+def profile(request, username):
+    user = User.objects.get(username=username) if User.objects.filter(username=username).count() == 1 else None
+    profile = Profile.objects.get(user=user) if user else None
+    return render(request, 'dashboard/profile.html', {
+    'profile': profile,
     })
 
 def summoners(request):
@@ -23,19 +30,18 @@ def summoners(request):
     'summoners': Summoner.objects.all().order_by('-soloQ_leaguePoints'),
     })
 
-def summonerDetails(request, summonerName):
-    functionResponse = None;
+def chat(request):
+    return render(request, 'dashboard/chat.html', {
+    
+    })
 
-    isSummoner = Summoner.objects.filter(summonerName__iexact=summonerName).count()
-    if isSummoner == 1:
-        summoner = Summoner.objects.get(summonerName__iexact=summonerName)
-    else:
-        # TODO: Check Riot API for Summoner, if exists create it. Else, error not found page.
+def summonerDetails(request, summonerName):
+    summoner = Summoner.objects.get(summonerName__iexact=summonerName) if Summoner.objects.filter(summonerName__iexact=summonerName).count() == 1 else None
+    if summoner == None:
         return HttpResponseRedirect('/')
 
     return render(request, 'dashboard/summoners/summonerDetails.html', {
-    'summonerName': summoner.summonerName,
-    'functionResponse': functionResponse,
+    'summoner': summoner,
     })
 
 class UserViewSet(viewsets.ModelViewSet):

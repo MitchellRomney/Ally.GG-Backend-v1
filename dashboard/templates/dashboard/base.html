@@ -21,6 +21,7 @@
   <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+  <script src="https://unpkg.com/@pusher/chatkit-client@1/dist/web/chatkit.js"></script>
   <script src="{% static 'dashboard/js/all.js' %}"></script>
   {% if DEBUG %}
     <script src="{% static 'dashboard/js/vue.js' %}"></script>
@@ -44,14 +45,14 @@
           <i class="fas fa-bell"></i>
         </div>
         <div class="avatar">
-          {% if profile.avatar %}
-            <img class="resp-img" src="{{ PROFILE.avatar }}" alt="{{ PROFILE.user.username }}">
+          {% if MY_PROFILE.avatar %}
+            <img class="resp-img" src="{{ MY_PROFILE.avatar }}" alt="{{ MY_PROFILE.user.username }}">
           {% else %}
-            <img class="resp-img" src="{% static 'dashboard/images/placeholder.png' %}" alt="{{ PROFILE.user.username }}">
+            <img class="resp-img" src="{% static 'dashboard/images/placeholder.png' %}" alt="{{ MY_PROFILE.user.username }}">
           {% endif %}
         </div>
         <div class="user">
-          <h3>{{ PROFILE.user.username }}</h3>
+          <a href="/profiles/{{ MY_PROFILE.user.username }}"><h3>{{ MY_PROFILE.user.username }}</h3></a>
           <a href="#"><span><i class="fas fa-circle"></i>Online</span></a>
         </div>
         <div class="acc-options">
@@ -75,7 +76,13 @@
             <li>
               <a href="/summoners/">
                 <i class="fa fa-users"></i>
-                <span>Summoner List</span>
+                <span>Summoners</span>
+              </a>
+            </li>
+            <li>
+              <a href="/chat/">
+                <i class="fa fa-comment-alt"></i>
+                <span>Chat</span>
               </a>
             </li>
             {% if MY_SUMMONERS %}

@@ -1,0 +1,80 @@
+{% extends 'dashboard/base.html' %}
+
+{% block title %}
+{{ block.super }} Chat
+{% endblock title %}
+
+{% block content %}
+<div id="chat">
+  <div class="friends panel">
+    <h2>Friends</h2>
+    {% for friend in MY_PROFILE.friends.all %}
+      <span>{{ friend.user }}</span>
+    {% endfor %}
+  </div>
+  <div class="chatroom panel">
+    <div class="messages">
+      <div class="message-wrapper" v-for="message in messages" :key="message.id" :class="{ self: message.senderId == '{{ MY_PROFILE.user.username }}' }" v-if="messages" v-cloak>
+        [[ message.parts[0].payload.content ]]
+      </div>
+    </div>
+    <input id="messageBox" class="textbox" type="text">
+    <button id="sendMessage">Send</button>
+  </div>
+</div>
+
+<script>
+var vm = new Vue({
+  delimiters: ['[[', ']]'],
+  el: '#chat',
+  data: {
+    friend: '',
+    messages: [],
+  },
+  methods: {
+    joinTest(){
+      const tokenProvider = new Chatkit.TokenProvider({
+        url: "https://us1.pusherplatform.io/services/chatkit_token_provider/v1/5969cdbc-1582-40fa-a851-5aa8bcc6993f/token"
+      });
+
+      const chatManager = new Chatkit.ChatManager({
+        instanceLocator: "v1:us1:5969cdbc-1582-40fa-a851-5aa8bcc6993f",
+        userId: "Mitchell",
+        tokenProvider: tokenProvider
+      });
+
+      chatManager
+      .connect()
+      .then(currentUser => {
+          currentUser.subscribeToRoomMultipart({
+          roomId: currentUser.rooms[0].id,
+          hooks: {
+            onMessage: message => {
+              console.log("Received message:", message)
+              this.messages.push(message)
+              $(".messages").stop().animate({ scrollTop: $(".messages")[0].scrollHeight}, 1000);
+            }
+          }
+        })
+        document.getElementById("sendMessage").addEventListener("click", function sendMessage() {
+          var message = document.getElementById("messageBox").value;
+          currentUser.sendSimpleMessage({
+            text: message,
+            roomId: currentUser.rooms[0].id
+          });
+          document.getElementById("messageBox").value = '';
+        });
+      ;
+      })
+      .catch(error => {
+        console.error("error:", error);
+      });
+    },
+  },
+  mounted() {
+    console.log('Mounted!');
+    this.joinTest();
+  }
+});
+</script>
+{% endblock content %}

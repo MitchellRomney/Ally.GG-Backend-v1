@@ -19,6 +19,10 @@ router.register(r'champions', dashboard.ChampionViewSet)
 urlpatterns = [
     path('', dashboard.home, name='home'),
 
+    path('profiles/<username>/', dashboard.profile, name='profile'),
+
+    path('chat/', dashboard.chat, name='chat'),
+
     path('summoners/', dashboard.summoners, name='summoners'),
 
     path('summoners/<summonerName>/', dashboard.summonerDetails, name='summonerDetails'),

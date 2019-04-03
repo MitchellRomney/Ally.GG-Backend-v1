@@ -17,6 +17,7 @@ class Profile(models.Model):
     last_name = models.CharField(max_length=255, blank=True)
     email = models.CharField(max_length=255, blank=False)
     avatar = S3DirectField(dest='profiles', null=True, blank=True)
+    friends = models.ManyToManyField('Profile', related_name='Friends')
 
     date_created = models.DateTimeField(auto_now_add=True, blank=False)
     date_modified = models.DateTimeField(auto_now=True, blank=False)

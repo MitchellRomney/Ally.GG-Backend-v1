@@ -14,7 +14,8 @@ Summoner Stats, Find Allies, Message Friends - {{ block.super }}
       </div>
     </transition>
   </div>
-  <div id="summoners" class="panel" v-bind:class="{ error: isError }">
+  <div id="summoners" v-bind:class="{ error: isError }">
+    <h1>Summoners</h1>
     {% if user.is_authenticated %}
       <div class="actions">
         <input type="text" value="" v-model="addSummonerName" />
@@ -22,8 +23,8 @@ Summoner Stats, Find Allies, Message Friends - {{ block.super }}
         <span v-if="ajaxRequest" v-cloak>Please Wait ...</span>
       </div>
     {% endif %}
-    <div class="tables">
-      <div class="topPlayers">
+    <div class="panels">
+      <div class="topPlayers panel">
         <div class="summoners_loader loader" v-if="topPlayersLoading">
           <div class="half-circle-spinner">
             <div class="circle circle-1"></div>
@@ -50,7 +51,7 @@ Summoner Stats, Find Allies, Message Friends - {{ block.super }}
           </table>
         </transition>
       </div>
-      <div class="latestPlayers">
+      <div class="latestPlayers panel">
         <div class="summoners_loader loader" v-if="latestPlayersLoading">
           <div class="half-circle-spinner">
             <div class="circle circle-1"></div>

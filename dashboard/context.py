@@ -11,6 +11,6 @@ def global_context(request):
     'GSETTINGS': Setting.objects.get(name='Global') if Setting.objects.filter(name='Global').count() == 1 else None,
     'SUMMONER_COUNT': Summoner.objects.all().count(),
     'MATCH_COUNT': Match.objects.all().count(),
-    'PROFILE': profile,
+    'MY_PROFILE': profile,
     'MY_SUMMONERS': Summoner.objects.filter(user_profile=profile) if isProfile else None,
     }

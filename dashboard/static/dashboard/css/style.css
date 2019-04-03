@@ -1,10 +1,13 @@
 /* Breakpoints */
-#summoners .tables {
+#summoners .panels {
   display: grid;
-  grid-template: auto / 1fr 1fr;
+  grid-template: auto / 2fr 1fr;
   grid-gap: 20px;
-  margin-top: 50px;
-  justify-items: center; }
+  margin-top: 50px; }
+  #summoners .panels .panel {
+    text-align: center; }
+    #summoners .panels .panel table {
+      width: 100%; }
 
 #profile {
   display: grid;
@@ -362,6 +365,43 @@
   grid-gap: 20px;
   margin-top: 50px; }
 
+#chat {
+  display: grid;
+  grid-template: auto / 1fr 2fr;
+  grid-gap: 50px; }
+  #chat .friends {
+    height: calc(100vh - 150px); }
+  #chat .chatroom {
+    height: calc(100vh - 150px);
+    padding: 10px;
+    display: grid;
+    grid-template: 4fr 1fr / 1fr;
+    grid-gap: 20px; }
+    #chat .chatroom .messages {
+      background-color: #F6F7FB;
+      border-radius: 10px;
+      border: rgba(0, 0, 0, 0.05) solid 5px;
+      overflow-y: scroll;
+      padding: 20px;
+      display: flex;
+      flex-direction: column; }
+      #chat .chatroom .messages .message-wrapper {
+        background-color: #f93d7c;
+        padding: 5px;
+        border-radius: 15px;
+        color: white;
+        margin: 10px 0px;
+        margin-right: auto;
+        display: inline-block; }
+        #chat .chatroom .messages .message-wrapper.self {
+          margin-left: auto;
+          margin-right: 0;
+          background-color: #333343; }
+    #chat .chatroom .textbox {
+      background-color: #F6F7FB;
+      border-radius: 10px;
+      border: rgba(0, 0, 0, 0.05) solid 5px; }
+
 html, body {
   width: 100vw;
   margin: 0px;
@@ -373,7 +413,8 @@ html, body {
   box-sizing: border-box; }
 
 a {
-  text-decoration: none; }
+  text-decoration: none;
+  color: #f93d7c; }
 
 h1, h2, h3, h4, h5, h6 {
   margin: 0; }
@@ -384,6 +425,12 @@ div, img {
 ul {
   list-style-type: none;
   margin: 0; }
+
+input:focus, textarea:focus, select:focus {
+  outline-offset: 0px; }
+
+:focus {
+  outline: none; }
 
 [v-cloak] {
   display: none !important; }
@@ -502,7 +549,8 @@ ul {
       background-color: white;
       padding: 40px;
       border-radius: 10px;
-      box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3); }
+      box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+      width: 100%; }
     #wrapper #page-content-wrapper #errors {
       position: absolute;
       top: 100px;
