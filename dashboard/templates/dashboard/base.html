@@ -45,13 +45,13 @@
         </div>
         <div class="avatar">
           {% if profile.avatar %}
-            <img class="resp-img" src="{{ profile.avatar }}" alt="{{ profile.user.username }}">
+            <img class="resp-img" src="{{ PROFILE.avatar }}" alt="{{ PROFILE.user.username }}">
           {% else %}
-            <img class="resp-img" src="{% static 'dashboard/images/placeholder.png' %}" alt="{{ profile.user.username }}">
+            <img class="resp-img" src="{% static 'dashboard/images/placeholder.png' %}" alt="{{ PROFILE.user.username }}">
           {% endif %}
         </div>
         <div class="user">
-          <h3>{{ profile.user.username }}</h3>
+          <h3>{{ PROFILE.user.username }}</h3>
           <a href="#"><span><i class="fas fa-circle"></i>Online</span></a>
         </div>
         <div class="acc-options">
@@ -78,7 +78,7 @@
                 <span>Summoner List</span>
               </a>
             </li>
-            {% if mySummoners %}
+            {% if MY_SUMMONERS %}
             <li class="sidebar-dropdown">
               <a class="dropdown-title" href="#">
                 <i class="fa fa-user-check"></i>
@@ -86,7 +86,7 @@
               </a>
               <div class="sidebar-submenu">
                 <ul>
-                  {% for summoner in mySummoners %}
+                  {% for summoner in MY_SUMMONERS %}
                   <li>
                     <a href="/summoners/{{ summoner.summonerName }}">{{ summoner.summonerName }}
                     </a>

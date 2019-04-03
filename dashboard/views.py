@@ -15,72 +15,26 @@ from datetime import datetime
 import requests
 
 def home(request, reason=None):
-    mySummoners = None
-    summonerCount = Summoner.objects.all().count()
-    matchCount = Match.objects.all().count()
-
-    globalSettingsCount = Setting.objects.filter(name='Global').count()
-    if globalSettingsCount == 1:
-        globalSettings = Setting.objects.get(name='Global')
-
-    # Sidebar Information
-    isProfile = Profile.objects.all().filter(user=request.user) if request.user.is_authenticated == True else False
-
-    if isProfile:
-        profile = Profile.objects.get(user=request.user)
-        mySummoners = Summoner.objects.filter(user_profile=profile)
-    else:
-        profile = None
-
     return render(request, 'dashboard/home.html', {
-    'summonerCount': summonerCount,
-    'matchCount': matchCount,
-    'version': globalSettings.latestVersion=None,
-    'profile': profile,
-    'mySummoners': mySummoners,
     })
 
 def summoners(request):
-    mySummoners = None
-
-    # Sidebar Information
-    isProfile = Profile.objects.all().filter(user=request.user) if request.user.is_authenticated == True else False
-
-    if isProfile:
-        profile = Profile.objects.get(user=request.user)
-        mySummoners = Summoner.objects.filter(user_profile=profile)
-    else:
-        profile = None
-
     return render(request, 'dashboard/summoners/summoners.html', {
     'summoners': Summoner.objects.all().order_by('-soloQ_leaguePoints'),
-    'profile': profile,
-    'mySummoners': mySummoners,
     })
 
 def summonerDetails(request, summonerName):
-    mySummoners = None
     functionResponse = None;
-
-    # Sidebar Information
-    isProfile = Profile.objects.all().filter(user=request.user) if request.user.is_authenticated == True else False
-
-    if isProfile:
-        profile = Profile.objects.get(user=request.user)
-        mySummoners = Summoner.objects.filter(user_profile=profile)
-    else:
-        profile = None
 
     isSummoner = Summoner.objects.filter(summonerName__iexact=summonerName).count()
     if isSummoner == 1:
         summoner = Summoner.objects.get(summonerName__iexact=summonerName)
     else:
+        # TODO: Check Riot API for Summoner, if exists create it. Else, error not found page.
         return HttpResponseRedirect('/')
 
     return render(request, 'dashboard/summoners/summonerDetails.html', {
     'summonerName': summoner.summonerName,
-    'profile': profile,
-    'mySummoners': mySummoners,
     'functionResponse': functionResponse,
     })
 
