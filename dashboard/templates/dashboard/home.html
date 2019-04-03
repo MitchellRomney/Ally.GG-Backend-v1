@@ -6,15 +6,23 @@ Summoner Stats, Find Allies, Message Friends - {{ block.super }}
 
 {% block content %}
 <div id="home">
-  <div class="panel">
-    <h1>Homepage</h1>
-    <h2><strong>Players in Database: </strong>{{ summonerCount }}</h2>
-    <a href="/summoners">Summoners</a>
-
-    {% if request.user.is_superuser %}
-    <h2>Power Buttons</h2>
-    <button name="action" v-on:click="updateChampions" type="submit">Update Champions</button>
-    {% endif %}
+  <h1>Homepage</h1>
+  {% if request.user.is_superuser %}
+  <button name="action" v-on:click="updateChampions" type="submit">Update Champions</button>
+  {% endif %}
+  <div class="panels">
+    <div class="panel">
+      <h2><strong>Total Summoners</strong></h2>
+      <span>{{ summonerCount }}</span>
+    </div>
+    <div class="panel">
+      <h2><strong>Total Matches</strong></h2>
+      <span>{{ matchCount }}</span>
+    </div>
+    <div class="panel">
+      <h2><strong>Current Patch</strong></h2>
+      <span>{{ version }}</span>
+    </div>
   </div>
 </div>
 

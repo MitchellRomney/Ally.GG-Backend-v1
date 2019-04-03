@@ -17,12 +17,17 @@
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.1/css/all.css" integrity="sha384-gfdkjb5BdAXd+lj+gudLWI+BXq4IuLW5IT+brZEZsLFm++aCMlF1V92rMkPaX4PP" crossorigin="anonymous">
   <link rel="stylesheet" href="{% static 'dashboard/css/style.css' %}" />
   <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,700" rel="stylesheet">
-
-  <script src="https://unpkg.com/vue"></script>
+  <link rel="shortcut icon" href="{% static 'dashboard/images/favicon.ico' %}" type="image/x-icon" />
   <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
   <script src="{% static 'dashboard/js/all.js' %}"></script>
+  {% if DEBUG %}
+    <script src="{% static 'dashboard/js/vue.js' %}"></script>
+  {% else %}
+    <script src="{% static 'dashboard/js/vue.min.js' %}"></script>
+  {% endif %}
+
 
   {% block header %}{% endblock header %}
 </head>
@@ -32,7 +37,7 @@
   <div id="wrapper">
     <div id="top-nav">
       <div class="logo">
-        <img class="resp-img" src="{% static 'dashboard/images/logo.png' %}" alt="Ally.GG">
+        <a href="/"><img class="resp-img" src="{% static 'dashboard/images/logo.png' %}" alt="Ally.GG"></a>
       </div>
       <div class="profile">
         <div class="notifications">

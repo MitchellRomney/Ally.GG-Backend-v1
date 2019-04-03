@@ -1,3 +1,4 @@
+/* Breakpoints */
 #summoners .tables {
   display: grid;
   grid-template: auto / 1fr 1fr;
@@ -274,11 +275,14 @@
   grid-area: nav;
   background-color: white;
   color: #333343;
-  width: 16.66%;
+  width: 25%;
   position: fixed;
   bottom: 0;
   top: 100px;
   z-index: 1000; }
+  @media (min-width: 992px) {
+    #sidebar {
+      width: 16.66%; } }
   #sidebar a {
     color: #333343; }
   #sidebar .profile .avatar img {
@@ -352,6 +356,12 @@
                 transform: rotate(90deg);
         right: 17px; }
 
+#home .panels {
+  display: grid;
+  grid-template: auto/repeat(3, 1fr);
+  grid-gap: 20px;
+  margin-top: 50px; }
+
 html, body {
   width: 100vw;
   margin: 0px;
@@ -380,8 +390,8 @@ ul {
 
 .resp-img {
   max-width: 100%;
-  margin: auto;
-  height: 100%; }
+  max-height: 100%;
+  margin: auto; }
 
 .loader {
   display: flex;
@@ -402,9 +412,12 @@ ul {
 #wrapper {
   display: grid;
   grid-template: 100px auto/repeat(12, 1fr);
-  grid-template-areas: "tnav tnav tnav tnav tnav tnav tnav tnav tnav tnav tnav tnav" "nav nav . main main main main main main main main .";
+  grid-template-areas: "tnav tnav tnav tnav tnav tnav tnav tnav tnav tnav tnav tnav" "nav nav nav . main main main main main main main .";
   min-height: 100vh;
   background-color: #F6F7FB; }
+  @media (min-width: 992px) {
+    #wrapper {
+      grid-template-areas: "tnav tnav tnav tnav tnav tnav tnav tnav tnav tnav tnav tnav" "nav nav . main main main main main main main main ."; } }
   #wrapper #top-nav {
     grid-area: tnav;
     background-color: white;
@@ -413,10 +426,13 @@ ul {
     border-bottom: rgba(0, 0, 0, 0.05) solid 5px;
     display: grid;
     grid-template: auto/repeat(12, 1fr);
-    grid-template-areas: "logo logo . . . . . . . profile profile .";
+    grid-template-areas: "logo logo logo . . . . . . profile profile .";
     position: fixed;
     height: 100px;
     width: 100%; }
+    @media (min-width: 992px) {
+      #wrapper #top-nav {
+        grid-template-areas: "logo logo . . . . . . . profile profile ."; } }
     #wrapper #top-nav .logo {
       grid-area: logo;
       padding: 30px;
@@ -467,15 +483,9 @@ ul {
           border-top-right-radius: 2px;
           background-color: white;
           box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
-          transition: all 0.3s ease-in-out 0s, visibility 0s linear 0.3s, z-index 0s linear 0.01s; }
-          #wrapper #top-nav .profile .acc-options .options-dropdown:focus, #wrapper #top-nav .profile .acc-options .options-dropdown:focus-within, #wrapper #top-nav .profile .acc-options .options-dropdown:hover {
-            visibility: visible;
-            opacity: 1;
-            z-index: 1;
-            -webkit-transform: translateY(0%);
-                    transform: translateY(0%);
-            transition-delay: 0s, 0s, 0.3s; }
-        #wrapper #top-nav .profile .acc-options:focus .options-dropdown, #wrapper #top-nav .profile .acc-options:focus-within .options-dropdown, #wrapper #top-nav .profile .acc-options:hover .options-dropdown {
+          transition: all 0.3s ease-in-out 0s, visibility 0s linear 0.3s, z-index 0s linear 0.01s;
+          text-align: center; }
+        #wrapper #top-nav .profile .acc-options.open .options-dropdown {
           visibility: visible;
           opacity: 1;
           z-index: 1;

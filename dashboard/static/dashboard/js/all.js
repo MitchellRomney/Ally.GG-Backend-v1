@@ -20,6 +20,16 @@ $(document).ready(function() {
         .addClass("active");
     }
   });
+
+  $(".acc-options").on("click", function(e) {
+    $(this).toggleClass("open");
+    e.stopPropagation()
+  });
+  $(document).on("click", function(e) {
+    if ($(e.target).is(".acc-options") === false) {
+      $(".acc-options").removeClass("open");
+    }
+  });
 });
 
 //! moment.js

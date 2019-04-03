@@ -4,6 +4,13 @@ from s3direct.fields import S3DirectField
 from datetime import datetime
 import json
 
+class Setting(models.Model):
+    name = models.CharField(max_length=255, blank=False)
+    latestVersion = models.CharField(max_length=255, blank=False)
+
+    def __str__(self):
+        return self.name
+
 class Profile(models.Model):
     user = models.ForeignKey(User, related_name="Profiles", on_delete=models.CASCADE, blank=False)
     first_name = models.CharField(max_length=255, blank=True)

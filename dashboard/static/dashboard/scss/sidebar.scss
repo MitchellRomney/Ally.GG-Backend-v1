@@ -2,11 +2,14 @@
   grid-area: nav;
   background-color: white;
   color: $palette-primary;
-  width: 16.66%;
+  width: 25%;
   position: fixed;
   bottom: 0;
   top: 100px;
   z-index: 1000;
+  @media #{$bp-lg}{
+    width: 16.66%;
+  }
   a {
     color: $palette-primary;
   }

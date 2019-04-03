@@ -55,10 +55,15 @@ class ChampionAdmin(admin.ModelAdmin):
     list_display = ('name', 'key', 'version')
     search_fields = ('name',)
 
+class SettingAdmin(admin.ModelAdmin):
+    model = Setting
+    list_display = ('name',)
+
 admin.site.register(Profile, ProfileAdmin)
 admin.site.register(Summoner, SummonerAdmin)
 admin.site.register(Match, MatchAdmin)
 admin.site.register(Team, TeamAdmin)
 admin.site.register(Player, PlayerAdmin)
 admin.site.register(Champion, ChampionAdmin)
+admin.site.register(Setting, SettingAdmin)
 admin.site.unregister(Group)
