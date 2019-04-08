@@ -104,7 +104,7 @@ var vm = new Vue({
       // Setup variables and grab first page.
       const results = [];
       page = 1
-      let op = await axios.get('/api/summoners?tier=CHALLENGER&tier=GRANDMASTER&tier=MASTER&page=' + page);
+      let op = await axios.get('/api/summoners?tier=CHALLENGER&tier=GRANDMASTER&tier=MASTER&page_size=200&page=' + page);
       next = op.data.next
       results.push(op.data.results)
 
@@ -112,7 +112,7 @@ var vm = new Vue({
       while (next != null){
         const extra = [];
         page += 1;
-        op = await axios.get('/api/summoners?tier=CHALLENGER&tier=GRANDMASTER&tier=MASTER&page=' + page);
+        op = await axios.get('/api/summoners?tier=CHALLENGER&tier=GRANDMASTER&tier=MASTER&page_size=200&page=' + page);
         next = op.data.next;
         [].push.apply(results[0], op.data.results);
       }
