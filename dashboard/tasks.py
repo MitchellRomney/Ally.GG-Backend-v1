@@ -28,3 +28,18 @@ def task_updateSummoners():
                 matchClean = checkMatchIntegrity(newMatch)
 
     return None
+
+@task()
+def task_updateVersion():
+    globalSettings = Setting.objects.get(name='Global') if Setting.objects.filter(name='Global').count() == 1 else None
+    if globalSettings:
+        latestVersion = getLatestVersion()
+        if latestVersion != globalSettings.latestVersion:
+            globalSettings.latestVersion = latestVersion
+            globalSettings.save()
+            print(Fore.GREEN + 'New Version: ' + Style.RESET_ALL + latestVersion)
+        else:
+            print(Fore.YELLOW + 'Current Version up to date.')
+    else:
+        globalSettings = Setting.objects.create(name='Global',latestVersion=getLatestVersion())
+        print(Fore.GREEN + 'New Version: ' + Style.RESET_ALL + globalSettings.latestVersion)

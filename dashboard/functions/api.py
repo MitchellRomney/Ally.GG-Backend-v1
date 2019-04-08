@@ -26,7 +26,7 @@ def fetchDDragonAPI(version, type, option1, option2=None, language='en_US',):
     url = 'https://ddragon.leagueoflegends.com/cdn/' + version + '/' + type + '/' + language + '/' + option1 + target + '?api_key=' + settings.RIOT_API_KEY
     loadJson = json.loads(json.dumps(requests.get(url).json()))
 
-    print(Fore.MAGENTA + '[RIOT API]: ' + Style.RESET_ALL + url )
+    print(Fore.MAGENTA + '[DDRAGON API]: ' + Style.RESET_ALL + url )
     return loadJson
 
 def fetchChatKitAPI(endpoint, value=None):

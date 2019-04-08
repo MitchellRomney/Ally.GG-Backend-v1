@@ -117,8 +117,8 @@ CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_TIMEZONE = 'Australia/Melbourne'
 CELERY_BEAT_SCHEDULE = {
-    'task_updateSummoners': {
-        'task': 'dashboard.tasks.task_updateSummoners',
+    'task_updateVersion': {
+        'task': 'dashboard.tasks.task_updateVersion',
         'schedule': crontab(minute='*/5'),
     },
 }

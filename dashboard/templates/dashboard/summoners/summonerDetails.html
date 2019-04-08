@@ -1,4 +1,5 @@
 {% extends 'dashboard/base.html' %}
+{% load static %}
 
 {% block title %}
 {{ summoner.summonerName }} Summoner Statistics - League of Legends // {{ block.super }}
@@ -26,7 +27,7 @@
       </transition>
       <transition name="fade">
         <div class="avatar" v-if="!playerLoading" v-cloak>
-            <img class="resp-img" :src="'http://ddragon.leagueoflegends.com/cdn/9.6.1/img/profileicon/' + summoner.profileIconId + '.png'">
+            <img class="resp-img" onerror="this.src='{% static 'dashboard/images/placeholder.png' %}'" :src="'http://ddragon.leagueoflegends.com/cdn/{{ CURRENT_PATCH }}/img/profileicon/' + summoner.profileIconId + '.png'">
             <div class="updateButtons">
               <button v-on:click="updateSummoner">
                 Update
@@ -72,7 +73,7 @@
           </div>
           <div class="champ-info">
             <div class="avatar">
-              <img class="resp-img" :src="'http://ddragon.leagueoflegends.com/cdn/9.5.1/img/champion/' + match.summonerPrime.champion.image_full" class="img-responsive" :alt="match.summonerPrime.champion.name">
+              <img class="resp-img" onerror="this.src='{% static 'dashboard/images/placeholder.png' %}'" :src="'http://ddragon.leagueoflegends.com/cdn/9.5.1/img/champion/' + match.summonerPrime.champion.image_full" class="img-responsive" :alt="match.summonerPrime.champion.name">
             </div>
           </div>
           <div class="players">

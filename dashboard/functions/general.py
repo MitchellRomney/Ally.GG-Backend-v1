@@ -10,6 +10,11 @@ from datetime import datetime
 from colorama import Fore, Back, Style
 import requests, json
 
+def getLatestVersion():
+    versionList = json.loads(json.dumps(requests.get('https://ddragon.leagueoflegends.com/api/versions.json').json()))
+    print(Fore.MAGENTA + '[DDRAGON API]: ' + Style.RESET_ALL + 'https://ddragon.leagueoflegends.com/api/versions.json')
+    return versionList[0]
+
 def checkMatchIntegrity(match):
     players = Player.objects.filter(match=match)
     teams = Team.objects.filter(match=match)
