@@ -73,7 +73,7 @@
           </div>
           <div class="champ-info">
             <div class="avatar">
-              <img class="resp-img" onerror="this.src='{% static 'dashboard/images/placeholder.png' %}'" :src="'http://ddragon.leagueoflegends.com/cdn/9.5.1/img/champion/' + match.summonerPrime.champion.image_full" class="img-responsive" :alt="match.summonerPrime.champion.name">
+              <img class="resp-img" onerror="this.src='{% static 'dashboard/images/placeholder.png' %}'" :src="'http://ddragon.leagueoflegends.com/cdn/{{ CURRENT_PATCH }}/img/champion/' + match.summonerPrime.champion.image_full" class="img-responsive" :alt="match.summonerPrime.champion.name">
             </div>
           </div>
           <div class="players">

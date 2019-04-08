@@ -14,6 +14,8 @@ from colorama import Fore, Back, Style
 from datetime import datetime
 import requests
 
+globalSettings = Setting.objects.get(name='Global') if Setting.objects.filter(name='Global').count() == 1 else Setting.objects.create(name='Global', latestversion=getLatestVersion())
+
 def home(request):
     return render(request, 'dashboard/home.html', {
     })
@@ -175,7 +177,7 @@ class ChampionViewSet(viewsets.ModelViewSet):
     def create(self, request):
         isUpdate = request.data['isUpdate']
         if isUpdate == True:
-            response = updateChampions('9.6.1') # TODO: Version should be dynamic.
+            response = updateChampions(globalSettings.latestVersion)
         return Response(response)
 
     def retrieve(self, request, pk=None):
