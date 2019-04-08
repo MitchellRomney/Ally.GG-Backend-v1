@@ -25,6 +25,13 @@ class Profile(models.Model):
     def __str__(self):
         return self.user.username
 
+class ChatRoom(models.Model):
+    members = models.ManyToManyField('Profile', related_name='Members')
+    roomId = models.CharField(max_length=255, blank=False)
+
+    date_created = models.DateTimeField(auto_now_add=True, blank=False)
+    date_updated = models.DateTimeField(blank=False)
+
 class Champion(models.Model):
     # General
     version = models.CharField(max_length=255, blank=False) # What version did we gather this data from (should be latest).

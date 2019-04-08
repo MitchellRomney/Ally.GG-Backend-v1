@@ -28,3 +28,9 @@ def fetchDDragonAPI(version, type, option1, option2=None, language='en_US',):
 
     print(Fore.MAGENTA + '[RIOT API]: ' + Style.RESET_ALL + url )
     return loadJson
+
+def fetchChatKitAPI(endpoint, value=None):
+    instanceId = '5969cdbc-1582-40fa-a851-5aa8bcc6993f'
+    url = 'https://us1.pusherplatform.io/services/chatkit_token_provider/chatkit/v3/' + instanceId + '/' + endpoint + '/' + value
+    print(Fore.MAGENTA + '[ChatKit API]: ' + Style.RESET_ALL + url )
+    return json.loads(json.dumps(requests.get(url).json()))

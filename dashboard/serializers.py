@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 from dashboard.models import *
 from rest_framework import serializers
+from rest_framework.pagination import PageNumberPagination
 from datetime import datetime
 from django.utils import timezone
 import time, timeago
@@ -14,6 +15,20 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('url', 'username', 'email', 'is_staff')
+
+class ProfileSerializer(serializers.ModelSerializer):
+    user = UserSerializer()
+
+    class Meta:
+        model = Profile
+        fields = ('user', 'first_name', 'last_name', 'email', 'avatar', 'friends', 'date_created', 'date_modified',)
+
+class ChatRoomSerializer(serializers.ModelSerializer):
+    members = ProfileSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = ChatRoom
+        fields = ('roomId', 'members', 'date_created', 'date_updated',)
 
 class ChampionSerializer(serializers.ModelSerializer):
     class Meta:
@@ -339,3 +354,43 @@ class SummonerSerializer(serializers.ModelSerializer):
         response = super().to_representation(instance)
         response["Matches"] = sorted(response["Matches"], key=lambda x: x["timestamp"])
         return response
+
+class MinimalSummonerSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Summoner
+        fields = (
+            # IDs
+            'user_profile',
+            'summonerName',
+            'summonerId',
+            'puuid',
+            'accountId',
+
+            # General
+            'server',
+            'profileIconId',
+            'summonerLevel',
+
+            # SoloQ
+            'soloQ_leagueId',
+            'soloQ_leagueName',
+            'soloQ_tier',
+            'soloQ_hotStreak',
+            'soloQ_wins',
+            'soloQ_losses',
+            'soloQ_veteran',
+            'soloQ_rank',
+            'soloQ_inactive',
+            'soloQ_freshBlood',
+            'soloQ_leaguePoints',
+
+            # System
+            'date_created',
+            'date_updated',
+            )
+
+class StandardResultsSetPagination(PageNumberPagination):
+    page_size = 10
+    page_size_query_param = 'page_size'
+    max_page_size = 1000

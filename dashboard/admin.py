@@ -59,6 +59,11 @@ class SettingAdmin(admin.ModelAdmin):
     model = Setting
     list_display = ('name',)
 
+class ChatRoomAdmin(admin.ModelAdmin):
+    model = ChatRoom
+    list_display = ('roomId', 'date_created', 'date_updated',)
+
+
 admin.site.register(Profile, ProfileAdmin)
 admin.site.register(Summoner, SummonerAdmin)
 admin.site.register(Match, MatchAdmin)
@@ -66,4 +71,5 @@ admin.site.register(Team, TeamAdmin)
 admin.site.register(Player, PlayerAdmin)
 admin.site.register(Champion, ChampionAdmin)
 admin.site.register(Setting, SettingAdmin)
+admin.site.register(ChatRoom, ChatRoomAdmin)
 admin.site.unregister(Group)

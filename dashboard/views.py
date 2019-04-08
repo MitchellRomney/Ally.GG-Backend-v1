@@ -32,7 +32,7 @@ def summoners(request):
 
 def chat(request):
     return render(request, 'dashboard/chat.html', {
-    
+
     })
 
 def summonerDetails(request, summonerName):
@@ -56,7 +56,6 @@ class UserViewSet(viewsets.ModelViewSet):
 
 class SummonerViewSet(viewsets.ModelViewSet):
     queryset = Summoner.objects.all().order_by('summonerName')
-    serializer_class = SummonerSerializer
 
     def get_queryset(self):
         queryset = Summoner.objects.all()
@@ -109,6 +108,12 @@ class SummonerViewSet(viewsets.ModelViewSet):
             serializer = SummonerSerializer(summoner, context={'request': request})
             response['summonerInfo'] = serializer.data
             return Response(response)
+
+    def get_serializer_class(self):
+        tier = self.request.query_params.getlist('tier', None)
+        if tier is not None:
+            return MinimalSummonerSerializer
+        return SummonerSerializer
 
 class MatchViewSet(viewsets.ModelViewSet):
     queryset = Match.objects.all().order_by('timestamp')
@@ -170,10 +175,40 @@ class ChampionViewSet(viewsets.ModelViewSet):
     def create(self, request):
         isUpdate = request.data['isUpdate']
         if isUpdate == True:
-            response = updateChampions('9.6.1')
+            response = updateChampions('9.6.1') # TODO: Version should be dynamic.
         return Response(response)
 
     def retrieve(self, request, pk=None):
         queryset = Champion.objects.filter(champId__iexact=pk)
         serializer = ChampionSerializer(queryset, many=True, context={'request': request})
+        return Response(serializer.data)
+
+class ChatRoomViewSet(viewsets.ModelViewSet):
+    queryset = ChatRoom.objects.all().order_by('-date_updated')
+    serializer_class = ChatRoomSerializer
+
+    def create(self, request):
+        rooms = ChatRoom.objects.all()
+        participants = [request.data['creator'], request.data['recipient']]
+        for user in participants:
+            rooms = rooms.filter(members__user__username=user)
+        if rooms.count() == 1:
+            room = rooms.get()
+            print('Found Room! ' + str(room.roomId))
+            # Redirect to room.
+            return Response({'redirect': True, 'url': 'chat/'})
+        # Create room, then redirect.
+
+        # TODO:
+        creatorResponse = fetchChatKitAPI('users', request.data['creator'])
+        print(creatorResponse)
+        # Make GET request for both users, if user doesn't exist create it.
+        # Make GET request for room that contains ONLY those 2 users, if doesn't exist create it.
+        # Create Database object with the RoomID from the Room GET/POST and connect to the 2 user profiles.
+        #return Response({'redirect': True, 'url': 'chat/'})
+        return Response(True)
+
+    def retrieve(self, request, pk=None):
+        queryset = ChatRoom.objects.filter(members__user__username=pk)
+        serializer = ChatRoomSerializer(queryset, many=True, context={'request': request})
         return Response(serializer.data)

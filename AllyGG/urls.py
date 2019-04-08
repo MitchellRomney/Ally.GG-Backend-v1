@@ -14,6 +14,7 @@ router.register(r'summoners', dashboard.SummonerViewSet)
 router.register(r'matches', dashboard.MatchViewSet)
 router.register(r'players', dashboard.PlayerViewSet)
 router.register(r'champions', dashboard.ChampionViewSet)
+router.register(r'chat/room', dashboard.ChatRoomViewSet)
 
 
 urlpatterns = [
