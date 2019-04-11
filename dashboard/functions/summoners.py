@@ -78,7 +78,7 @@ def updateSummoner(puuid):
     for queue in rankedInfo:
         if queue['queueType'] == 'RANKED_SOLO_5x5':
             summoner.soloQ_leagueId = queue['leagueId'] if summoner.soloQ_leagueId != queue['leagueId'] else summoner.soloQ_leagueId
-            summoner.soloQ_leagueName = soloQ['leagueName'] if summoner.soloQ_leagueName != queue['leagueName'] else summoner.soloQ_leagueName
+            summoner.soloQ_leagueName = queue['leagueName'] if summoner.soloQ_leagueName != queue['leagueName'] else summoner.soloQ_leagueName
             summoner.soloQ_tier = queue['tier'] if summoner.soloQ_tier != queue['tier'] else summoner.soloQ_tier
             summoner.soloQ_hotStreak = queue['hotStreak'] if summoner.soloQ_hotStreak != queue['hotStreak'] else summoner.soloQ_hotStreak
             summoner.soloQ_wins = queue['wins'] if summoner.soloQ_wins != queue['wins'] else summoner.soloQ_wins
