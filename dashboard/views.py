@@ -132,9 +132,9 @@ class MatchViewSet(viewsets.ModelViewSet):
     def create(self, request):
         deleteAll = request.data['delete_all']
         if deleteAll == True:
-            print('Deleting 1000 matches.')
-            Match.objects.filter(pk__in=Match.objects.all().values_list('pk')[:30000]).delete()
-            print('1000 Matches Deleted')
+            print('Deleting 5000 matches.')
+            Match.objects.filter(pk__in=Match.objects.all().values_list('pk')[:5000]).delete()
+            print('5000 Matches Deleted')
             return Response('All Matches Deleted')
         existingMatch = Match.objects.filter(gameId=request.data['gameId'])
         if existingMatch.count() == 0:
