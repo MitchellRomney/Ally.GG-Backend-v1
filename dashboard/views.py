@@ -134,6 +134,7 @@ class MatchViewSet(viewsets.ModelViewSet):
         if deleteAll == True:
             Match.objects.all().delete()
             print('All Matches Deleted')
+            return Response('All Matches Deleted')
         existingMatch = Match.objects.filter(gameId=request.data['gameId'])
         if existingMatch.count() == 0:
             fetch = fetchMatch(request.data['gameId'])
