@@ -40,6 +40,7 @@ def chat(request):
 def summonerDetails(request, summonerName):
     summoner = Summoner.objects.get(summonerName__iexact=summonerName) if Summoner.objects.filter(summonerName__iexact=summonerName).count() == 1 else None
     if summoner == None:
+        # TODO: Display custom error page.
         return HttpResponseRedirect('/')
 
     return render(request, 'dashboard/summoners/summonerDetails.html', {

@@ -76,7 +76,7 @@ input:focus, textarea:focus, select:focus {
 
 #wrapper {
   display: grid;
-  grid-template: 100px auto / repeat(12, 1fr);
+  grid-template: 100px auto / 5% repeat(12, 1fr);
   grid-template-areas:
   "tnav tnav tnav tnav tnav tnav tnav tnav tnav tnav tnav tnav"
   "nav nav nav . main main main main main main main .";
@@ -84,15 +84,15 @@ input:focus, textarea:focus, select:focus {
   background-color: $palette-secondary;
   @media #{$bp-lg}{
     grid-template-areas:
-    "tnav tnav tnav tnav tnav tnav tnav tnav tnav tnav tnav tnav"
-    "nav nav . main main main main main main main main .";
+    "tnav tnav tnav tnav tnav tnav tnav tnav tnav tnav tnav tnav tnav"
+    "nav . main main main main main main main main main main .";
   }
   #top-nav {
     grid-area: tnav;
     background-color: white;
     color: $palette-primary;
     z-index: 900;
-    border-bottom: rgba(0, 0, 0, 0.05) solid 5px;
+    border-bottom: #e2e2e2 solid 5px;
     display: grid;
     grid-template: auto / repeat(12, 1fr);
     grid-template-areas:

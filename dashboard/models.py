@@ -100,9 +100,6 @@ class Summoner(models.Model):
     profileIconId = models.BigIntegerField(blank=True, default=1)
     summonerLevel = models.CharField(max_length=255, blank=True)
 
-    # SoloQ
-    soloQ_leagueId = models.CharField(max_length=255, blank=True)
-    soloQ_leagueName = models.CharField(max_length=255, blank=True)
     TIERS = (
         ('CHALLENGER', 'Challenger'),
         ('GRANDMASTER', 'Grandmaster'),
@@ -114,6 +111,10 @@ class Summoner(models.Model):
         ('BRONZE', 'Bronze'),
         ('IRON', 'Iron'),
     )
+
+    # SoloQ
+    soloQ_leagueId = models.CharField(max_length=255, blank=True)
+    soloQ_leagueName = models.CharField(max_length=255, blank=True)
     soloQ_tier = models.CharField(max_length=20, choices=TIERS, null=True, blank=True)
     soloQ_hotStreak = models.BooleanField(default=False)
     soloQ_wins = models.BigIntegerField(null=True, blank=True, default=0)
@@ -123,6 +124,32 @@ class Summoner(models.Model):
     soloQ_inactive = models.BooleanField(default=False)
     soloQ_freshBlood = models.BooleanField(default=False)
     soloQ_leaguePoints = models.BigIntegerField(null=True, blank=True, default=0)
+
+    # Flex SR
+    flexSR_leagueId = models.CharField(max_length=255, blank=True)
+    flexSR_leagueName = models.CharField(max_length=255, blank=True)
+    flexSR_tier = models.CharField(max_length=20, choices=TIERS, null=True, blank=True)
+    flexSR_hotStreak = models.BooleanField(default=False)
+    flexSR_wins = models.BigIntegerField(null=True, blank=True, default=0)
+    flexSR_losses = models.BigIntegerField(null=True, blank=True, default=0)
+    flexSR_veteran = models.BooleanField(default=False)
+    flexSR_rank = models.CharField(max_length=255, null=True, blank=True)
+    flexSR_inactive = models.BooleanField(default=False)
+    flexSR_freshBlood = models.BooleanField(default=False)
+    flexSR_leaguePoints = models.BigIntegerField(null=True, blank=True, default=0)
+
+    # Flex TT
+    flexTT_leagueId = models.CharField(max_length=255, blank=True)
+    flexTT_leagueName = models.CharField(max_length=255, blank=True)
+    flexTT_tier = models.CharField(max_length=20, choices=TIERS, null=True, blank=True)
+    flexTT_hotStreak = models.BooleanField(default=False)
+    flexTT_wins = models.BigIntegerField(null=True, blank=True, default=0)
+    flexTT_losses = models.BigIntegerField(null=True, blank=True, default=0)
+    flexTT_veteran = models.BooleanField(default=False)
+    flexTT_rank = models.CharField(max_length=255, null=True, blank=True)
+    flexTT_inactive = models.BooleanField(default=False)
+    flexTT_freshBlood = models.BooleanField(default=False)
+    flexTT_leaguePoints = models.BigIntegerField(null=True, blank=True, default=0)
 
     # System
     date_created = models.DateTimeField(auto_now_add=True, blank=False)

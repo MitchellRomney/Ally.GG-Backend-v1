@@ -16,83 +16,80 @@
   </transition>
 </div>
 <div id="profile" :class="{ error: isError }">
-  <div class="top-wrapper" v-if="summoner" v-cloak>
-    <div class="avatar-wrapper">
-      <div class="avatar">
-        <img class="resp-img" onerror="this.src='{% static 'dashboard/images/placeholder.png' %}'" :src="'http://ddragon.leagueoflegends.com/cdn/{{ CURRENT_PATCH }}/img/profileicon/{{ summoner.profileIconId }}.png'">
-        <span class="level">[[ summoner.summonerLevel ]]</span>
-      </div>
-      <span class="updated" v-if="last_updated">Last Updated: [[ last_updated ]]</span>
-      <button v-on:click="updateSummoner">Update Summoner</button>
+    <div id="summonerInfo" class="panel">
+      <transition name="fade">
+        <div class="summonerInfo_loader loader" v-if="playerLoading" v-cloak>
+          <div class="half-circle-spinner">
+            <div class="circle circle-1"></div>
+            <div class="circle circle-2"></div>
+          </div>
+        </div>
+      </transition>
+      <transition name="fade">
+        <div class="avatar" v-if="!playerLoading" v-cloak>
+            <img class="resp-img" onerror="this.src='{% static 'dashboard/images/placeholder.png' %}'" :src="'http://ddragon.leagueoflegends.com/cdn/{{ CURRENT_PATCH }}/img/profileicon/' + summoner.profileIconId + '.png'">
+            <div class="updateButtons">
+              <button v-on:click="updateSummoner">
+                Update
+              </button>
+              <h6 v-if="last_updated"><strong>Last Updated: </strong>[[ last_updated ]]</h6>
+              <h6 v-else>Data hasn't been fetched yet.</h6>
+            </div>
+        </div>
+      </transition>
+      <transition name="fade">
+        <div class="statistics" v-if="!playerLoading" v-cloak>
+          <h1><span>[[ summoner.summonerName ]]</span></h1>
+          <h2><strong>Level: </strong>[[ summoner.summonerLevel ]]</h2>
+          <div v-if="last_updated">
+            <h2>Solo Queue</h2>
+            <h3><strong>Rank: </strong>[[ summoner.soloQ_tier ]] [[ summoner.soloQ_rank ]] - [[ summoner.soloQ_leaguePoints ]]</h3>
+            <h3><strong>Wins: </strong>[[ summoner.soloQ_wins ]]</h3>
+            <h3><strong>Losses: </strong>[[ summoner.soloQ_losses ]]</h3>
+          </div>
+        </div>
+      </transition>
     </div>
-    <div class="title" v-if="summoner.summonerName" v-cloak>
-      <h1 class="summonerName" :style="'font-size: ' + [[ nameFontSize ]]">[[ summoner.summonerName ]]</h1>
-      {% if summoner.user_profile %}
-      <div class="user">
-        <div class="avatar">
-          <img class="resp-img" onerror="this.src='{% static 'dashboard/images/placeholder.png' %}'" src="{{ summoner.user_profile.avatar }}" alt="{{ summoner.user_profile.user.username }}">
-        </div>
-        <a href="/profiles/{{ summoner.user_profile.user.username }}">{{ summoner.user_profile.first_name }} {{ summoner.user_profile.last_name }}</a>
-      </div>
-      {% endif %}
-    </div>
-    <div class="ranked-stats">
-      <div class="ranked-solo">
-        <div class="medal">
-          <img v-if="soloQ_medal" class="resp-img" :src="'{% static 'dashboard/images/ranked_medals/' %}' + soloQ_medal">
-        </div>
-        <div class="text">
-          <h5 class="faded">Ranked Solo</h5>
-          <h2 class="rank">[[ summoner.soloQ_tier ]] [[ summoner.soloQ_rank ]]</h2>
-          <h5 class="winrate">[[ summoner.soloQ_leaguePoints ]]LP |<span> [[ summoner.soloQ_wins ]]W / [[ summoner.soloQ_losses ]]L</span></h5>
-        </div>
-      </div>
-      <div class="ranked-flexSR" v-if="summoner.flexSR_tier" v-cloak>
-        <div class="medal">
-          <img v-if="flexSR_medal" class="resp-img" :src="'{% static 'dashboard/images/ranked_medals/' %}' + flexSR_medal">
-        </div>
-        <div class="text">
-          <h5 class="faded">Ranked 5x5 Flex</h5>
-          <h2 class="rank">[[ summoner.flexSR_tier ]] [[ summoner.flexSR_rank ]]</h2>
-          <h5 class="winrate">[[ summoner.flexSR_leaguePoints ]]LP |<span> [[ summoner.flexSR_wins ]]W / [[ summoner.flexSR_losses ]]L</span></h5>
-        </div>
-      </div>
-      <div class="ranked-flexTT" v-if="summoner.flexTT_tier" v-cloak>
-        <div class="medal">
-          <img v-if="flexTT_medal" class="resp-img" :src="'{% static 'dashboard/images/ranked_medals/' %}' + flexTT_medal">
-        </div>
-        <div class="text">
-          <h5 class="faded">Ranked 3x3 Flex</h5>
-          <h2 class="rank">[[ summoner.flexTT_tier ]] [[ summoner.flexTT_rank ]]</h2>
-          <h5 class="winrate">[[ summoner.flexTT_leaguePoints ]]LP |<span> [[ summoner.flexTT_wins ]]W / [[ summoner.flexTT_losses ]]L</span></h5>
-        </div>
+    <div class="matches_loader loader" v-if="matchLoading" v-cloak>
+      <div class="half-circle-spinner">
+        <div class="circle circle-1"></div>
+        <div class="circle circle-2"></div>
       </div>
     </div>
-    <ul id="summoner-menu">
-      <li class="general">General</li>
-      <li class="matches">Matches</li>
-      <li class="champions">Champions</li>
-      <li class="achievements">Achievements</li>
-      <span class="selector"></span>
-    </ul>
-  </div>
-  <div id="summoner-content-wrapper" class="general">
-    <div class="content-general">
-      <div class="ranked-panel">
-      </div>
-      <div class="latest-matches-panel">
-      </div>
+    <div id="matches" v-if="!matchLoading" v-cloak>
+      <transition-group name="fade">
+        <div
+          class="match"
+          v-for="match in sortedMatches"
+          :key="match.gameId"
+          v-if="!matchLoading"
+          v-cloak
+          :class="{ win: match.summonerPrime.win, lose: !match.summonerPrime.win }"
+        >
+          <div class="stats">
+            <h4>Match - [[ match.gameId ]]</h4>
+            <h4>[[ match.queue ]]</h4>
+            <h4>[[ match.timeAgo ]]</h4>
+          </div>
+          <div class="champ-info">
+            <div class="avatar">
+              <img class="resp-img" onerror="this.src='{% static 'dashboard/images/placeholder.png' %}'" :src="'http://ddragon.leagueoflegends.com/cdn/{{ CURRENT_PATCH }}/img/champion/' + match.summonerPrime.champion.image_full" class="img-responsive" :alt="match.summonerPrime.champion.name">
+            </div>
+          </div>
+          <div class="players">
+            <div class="player" v-for="player in match.Players" v-bind:key="player.summonerName">
+              <a :href="'/summoners/' + player.summoner.summonerName">[[ player.summoner.summonerName ]]</a>
+            </div>
+          </div>
+          <div class="result"></div>
+        </div>
+      </transition-group>
+      <transition name="fade">
+        <div class="no-match" v-if="isEmpty" v-cloak>
+          <h1>Sorry, no matches have been loaded!</h1>
+        </div>
+      </transition>
     </div>
-    <div class="content-matches">
-      Matches
-    </div>
-    <div class="content-champions">
-      Champions
-    </div>
-    <div class="content-achievements">
-      Achievements
-    </div>
-  </div>
 </div>
 <script>
 var errorVm = new Vue({
@@ -112,15 +109,19 @@ var vm = new Vue({
     match_list: [],
     remaining_games: 0,
     last_updated: '',
-    soloQ_medal: '',
-    flexSR_medal: '',
-    flexTT_medal: '',
     matchLoading: true,
     newGamesLoading: false,
     playerLoading: true,
     isEmpty: false,
     isError: false,
-    nameFontSize: '7rem',
+  },
+  computed: {
+    sortedMatches() {
+      return vm.match_list.sort(function(a, b) {
+        var x = a['timestamp']; var y = b['timestamp'];
+        return ((x > y) ? -1 : ((x < y) ? 1 : 0));
+      });
+    }
   },
   methods: {
     updateSummoner: async function(event) {
@@ -164,23 +165,6 @@ var vm = new Vue({
     getSummonerInfo(){
       axios.get('/api/summoners/{{ summoner.summonerName }}').then(summonerResponse => {
         vm.summoner = summonerResponse.data['summonerInfo']
-        if (vm.summoner.summonerName.length > 14){
-          vm.nameFontSize = '5rem';
-        } else if (vm.summoner.summonerName.length > 10){
-          vm.nameFontSize = '6rem';
-        }
-        if (this.summoner.soloQ_rank && this.summoner.soloQ_tier){
-          if (this.summoner.soloQ_rank == 'IV'){
-            number = '4';
-          } else if (this.summoner.soloQ_rank == 'III'){
-            number = '3';
-          } else if (this.summoner.soloQ_rank == 'II'){
-            number = '2';
-          } else {
-            number = '1';
-          }
-          this.soloQ_medal = this.summoner.soloQ_tier.toLowerCase() + '_' + number + '.png';
-        }
         vm.last_updated = summonerResponse.data['summonerInfo'].date_updated ? moment(summonerResponse.data['summonerInfo'].date_updated).fromNow() : false;
         vm.playerLoading = false;
         vm.getMatchInfo(summonerResponse.data['summonerInfo']['Matches'], summonerResponse.data['summonerInfo']);

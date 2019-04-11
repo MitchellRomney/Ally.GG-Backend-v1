@@ -10,91 +10,190 @@
       width: 100%; }
 
 #profile {
-  display: grid;
-  grid-template: 250px auto/repeat(12, 1fr);
-  grid-template-areas: "summonerInfo summonerInfo summonerInfo summonerInfo summonerInfo summonerInfo summonerInfo summonerInfo summonerInfo summonerInfo summonerInfo summonerInfo" "matches matches matches matches matches matches matches matches matches matches matches matches";
   width: 100%; }
-  #profile #summonerInfo {
-    grid-area: summonerInfo;
-    display: flex;
+  #profile .top-wrapper {
+    display: grid;
     width: 100%;
-    height: 250px;
-    position: relative; }
-    #profile #summonerInfo.loading {
-      justify-content: center; }
-    #profile #summonerInfo .updateButtons {
-      text-align: center; }
-    #profile #summonerInfo .avatar {
-      height: 128px; }
-    #profile #summonerInfo .statistics {
-      margin-left: 50px; }
-  #profile #matches {
-    grid-area: matches;
-    margin-top: 50px;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3); }
-    #profile #matches .match {
-      width: 100%;
-      height: 100px;
+    grid-gap: 10px 15px;
+    grid-template: 120px 95px 95px/repeat(12, 1fr);
+    grid-template-areas: "avatar avatar avatar title title title title title title title title title" "avatar avatar avatar ranked ranked ranked ranked ranked ranked ranked ranked ranked" "avatar avatar avatar menu menu menu menu menu menu menu menu menu"; }
+    #profile .top-wrapper .avatar-wrapper {
+      grid-area: avatar;
+      padding: 20px 40px;
       background-color: white;
-      display: grid;
-      grid-template: auto / 1fr 2fr 1fr 20px;
-      grid-gap: 0px 10px;
-      grid-template-areas: "stats players champ result";
-      align-items: center;
-      background-size: cover;
-      padding-left: 20px;
-      color: #333343;
-      background-blend-mode: difference; }
-      #profile #matches .match:last-child {
-        margin-bottom: 0px; }
-      #profile #matches .match .stats {
-        grid-area: stats; }
-      #profile #matches .match .champ-info {
-        grid-area: champ;
+      border: 3px solid #f4f4f4;
+      border-radius: 20px;
+      text-align: center; }
+      #profile .top-wrapper .avatar-wrapper .avatar {
+        position: relative;
+        margin-bottom: 5px; }
+        #profile .top-wrapper .avatar-wrapper .avatar img {
+          border-radius: 10px; }
+        #profile .top-wrapper .avatar-wrapper .avatar .level {
+          position: absolute;
+          bottom: -10px;
+          right: 0;
+          padding: 2px 20px;
+          background-color: white;
+          border-top-left-radius: 10px;
+          font-size: 2rem;
+          font-weight: bold; }
+      #profile .top-wrapper .avatar-wrapper button {
+        width: 100%;
+        background-color: #f93d7c;
+        padding: 8px;
+        color: white;
+        font-size: 0.8rem;
+        font-weight: bold;
+        border-radius: 10px;
+        margin-top: 5px;
+        cursor: pointer; }
+      #profile .top-wrapper .avatar-wrapper .updated {
+        font-size: 0.8rem;
+        opacity: 0.8; }
+    #profile .top-wrapper .title {
+      grid-area: title;
+      display: flex;
+      align-items: center; }
+      #profile .top-wrapper .title .summonerName {
+        font-family: Roboto-Black, sans-serif; }
+      #profile .top-wrapper .title .user {
         display: flex;
-        justify-content: center; }
-        #profile #matches .match .champ-info .avatar {
-          height: 75px;
-          width: 75px;
-          border-radius: 50%;
-          overflow: hidden; }
-          #profile #matches .match .champ-info .avatar img {
-            -webkit-transform: scale(1.2, 1.2);
-                    transform: scale(1.2, 1.2); }
-      #profile #matches .match .players {
-        grid-area: players;
-        display: grid;
-        grid-template: repeat(5, 15px)/repeat(2, 1fr);
-        grid-auto-flow: column;
-        font-size: 0.6rem;
-        padding: 10px;
-        grid-gap: 0px 10px; }
-        #profile #matches .match .players .player {
-          text-align: right; }
-          #profile #matches .match .players .player:nth-child(n+6) {
-            text-align: left; }
-        #profile #matches .match .players a {
-          color: #333343; }
-      #profile #matches .match .result {
-        grid-area: result;
+        margin: 50px 20px 30px; }
+        #profile .top-wrapper .title .user .avatar {
+          margin-right: 10px;
+          width: 50px; }
+          #profile .top-wrapper .title .user .avatar img {
+            border-radius: 50%; }
+        #profile .top-wrapper .title .user a {
+          margin: auto 0px;
+          color: grey; }
+    #profile .top-wrapper .ranked-stats {
+      grid-area: ranked;
+      display: flex; }
+      #profile .top-wrapper .ranked-stats .ranked-solo, #profile .top-wrapper .ranked-stats .ranked-flexSR, #profile .top-wrapper .ranked-stats .ranked-flexTT {
+        padding: 5px;
+        background-color: white;
+        border: 3px solid #f4f4f4;
+        border-radius: 20px;
+        position: relative;
         height: 100%;
-        width: 100%; }
-      #profile #matches .match.win {
-        background-color: rgba(56, 202, 115, 0.2); }
-        #profile #matches .match.win .result {
-          background-color: rgba(56, 202, 115, 0.8); }
-      #profile #matches .match.lose {
-        background-color: rgba(213, 84, 83, 0.2); }
-        #profile #matches .match.lose .result {
-          background-color: rgba(213, 84, 83, 0.8); }
-  #profile .summonerInfo_loader {
-    position: absolute;
-    height: 100%;
-    margin: -40px; }
-  #profile .matches_loader {
-    grid-area: matches;
-    margin-top: 50px;
-    display: flex; }
+        margin-right: 10px;
+        display: flex; }
+        #profile .top-wrapper .ranked-stats .ranked-solo .medal, #profile .top-wrapper .ranked-stats .ranked-flexSR .medal, #profile .top-wrapper .ranked-stats .ranked-flexTT .medal {
+          width: 25%;
+          height: 100%;
+          display: flex;
+          margin: 0px 5px; }
+        #profile .top-wrapper .ranked-stats .ranked-solo .text, #profile .top-wrapper .ranked-stats .ranked-flexSR .text, #profile .top-wrapper .ranked-stats .ranked-flexTT .text {
+          padding: 5px 0px;
+          display: flex;
+          justify-content: center;
+          flex-direction: column; }
+          #profile .top-wrapper .ranked-stats .ranked-solo .text .faded, #profile .top-wrapper .ranked-stats .ranked-flexSR .text .faded, #profile .top-wrapper .ranked-stats .ranked-flexTT .text .faded {
+            color: grey;
+            font-weight: normal; }
+          #profile .top-wrapper .ranked-stats .ranked-solo .text .rank, #profile .top-wrapper .ranked-stats .ranked-flexSR .text .rank, #profile .top-wrapper .ranked-stats .ranked-flexTT .text .rank {
+            color: #f93d7c;
+            font-weight: bold; }
+          #profile .top-wrapper .ranked-stats .ranked-solo .text .winrate span, #profile .top-wrapper .ranked-stats .ranked-flexSR .text .winrate span, #profile .top-wrapper .ranked-stats .ranked-flexTT .text .winrate span {
+            font-weight: normal; }
+    #profile .top-wrapper #summoner-menu {
+      grid-area: menu;
+      background-color: white;
+      border: 3px solid #f4f4f4;
+      border-radius: 20px;
+      width: 100%;
+      padding: 0px;
+      display: grid;
+      grid-template: auto / 1fr 1fr 1fr 1fr;
+      position: relative; }
+      #profile .top-wrapper #summoner-menu li {
+        border-right: 3px solid #f4f4f4;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        opacity: 0.6;
+        cursor: pointer;
+        transition: all 0.25s ease; }
+        #profile .top-wrapper #summoner-menu li.general {
+          font-weight: bold;
+          opacity: 1; }
+      #profile .top-wrapper #summoner-menu .selector {
+        width: 25%;
+        position: absolute;
+        bottom: 0;
+        height: 10px;
+        background-color: #f93d7c;
+        border-radius: 0px;
+        border-bottom-left-radius: 20px;
+        transition: all 0.25s ease;
+        left: 0%; }
+        #profile .top-wrapper #summoner-menu .selector.s_matches {
+          left: 25%;
+          border-radius: 0px; }
+        #profile .top-wrapper #summoner-menu .selector.s_champions {
+          left: 50%;
+          border-radius: 0px; }
+        #profile .top-wrapper #summoner-menu .selector.s_achievements {
+          left: 75%;
+          border-radius: 0px;
+          border-bottom-right-radius: 20px; }
+      #profile .top-wrapper #summoner-menu.s_matches .matches {
+        opacity: 1;
+        font-weight: bold; }
+      #profile .top-wrapper #summoner-menu.s_matches .general, #profile .top-wrapper #summoner-menu.s_matches .champions, #profile .top-wrapper #summoner-menu.s_matches .achievements {
+        opacity: 0.6;
+        font-weight: normal; }
+      #profile .top-wrapper #summoner-menu.s_champions .champions {
+        opacity: 1;
+        font-weight: bold; }
+      #profile .top-wrapper #summoner-menu.s_champions .general, #profile .top-wrapper #summoner-menu.s_champions .matches, #profile .top-wrapper #summoner-menu.s_champions .achievements {
+        opacity: 0.6;
+        font-weight: normal; }
+      #profile .top-wrapper #summoner-menu.s_achievements .achievements {
+        opacity: 1;
+        font-weight: bold; }
+      #profile .top-wrapper #summoner-menu.s_achievements .general, #profile .top-wrapper #summoner-menu.s_achievements .champions, #profile .top-wrapper #summoner-menu.s_achievements .matches {
+        opacity: 0.6;
+        font-weight: normal; }
+  #profile #summoner-content-wrapper {
+    width: 100%;
+    margin-top: 20px; }
+    #profile #summoner-content-wrapper .content-general {
+      display: grid;
+      grid-gap: 20px;
+      grid-template: 1fr 1fr/repeat(3, 1fr);
+      min-height: 100vh;
+      grid-template-areas: "ranked matches matches" ". . ."; }
+      #profile #summoner-content-wrapper .content-general .ranked-panel {
+        grid-area: ranked;
+        background-color: white;
+        border: 3px solid #f4f4f4;
+        border-radius: 20px; }
+      #profile #summoner-content-wrapper .content-general .latest-matches-panel {
+        grid-area: matches;
+        background-color: white;
+        border: 3px solid #f4f4f4;
+        border-radius: 20px; }
+    #profile #summoner-content-wrapper.general .content-general {
+      display: grid; }
+    #profile #summoner-content-wrapper.general .content-matches, #profile #summoner-content-wrapper.general .content-champions, #profile #summoner-content-wrapper.general .content-achievements {
+      display: none; }
+    #profile #summoner-content-wrapper.matches .content-matches {
+      display: block; }
+    #profile #summoner-content-wrapper.matches .content-general, #profile #summoner-content-wrapper.matches .content-champions, #profile #summoner-content-wrapper.matches .content-achievements {
+      display: none; }
+    #profile #summoner-content-wrapper.champions .content-champions {
+      display: block; }
+    #profile #summoner-content-wrapper.champions .content-matches, #profile #summoner-content-wrapper.champions .content-general, #profile #summoner-content-wrapper.champions .content-achievements {
+      display: none; }
+    #profile #summoner-content-wrapper.achievements .content-achievements {
+      display: block; }
+    #profile #summoner-content-wrapper.achievements .content-matches, #profile #summoner-content-wrapper.achievements .content-champions, #profile #summoner-content-wrapper.achievements .content-general {
+      display: none; }
 
 .fade-enter-active, .fade-leave-active {
   transition: opacity .21s; }
@@ -277,14 +376,12 @@
   grid-area: nav;
   background-color: white;
   color: #333343;
-  width: 25%;
+  width: 5%;
   position: fixed;
   bottom: 0;
   top: 100px;
-  z-index: 1000; }
-  @media (min-width: 992px) {
-    #sidebar {
-      width: 16.66%; } }
+  z-index: 1000;
+  border-right: #e2e2e2 solid 5px; }
   #sidebar a {
     color: #333343; }
   #sidebar .profile .avatar img {
@@ -294,7 +391,7 @@
     height: 50%;
     border-radius: 50% !important; }
   #sidebar .sidebar-wrapper {
-    padding: 50px 30px; }
+    margin-top: 25px; }
     #sidebar .sidebar-wrapper ul {
       list-style-type: none;
       padding: 0;
@@ -302,23 +399,23 @@
     #sidebar .sidebar-wrapper .sidebar-menu {
       padding-bottom: 10px; }
       #sidebar .sidebar-wrapper .sidebar-menu ul li {
-        height: 60px; }
+        height: 60px;
+        display: flex; }
         #sidebar .sidebar-wrapper .sidebar-menu ul li a {
           display: flex;
           align-items: center;
           width: 100%;
           text-decoration: none;
           position: relative;
-          padding: 8px 30px 8px 20px;
-          opacity: 0.8; }
+          opacity: 0.6; }
           #sidebar .sidebar-wrapper .sidebar-menu ul li a i {
-            margin-right: 10px;
             font-size: 1.5rem;
             width: 30px;
             height: 30px;
             line-height: 30px;
             text-align: center;
-            border-radius: 4px; }
+            border-radius: 4px;
+            margin: auto; }
           #sidebar .sidebar-wrapper .sidebar-menu ul li a:hover i::before {
             display: inline-block;
             -webkit-animation: swing ease-in-out 0.5s 1 alternate;
@@ -327,6 +424,12 @@
             float: right;
             margin-top: 8px;
             margin-left: 5px; }
+        #sidebar .sidebar-wrapper .sidebar-menu ul li.active {
+          border-left: 3px solid #f93d7c; }
+          #sidebar .sidebar-wrapper .sidebar-menu ul li.active a {
+            opacity: 1; }
+            #sidebar .sidebar-wrapper .sidebar-menu ul li.active a i {
+              color: #f93d7c; }
       #sidebar .sidebar-wrapper .sidebar-menu .sidebar-dropdown .dropdown-title:after {
         font-family: "Font Awesome 5 Free";
         font-weight: 900;
@@ -457,19 +560,19 @@ input:focus, textarea:focus, select:focus {
 
 #wrapper {
   display: grid;
-  grid-template: 100px auto/repeat(12, 1fr);
+  grid-template: 100px auto/5% repeat(12, 1fr);
   grid-template-areas: "tnav tnav tnav tnav tnav tnav tnav tnav tnav tnav tnav tnav" "nav nav nav . main main main main main main main .";
   min-height: 100vh;
   background-color: #F6F7FB; }
   @media (min-width: 992px) {
     #wrapper {
-      grid-template-areas: "tnav tnav tnav tnav tnav tnav tnav tnav tnav tnav tnav tnav" "nav nav . main main main main main main main main ."; } }
+      grid-template-areas: "tnav tnav tnav tnav tnav tnav tnav tnav tnav tnav tnav tnav tnav" "nav . main main main main main main main main main main ."; } }
   #wrapper #top-nav {
     grid-area: tnav;
     background-color: white;
     color: #333343;
     z-index: 900;
-    border-bottom: rgba(0, 0, 0, 0.05) solid 5px;
+    border-bottom: #e2e2e2 solid 5px;
     display: grid;
     grid-template: auto/repeat(12, 1fr);
     grid-template-areas: "logo logo logo . . . . . . profile profile .";

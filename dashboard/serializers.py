@@ -342,6 +342,32 @@ class SummonerSerializer(serializers.ModelSerializer):
             'soloQ_freshBlood',
             'soloQ_leaguePoints',
 
+            # Flex SR
+            'flexSR_leagueId',
+            'flexSR_leagueName',
+            'flexSR_tier',
+            'flexSR_hotStreak',
+            'flexSR_wins',
+            'flexSR_losses',
+            'flexSR_veteran',
+            'flexSR_rank',
+            'flexSR_inactive',
+            'flexSR_freshBlood',
+            'flexSR_leaguePoints',
+
+            # Flex TT
+            'flexTT_leagueId',
+            'flexTT_leagueName',
+            'flexTT_tier',
+            'flexTT_hotStreak',
+            'flexTT_wins',
+            'flexTT_losses',
+            'flexTT_veteran',
+            'flexTT_rank',
+            'flexTT_inactive',
+            'flexTT_freshBlood',
+            'flexTT_leaguePoints',
+
             # Matches
             'Matches',
 
