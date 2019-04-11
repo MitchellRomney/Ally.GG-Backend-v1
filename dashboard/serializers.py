@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
 from dashboard.models import *
+from dashboard.serializers import *
 from rest_framework import serializers
 from rest_framework.pagination import PageNumberPagination
 from datetime import datetime
@@ -77,6 +78,32 @@ class ChampionSerializer(serializers.ModelSerializer):
             'stats_attackdamageperlevel',
             'stats_attackspeedperlevel',
             'stats_attackspeed',
+        )
+
+class MinimalPlayerSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = Player
+        fields = (
+            'match',
+            'gameId',
+            'won',
+            'kills',
+            'deaths',
+            'assists',
+            'champLevel',
+            'spell1Id',
+            'spell2Id',
+            'champion',
+            'totalMinionsKilled',
+            # TODO: Kill Participation
+            'item0',
+            'item1',
+            'item2',
+            'item3',
+            'item4',
+            'item5',
+            'item6',
         )
 
 class MatchPlayerSerializer(serializers.ModelSerializer):
@@ -281,6 +308,24 @@ class MatchListSerializer(serializers.ModelSerializer):
             'date_created',
         )
 
+class SummonerMatchListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Match
+        fields = (
+            'platformId',
+            'gameId',
+            'queueId',
+            'seasonId',
+            'mapId',
+            'gameMode',
+            'gameType',
+            'gameVersion',
+            'gameDuration',
+            'timestamp',
+            'date_created',
+            'players',
+        )
+
 class MatchSerializer(serializers.ModelSerializer):
     queue = serializers.CharField(source='get_queueId_display')
     season = serializers.CharField(source='get_seasonId_display')
@@ -312,7 +357,7 @@ class MatchSerializer(serializers.ModelSerializer):
         )
 
 class SummonerSerializer(serializers.ModelSerializer):
-    Matches = MatchListSerializer(many=True, read_only=True)
+    Matches = SummonerMatchListSerializer(many=True, read_only=True)
 
     class Meta:
         model = Summoner

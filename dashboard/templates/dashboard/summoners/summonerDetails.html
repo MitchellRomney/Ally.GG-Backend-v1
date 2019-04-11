@@ -16,13 +16,13 @@
   </transition>
 </div>
 <div id="profile" :class="{ error: isError }">
-  <div class="top-wrapper" v-if="summoner" v-cloak>
+  <div class="top-wrapper">
     <div class="avatar-wrapper">
       <div class="avatar">
         <img class="resp-img" onerror="this.src='{% static 'dashboard/images/placeholder.png' %}'" :src="'http://ddragon.leagueoflegends.com/cdn/{{ CURRENT_PATCH }}/img/profileicon/{{ summoner.profileIconId }}.png'">
-        <span class="level">[[ summoner.summonerLevel ]]</span>
+        <span class="level" v-if="summoner" v-cloak>[[ summoner.summonerLevel ]]</span>
       </div>
-      <span class="updated" v-if="last_updated">Last Updated: [[ last_updated ]]</span>
+      <span class="updated">Last Updated: <span v-if="last_updated" v-cloak>[[ last_updated ]]</span></span>
       <button v-on:click="updateSummoner">Update Summoner</button>
     </div>
     <div class="title" v-if="summoner.summonerName" v-cloak>
@@ -43,8 +43,8 @@
         </div>
         <div class="text">
           <h5 class="faded">Ranked Solo</h5>
-          <h2 class="rank">[[ summoner.soloQ_tier ]] [[ summoner.soloQ_rank ]]</h2>
-          <h5 class="winrate">[[ summoner.soloQ_leaguePoints ]]LP |<span> [[ summoner.soloQ_wins ]]W / [[ summoner.soloQ_losses ]]L</span></h5>
+          <h2 class="rank" v-if="summoner" v-cloak>[[ summoner.soloQ_tier ]] [[ summoner.soloQ_rank ]]</h2>
+          <h5 class="winrate" v-if="summoner" v-cloak>[[ summoner.soloQ_leaguePoints ]]LP |<span> [[ summoner.soloQ_wins ]]W / [[ summoner.soloQ_losses ]]L</span></h5>
         </div>
       </div>
       <div class="ranked-flexSR" v-if="summoner.flexSR_tier" v-cloak>
@@ -79,8 +79,33 @@
   <div id="summoner-content-wrapper" class="general">
     <div class="content-general">
       <div class="ranked-panel">
+        <h2>Ranked Solo</h2>
+        <h5 class="rank" v-if="summoner" v-cloak>[[ summoner.soloQ_tier ]] [[ summoner.soloQ_rank ]]</h5>
+        <div class="svg-item" v-if="soloQ_ring_values" v-cloak>
+          <svg width="100%" height="100%" viewBox="0 0 40 40" class="donut">
+            <circle class="donut-hole" cx="20" cy="20" r="15.91549430918954" fill="#fff"></circle>
+            <circle class="donut-ring" cx="20" cy="20" r="15.91549430918954" fill="transparent" stroke-width="3.5"></circle>
+            <circle class="donut-segment" cx="20" cy="20" r="15.91549430918954" fill="transparent" stroke-width="3.5" :stroke-dasharray="soloQ_ring_values" stroke-dashoffset="25"></circle>
+          </svg>
+          <div class="inside-svg">
+            <h2 class="total-LP">[[ summoner.soloQ_leaguePoints ]]LP</h2>
+            <h5 class="win-loss">[[ summoner.soloQ_wins ]]W / [[ summoner.soloQ_losses ]]L</h5>
+            <div class="medal">
+              <img v-if="soloQ_medal" class="resp-img" :src="'{% static 'dashboard/images/ranked_medals/' %}' + soloQ_medal">
+            </div>
+          </div>
+        </div>
+        <div class="league" v-if="summoner" v-cloak>
+          [[ summoner.soloQ_leagueName ]]
+        </div>
       </div>
       <div class="latest-matches-panel">
+        <h2>Latest Matches</h2>
+        <div class="latest-matches">
+          <div class="match" v-for="match in match_list.slice(0,3)">
+            [[match.gameId]]
+          </div>
+        </div>
       </div>
     </div>
     <div class="content-matches">
@@ -113,6 +138,7 @@ var vm = new Vue({
     remaining_games: 0,
     last_updated: '',
     soloQ_medal: '',
+    soloQ_ring_values: '',
     flexSR_medal: '',
     flexTT_medal: '',
     matchLoading: true,
@@ -170,6 +196,8 @@ var vm = new Vue({
           vm.nameFontSize = '6rem';
         }
         if (this.summoner.soloQ_rank && this.summoner.soloQ_tier){
+          var leftover = 100 - parseInt(vm.summoner.soloQ_leaguePoints);
+          vm.soloQ_ring_values = vm.summoner.soloQ_leaguePoints + ' ' + leftover;
           if (this.summoner.soloQ_rank == 'IV'){
             number = '4';
           } else if (this.summoner.soloQ_rank == 'III'){

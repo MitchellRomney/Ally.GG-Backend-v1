@@ -23,10 +23,13 @@
       background-color: white;
       border: 3px solid #f4f4f4;
       border-radius: 20px;
-      text-align: center; }
+      text-align: center;
+      display: flex;
+      flex-direction: column; }
       #profile .top-wrapper .avatar-wrapper .avatar {
         position: relative;
-        margin-bottom: 5px; }
+        margin-bottom: 5px;
+        height: 100%; }
         #profile .top-wrapper .avatar-wrapper .avatar img {
           border-radius: 10px; }
         #profile .top-wrapper .avatar-wrapper .avatar .level {
@@ -50,7 +53,8 @@
         cursor: pointer; }
       #profile .top-wrapper .avatar-wrapper .updated {
         font-size: 0.8rem;
-        opacity: 0.8; }
+        opacity: 0.8;
+        margin-top: auto; }
     #profile .top-wrapper .title {
       grid-area: title;
       display: flex;
@@ -79,7 +83,8 @@
         position: relative;
         height: 100%;
         margin-right: 10px;
-        display: flex; }
+        display: flex;
+        min-width: 250px; }
         #profile .top-wrapper .ranked-stats .ranked-solo .medal, #profile .top-wrapper .ranked-stats .ranked-flexSR .medal, #profile .top-wrapper .ranked-stats .ranked-flexTT .medal {
           width: 25%;
           height: 100%;
@@ -172,12 +177,58 @@
         grid-area: ranked;
         background-color: white;
         border: 3px solid #f4f4f4;
-        border-radius: 20px; }
+        border-radius: 20px;
+        padding: 20px; }
+        #profile #summoner-content-wrapper .content-general .ranked-panel .rank {
+          color: #f93d7c;
+          margin-top: 5px; }
+        #profile #summoner-content-wrapper .content-general .ranked-panel .league {
+          text-align: right;
+          color: grey; }
+        #profile #summoner-content-wrapper .content-general .ranked-panel .svg-item {
+          width: 100%;
+          height: 36vh;
+          position: relative;
+          display: flex;
+          align-items: center;
+          justify-content: center; }
+          #profile #summoner-content-wrapper .content-general .ranked-panel .svg-item .donut-segment {
+            animation: donut-chart-fill 1s reverse ease-in;
+            -webkit-transform-origin: center;
+                    transform-origin: center;
+            stroke: #3c56f2;
+            -webkit-transform: scaleX(-1);
+                    transform: scaleX(-1);
+            stroke-linecap: round; }
+          #profile #summoner-content-wrapper .content-general .ranked-panel .svg-item .donut-ring {
+            stroke: lightgrey; }
+          #profile #summoner-content-wrapper .content-general .ranked-panel .svg-item .inside-svg {
+            position: absolute;
+            top: 25%;
+            text-align: center; }
+            #profile #summoner-content-wrapper .content-general .ranked-panel .svg-item .inside-svg .total-LP {
+              font-size: 2.5rem;
+              color: #333343; }
+            #profile #summoner-content-wrapper .content-general .ranked-panel .svg-item .inside-svg .win-loss {
+              color: grey;
+              font-size: 1rem;
+              font-weight: normal; }
+            #profile #summoner-content-wrapper .content-general .ranked-panel .svg-item .inside-svg .medal {
+              width: 7vw; }
       #profile #summoner-content-wrapper .content-general .latest-matches-panel {
         grid-area: matches;
         background-color: white;
         border: 3px solid #f4f4f4;
-        border-radius: 20px; }
+        border-radius: 20px;
+        padding: 20px; }
+        #profile #summoner-content-wrapper .content-general .latest-matches-panel .latest-matches {
+          height: 100%;
+          display: grid;
+          grid-template: 1fr 1fr 1fr / 1fr;
+          grid-gap: 10px;
+          padding: 20px 0px; }
+          #profile #summoner-content-wrapper .content-general .latest-matches-panel .latest-matches .match {
+            border: 3px solid #f4f4f4; }
     #profile #summoner-content-wrapper.general .content-general {
       display: grid; }
     #profile #summoner-content-wrapper.general .content-matches, #profile #summoner-content-wrapper.general .content-champions, #profile #summoner-content-wrapper.general .content-achievements {
@@ -371,6 +422,14 @@
   100% {
     -webkit-transform: rotate(360deg);
             transform: rotate(360deg); } }
+
+@-webkit-keyframes donut-chart-fill {
+  to {
+    stroke-dasharray: 0 100; } }
+
+@keyframes donut-chart-fill {
+  to {
+    stroke-dasharray: 0 100; } }
 
 #sidebar {
   grid-area: nav;

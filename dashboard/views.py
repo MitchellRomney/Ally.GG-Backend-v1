@@ -119,8 +119,15 @@ class SummonerViewSet(viewsets.ModelViewSet):
         return SummonerSerializer
 
 class MatchViewSet(viewsets.ModelViewSet):
-    queryset = Match.objects.all().order_by('timestamp')
     serializer_class = MatchListSerializer
+    queryset = Match.objects.all().order_by('timestamp')
+
+    def get_queryset(self):
+        queryset = Match.objects.all().order_by('timestamp')
+        summoner = self.request.query_params.getlist('summoner', None)
+        if summoner is not []:
+            queryset = queryset.filter(Players__summoner__in=summoner).order_by('timestamp')[:10]
+        return queryset
 
     def create(self, request):
         existingMatch = Match.objects.filter(gameId=request.data['gameId'])
