@@ -1,23 +1,17 @@
-from dashboard.models import *
-from dashboard.functions.general import *
 from dashboard.functions.summoners import *
-from django.http import HttpResponse, JsonResponse
-from django.conf import settings
-from django.utils import timezone
-from itertools import islice
-from colorama import Fore, Back, Style
-from datetime import datetime
-import requests, json
+from dashboard.models import *
+from colorama import Fore, Style
 
-def updateChampions(version):
-    championsInfo = fetchDDragonAPI(version, 'data', 'champion.json')
-    for champion, value in championsInfo['data'].items():
 
-        existingChampion = Champion.objects.filter(key=value['key'])
+def update_champions(version):
+    champions_info = fetch_ddragon_api(version, 'data', 'champion.json')
+    for champion, value in champions_info['data'].items():
 
-        if existingChampion.count() == 0: # If champion doesn't exist in database.
+        existing_champion = Champion.objects.filter(key=value['key'])
 
-            newChampion = Champion(
+        if existing_champion.count() == 0:  # If champion doesn't exist in database.
+
+            new_champion = Champion(
                 version=value['version'],
                 champId=value['id'],
                 name=value['name'],
@@ -63,60 +57,60 @@ def updateChampions(version):
                 stats_attackspeed=value['stats']['attackspeed'],
             )
 
-            newChampion.save()
+            new_champion.save()
 
             print(Fore.GREEN + 'New champion added: ' + Style.RESET_ALL + value['name'])
 
-        else: # If champion DOES exist already, update itself.
-            existingChampion = Champion.objects.get(key=value['key'])
+        else:  # If champion DOES exist already, update itself.
+            existing_champion = Champion.objects.get(key=value['key'])
 
-            if existingChampion.version != version:
+            if existing_champion.version != version:
 
-                exsitingChampion.version = value['version']
-                exsitingChampion.champId = value['id']
-                exsitingChampion.name = value['name']
-                exsitingChampion.key = value['key']
-                exsitingChampion.title = value['title']
-                exsitingChampion.blurb = value['blurb']
-                exsitingChampion.info_attack = value['info']['attack']
-                exsitingChampion.info_defense = value['info']['defense']
-                exsitingChampion.info_magic = value['info']['magic']
-                exsitingChampion.info_difficulty = value['info']['difficulty']
+                existing_champion.version = value['version']
+                existing_champion.champId = value['id']
+                existing_champion.name = value['name']
+                existing_champion.key = value['key']
+                existing_champion.title = value['title']
+                existing_champion.blurb = value['blurb']
+                existing_champion.info_attack = value['info']['attack']
+                existing_champion.info_defense = value['info']['defense']
+                existing_champion.info_magic = value['info']['magic']
+                existing_champion.info_difficulty = value['info']['difficulty']
 
                 # Images
-                exsitingChampion.image_full = value['image']['full']
-                exsitingChampion.image_sprite = value['image']['sprite']
-                exsitingChampion.image_group = value['image']['group']
-                exsitingChampion.image_x = value['image']['x']
-                exsitingChampion.image_y = value['image']['y']
-                exsitingChampion.image_w = value['image']['w']
-                exsitingChampion.image_h = value['image']['h']
+                existing_champion.image_full = value['image']['full']
+                existing_champion.image_sprite = value['image']['sprite']
+                existing_champion.image_group = value['image']['group']
+                existing_champion.image_x = value['image']['x']
+                existing_champion.image_y = value['image']['y']
+                existing_champion.image_w = value['image']['w']
+                existing_champion.image_h = value['image']['h']
 
                 # Stats & Info
-                exsitingChampion.tags = value['tags']
-                exsitingChampion.partype = value['partype']
-                exsitingChampion.stats_hp = value['stats']['hp']
-                exsitingChampion.stats_hpperlevel = value['stats']['hpperlevel']
-                exsitingChampion.stats_mp = value['stats']['mp']
-                exsitingChampion.stats_mpperlevel = value['stats']['mpperlevel']
-                exsitingChampion.stats_movespeed = value['stats']['movespeed']
-                exsitingChampion.stats_armor = value['stats']['armor']
-                exsitingChampion.stats_armorperlevel = value['stats']['armorperlevel']
-                exsitingChampion.stats_spellblock = value['stats']['spellblock']
-                exsitingChampion.stats_spellblockperlevel = value['stats']['spellblockperlevel']
-                exsitingChampion.stats_attackrange = value['stats']['attackrange']
-                exsitingChampion.stats_hpregen = value['stats']['hpregen']
-                exsitingChampion.stats_hpregenperlevel = value['stats']['hpregenperlevel']
-                exsitingChampion.stats_mpregen = value['stats']['mpregen']
-                exsitingChampion.stats_mpregenperlevel = value['stats']['mpregenperlevel']
-                exsitingChampion.stats_crit = value['stats']['crit']
-                exsitingChampion.stats_critperlevel = value['stats']['critperlevel']
-                exsitingChampion.stats_attackdamage = value['stats']['attackdamage']
-                exsitingChampion.stats_attackdamageperlevel = value['stats']['attackdamageperlevel']
-                exsitingChampion.stats_attackspeedperlevel = value['stats']['attackspeedperlevel']
-                exsitingChampion.stats_attackspeed = value['stats']['attackspeed']
+                existing_champion.tags = value['tags']
+                existing_champion.partype = value['partype']
+                existing_champion.stats_hp = value['stats']['hp']
+                existing_champion.stats_hpperlevel = value['stats']['hpperlevel']
+                existing_champion.stats_mp = value['stats']['mp']
+                existing_champion.stats_mpperlevel = value['stats']['mpperlevel']
+                existing_champion.stats_movespeed = value['stats']['movespeed']
+                existing_champion.stats_armor = value['stats']['armor']
+                existing_champion.stats_armorperlevel = value['stats']['armorperlevel']
+                existing_champion.stats_spellblock = value['stats']['spellblock']
+                existing_champion.stats_spellblockperlevel = value['stats']['spellblockperlevel']
+                existing_champion.stats_attackrange = value['stats']['attackrange']
+                existing_champion.stats_hpregen = value['stats']['hpregen']
+                existing_champion.stats_hpregenperlevel = value['stats']['hpregenperlevel']
+                existing_champion.stats_mpregen = value['stats']['mpregen']
+                existing_champion.stats_mpregenperlevel = value['stats']['mpregenperlevel']
+                existing_champion.stats_crit = value['stats']['crit']
+                existing_champion.stats_critperlevel = value['stats']['critperlevel']
+                existing_champion.stats_attackdamage = value['stats']['attackdamage']
+                existing_champion.stats_attackdamageperlevel = value['stats']['attackdamageperlevel']
+                existing_champion.stats_attackspeedperlevel = value['stats']['attackspeedperlevel']
+                existing_champion.stats_attackspeed = value['stats']['attackspeed']
 
-                print(Fore.YELLOW + 'Champion updated: ' + Style.RESET_ALL + existingChampion.name)
+                print(Fore.YELLOW + 'Champion updated: ' + Style.RESET_ALL + existing_champion.name)
 
             else:
-                print(Fore.CYAN + 'Champion already up to date: ' + Style.RESET_ALL + existingChampion.name)
+                print(Fore.CYAN + 'Champion already up to date: ' + Style.RESET_ALL + existing_champion.name)

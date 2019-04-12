@@ -1,4 +1,3 @@
-from django.conf import settings
 from dashboard.functions.general import *
 from dashboard.models import *
 
@@ -6,7 +5,7 @@ def global_context(request):
     # User Information
     isProfile = Profile.objects.all().filter(user=request.user) if request.user.is_authenticated == True else None
     profile = Profile.objects.get(user=request.user) if isProfile else None
-    globalSettings = Setting.objects.get(name='Global') if Setting.objects.filter(name='Global').count() == 1 else Setting.objects.create(name='Global', latestversion=getLatestVersion())
+    globalSettings = Setting.objects.get(name='Global') if Setting.objects.filter(name='Global').count() == 1 else Setting.objects.create(name='Global', latestversion=get_latest_version())
 
     return {
     'DEBUG': settings.DEBUG,
