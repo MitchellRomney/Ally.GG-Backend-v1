@@ -139,7 +139,7 @@ class MatchViewSet(viewsets.ModelViewSet):
         deleteAll = request.data['delete_all']
         if deleteAll == True:
             print('Deleting 5000 matches.')
-            Match.objects.filter(pk__in=Match.objects.all().values_list('pk')[:10000]).delete()
+            Match.objects.filter(pk__in=Match.objects.all().values_list('pk')[:5000]).delete()
             print('5000 Matches Deleted')
             return Response('All Matches Deleted')
         existingMatch = Match.objects.filter(gameId=request.data['gameId'])
