@@ -5,7 +5,6 @@ Summoner Stats, Find Allies, Message Friends - {{ block.super }}
 {% endblock title %}
 
 {% block content %}
-<<<<<<< HEAD
     <div id="home">
         <h1>Homepage</h1>
         {% if request.user.is_superuser %}
@@ -28,7 +27,6 @@ Summoner Stats, Find Allies, Message Friends - {{ block.super }}
                 <span>{{ GSETTINGS.latestVersion }}</span>
             </div>
         </div>
-=======
 <div id="home">
   <h1>Homepage</h1>
   {% if request.user.is_superuser %}
@@ -38,7 +36,6 @@ Summoner Stats, Find Allies, Message Friends - {{ block.super }}
     <div class="panel">
       <h2><strong>Total Summoners</strong></h2>
       <span>{{ SUMMONER_COUNT }}</span>
->>>>>>> parent of a001010... BIG: Added Item/SSpell/Rune objects. Added short match history to Summoner page.
     </div>
     <div class="panel">
       <h2><strong>Total Matches</strong></h2>
@@ -51,7 +48,6 @@ Summoner Stats, Find Allies, Message Friends - {{ block.super }}
   </div>
 </div>
 
-<<<<<<< HEAD
     <script>
         var vm = new Vue({
             delimiters: ['[[', ']]'],
@@ -79,7 +75,6 @@ Summoner Stats, Find Allies, Message Friends - {{ block.super }}
             }
         })
     </script>
-=======
 <script>
 var vm = new Vue({
   delimiters: ['[[', ']]'],
@@ -98,5 +93,4 @@ var vm = new Vue({
   }
 })
 </script>
->>>>>>> parent of a001010... BIG: Added Item/SSpell/Rune objects. Added short match history to Summoner page.
 {% endblock content %}
