@@ -27,28 +27,7 @@
                 <span>{{ GSETTINGS.latestVersion }}</span>
             </div>
         </div>
-        <div id="home">
-            <h1>Homepage</h1>
-            {% if request.user.is_superuser %}
-                <button name="action" v-on:click="updateChampions" type="submit">Update Champions</button>
-            {% endif %}
-            <div class="panels">
-                <div class="panel">
-                    <h2><strong>Total Summoners</strong></h2>
-                    <span>{{ SUMMONER_COUNT }}</span>
-                </div>
-                <div class="panel">
-                    <h2><strong>Total Matches</strong></h2>
-                    <span>{{ MATCH_COUNT }}</span>
-                </div>
-                <div class="panel">
-                    <h2><strong>Current Patch</strong></h2>
-                    <span>{{ GSETTINGS.latestVersion }}</span>
-                </div>
-            </div>
-        </div>
     </div>
-
     <script>
         var vm = new Vue({
             delimiters: ['[[', ']]'],
