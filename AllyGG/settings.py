@@ -104,9 +104,6 @@ LOGOUT_REDIRECT_URL = "home"
 RIOT_API_KEY = 'RGAPI-554ce72f-1250-4fa4-9469-68c007c1d633'
 
 REST_FRAMEWORK = {
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
-    ],
     'DEFAULT_PAGINATION_CLASS': 'dashboard.serializers.StandardResultsSetPagination',
     'PAGE_SIZE': 10
 }
