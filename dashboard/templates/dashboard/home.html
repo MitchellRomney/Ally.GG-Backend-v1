@@ -1,7 +1,7 @@
 {% extends 'dashboard/base.html' %}
 
 {% block title %}
-Summoner Stats, Find Allies, Message Friends - {{ block.super }}
+    Summoner Stats, Find Allies, Message Friends - {{ block.super }}
 {% endblock title %}
 
 {% block content %}
@@ -27,26 +27,27 @@ Summoner Stats, Find Allies, Message Friends - {{ block.super }}
                 <span>{{ GSETTINGS.latestVersion }}</span>
             </div>
         </div>
-<div id="home">
-  <h1>Homepage</h1>
-  {% if request.user.is_superuser %}
-  <button name="action" v-on:click="updateChampions" type="submit">Update Champions</button>
-  {% endif %}
-  <div class="panels">
-    <div class="panel">
-      <h2><strong>Total Summoners</strong></h2>
-      <span>{{ SUMMONER_COUNT }}</span>
+        <div id="home">
+            <h1>Homepage</h1>
+            {% if request.user.is_superuser %}
+                <button name="action" v-on:click="updateChampions" type="submit">Update Champions</button>
+            {% endif %}
+            <div class="panels">
+                <div class="panel">
+                    <h2><strong>Total Summoners</strong></h2>
+                    <span>{{ SUMMONER_COUNT }}</span>
+                </div>
+                <div class="panel">
+                    <h2><strong>Total Matches</strong></h2>
+                    <span>{{ MATCH_COUNT }}</span>
+                </div>
+                <div class="panel">
+                    <h2><strong>Current Patch</strong></h2>
+                    <span>{{ GSETTINGS.latestVersion }}</span>
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="panel">
-      <h2><strong>Total Matches</strong></h2>
-      <span>{{ MATCH_COUNT }}</span>
-    </div>
-    <div class="panel">
-      <h2><strong>Current Patch</strong></h2>
-      <span>{{ GSETTINGS.latestVersion }}</span>
-    </div>
-  </div>
-</div>
 
     <script>
         var vm = new Vue({
@@ -75,22 +76,4 @@ Summoner Stats, Find Allies, Message Friends - {{ block.super }}
             }
         })
     </script>
-<script>
-var vm = new Vue({
-  delimiters: ['[[', ']]'],
-  el: '#home',
-  data: {},
-  methods: {
-    updateChampions: function(event) {
-      axios.defaults.xsrfCookieName = 'csrftoken'
-      axios.defaults.xsrfHeaderName = 'X-CSRFToken'
-      axios.post('/api/champions/', {
-        isUpdate: true,
-      }).then(response => {
-        console.log(response);
-      });
-    },
-  }
-})
-</script>
 {% endblock content %}
