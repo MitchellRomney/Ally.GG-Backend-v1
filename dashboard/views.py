@@ -10,8 +10,8 @@ from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect, JsonResponse
 from datetime import datetime
 
-#globalSettings = Setting.objects.get(name='Global') if Setting.objects.filter(
-#    name='Global').count() == 1 else Setting.objects.create(name='Global', latestversion=get_latest_version())
+globalSettings = Setting.objects.get(name='Global') if Setting.objects.filter(
+    name='Global').count() == 1 else Setting.objects.create(name='Global', latestversion=get_latest_version())
 
 
 def home(request):
