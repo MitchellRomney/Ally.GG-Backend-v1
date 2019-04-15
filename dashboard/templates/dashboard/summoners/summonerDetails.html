@@ -2,283 +2,391 @@
 {% load static %}
 
 {% block title %}
-{{ summoner.summonerName }} Summoner Statistics - League of Legends // {{ block.super }}
+    {{ summoner.summonerName }} Summoner Statistics - League of Legends // {{ block.super }}
 {% endblock title %}
 
 {% block content %}
-<div id="errors">
-  <transition name="fade">
-    <div class="error-wrapper" v-if="isError" v-cloak>
-      <div class="alert">
-        <span><i class="fas fa-exclamation-triangle"></i> [[ errorMessage ]]</span>
-      </div>
-    </div>
-  </transition>
-</div>
-<div id="profile" :class="{ error: isError }">
-  <div class="top-wrapper">
-    <div class="avatar-wrapper">
-      <div class="avatar">
-        <img class="resp-img" onerror="this.src='{% static 'dashboard/images/placeholder.png' %}'" :src="'http://ddragon.leagueoflegends.com/cdn/{{ CURRENT_PATCH }}/img/profileicon/{{ summoner.profileIconId }}.png'">
-        <span class="level" v-if="summoner" v-cloak>[[ summoner.summonerLevel ]]</span>
-      </div>
-      <span class="updated">Last Updated: <span v-if="last_updated" v-cloak>[[ last_updated ]]</span></span>
-      <button v-on:click="updateSummoner">Update Summoner</button>
-    </div>
-    <div class="title" v-if="summoner.summonerName" v-cloak>
-      <h1 class="summonerName" :style="'font-size: ' + [[ nameFontSize ]]">[[ summoner.summonerName ]]</h1>
-      {% if summoner.user_profile %}
-      <div class="user">
-        <div class="avatar">
-          <img class="resp-img" onerror="this.src='{% static 'dashboard/images/placeholder.png' %}'" src="{{ summoner.user_profile.avatar }}" alt="{{ summoner.user_profile.user.username }}">
-        </div>
-        <a href="/profiles/{{ summoner.user_profile.user.username }}">{{ summoner.user_profile.first_name }} {{ summoner.user_profile.last_name }}</a>
-      </div>
-      {% endif %}
-    </div>
-    <div class="ranked-stats">
-      <div class="ranked-solo">
-        <div class="medal">
-          <img v-if="soloQ_medal" class="resp-img" :src="'{% static 'dashboard/images/ranked_medals/' %}' + soloQ_medal">
-        </div>
-        <div class="text">
-          <h5 class="faded">Ranked Solo</h5>
-          <h2 class="rank" v-if="summoner" v-cloak>[[ summoner.soloQ_tier ]] [[ summoner.soloQ_rank ]]</h2>
-          <h5 class="winrate" v-if="summoner" v-cloak>[[ summoner.soloQ_leaguePoints ]]LP |<span> [[ summoner.soloQ_wins ]]W / [[ summoner.soloQ_losses ]]L</span></h5>
-        </div>
-      </div>
-      <div class="ranked-flexSR" v-if="summoner.flexSR_tier" v-cloak>
-        <div class="medal">
-          <img v-if="flexSR_medal" class="resp-img" :src="'{% static 'dashboard/images/ranked_medals/' %}' + flexSR_medal">
-        </div>
-        <div class="text">
-          <h5 class="faded">Ranked 5x5 Flex</h5>
-          <h2 class="rank">[[ summoner.flexSR_tier ]] [[ summoner.flexSR_rank ]]</h2>
-          <h5 class="winrate">[[ summoner.flexSR_leaguePoints ]]LP |<span> [[ summoner.flexSR_wins ]]W / [[ summoner.flexSR_losses ]]L</span></h5>
-        </div>
-      </div>
-      <div class="ranked-flexTT" v-if="summoner.flexTT_tier" v-cloak>
-        <div class="medal">
-          <img v-if="flexTT_medal" class="resp-img" :src="'{% static 'dashboard/images/ranked_medals/' %}' + flexTT_medal">
-        </div>
-        <div class="text">
-          <h5 class="faded">Ranked 3x3 Flex</h5>
-          <h2 class="rank">[[ summoner.flexTT_tier ]] [[ summoner.flexTT_rank ]]</h2>
-          <h5 class="winrate">[[ summoner.flexTT_leaguePoints ]]LP |<span> [[ summoner.flexTT_wins ]]W / [[ summoner.flexTT_losses ]]L</span></h5>
-        </div>
-      </div>
-    </div>
-    <ul id="summoner-menu">
-      <li class="general">General</li>
-      <li class="matches">Matches</li>
-      <li class="champions">Champions</li>
-      <li class="achievements">Achievements</li>
-      <span class="selector"></span>
-    </ul>
-  </div>
-  <div id="summoner-content-wrapper" class="general">
-    <div class="content-general">
-      <div class="ranked-panel">
-        <h2>Ranked Solo</h2>
-        <h5 class="rank" v-if="summoner" v-cloak>[[ summoner.soloQ_tier ]] [[ summoner.soloQ_rank ]]</h5>
-        <div class="svg-item" v-if="soloQ_ring_values" v-cloak>
-          <svg width="100%" height="100%" viewBox="0 0 40 40" class="donut">
-            <circle class="donut-hole" cx="20" cy="20" r="15.91549430918954" fill="#fff"></circle>
-            <circle class="donut-ring" cx="20" cy="20" r="15.91549430918954" fill="transparent" stroke-width="3.5"></circle>
-            <circle class="donut-segment" cx="20" cy="20" r="15.91549430918954" fill="transparent" stroke-width="3.5" :stroke-dasharray="soloQ_ring_values" stroke-dashoffset="25"></circle>
-          </svg>
-          <div class="inside-svg">
-            <h2 class="total-LP">[[ summoner.soloQ_leaguePoints ]]LP</h2>
-            <h5 class="win-loss">[[ summoner.soloQ_wins ]]W / [[ summoner.soloQ_losses ]]L</h5>
-            <div class="medal">
-              <img v-if="soloQ_medal" class="resp-img" :src="'{% static 'dashboard/images/ranked_medals/' %}' + soloQ_medal">
+    <div id="errors">
+        <transition name="fade">
+            <div class="error-wrapper" v-if="isError" v-cloak>
+                <div class="alert">
+                    <span><i class="fas fa-exclamation-triangle"></i> [[ errorMessage ]]</span>
+                </div>
             </div>
-          </div>
+        </transition>
+    </div>
+    <div id="profile" :class="{ error: isError }">
+        <div class="top-wrapper">
+            <div class="avatar-wrapper">
+                <div class="avatar">
+                    <img class="resp-img" onerror="this.src='{% static 'dashboard/images/placeholder.png' %}'"
+                         :src="'http://ddragon.leagueoflegends.com/cdn/{{ CURRENT_PATCH }}/img/profileicon/{{ summoner.profileIconId }}.png'">
+                    <span class="level" v-if="summoner" v-cloak>[[ summoner.summonerLevel ]]</span>
+                </div>
+                <span class="updated">Last Updated: <span v-if="last_updated" v-cloak>[[ last_updated ]]</span></span>
+                <button v-on:click="updateSummoner">Update Summoner</button>
+            </div>
+            <div class="title" v-if="summoner.summonerName" v-cloak>
+                <h1 class="summonerName" :style="'font-size: ' + [[ nameFontSize ]]">[[ summoner.summonerName ]]</h1>
+                {% if summoner.user_profile %}
+                    <div class="user">
+                        <div class="avatar">
+                            <img class="resp-img" onerror="this.src='{% static 'dashboard/images/placeholder.png' %}'"
+                                 src="{{ summoner.user_profile.avatar }}"
+                                 alt="{{ summoner.user_profile.user.username }}">
+                        </div>
+                        <a href="/profiles/{{ summoner.user_profile.user.username }}">{{ summoner.user_profile.first_name }} {{ summoner.user_profile.last_name }}</a>
+                    </div>
+                {% endif %}
+            </div>
+            <div class="ranked-stats">
+                <div class="ranked-solo">
+                    <div class="medal">
+                        <img v-if="soloQ_medal" class="resp-img"
+                             :src="'{% static 'dashboard/images/ranked_medals/' %}' + soloQ_medal">
+                    </div>
+                    <div class="text">
+                        <h5 class="faded">Ranked Solo</h5>
+                        <h2 class="rank" v-if="summoner" v-cloak>[[ summoner.soloQ_tier ]] [[ summoner.soloQ_rank
+                            ]]</h2>
+                        <h5 class="winrate" v-if="summoner" v-cloak>[[ summoner.soloQ_leaguePoints ]]LP |<span> [[ summoner.soloQ_wins ]]W / [[ summoner.soloQ_losses ]]L</span>
+                        </h5>
+                    </div>
+                </div>
+                <div class="ranked-flexSR" v-if="summoner.flexSR_tier" v-cloak>
+                    <div class="medal">
+                        <img v-if="flexSR_medal" class="resp-img"
+                             :src="'{% static 'dashboard/images/ranked_medals/' %}' + flexSR_medal">
+                    </div>
+                    <div class="text">
+                        <h5 class="faded">Ranked 5x5 Flex</h5>
+                        <h2 class="rank">[[ summoner.flexSR_tier ]] [[ summoner.flexSR_rank ]]</h2>
+                        <h5 class="winrate">[[ summoner.flexSR_leaguePoints ]]LP |<span> [[ summoner.flexSR_wins ]]W / [[ summoner.flexSR_losses ]]L</span>
+                        </h5>
+                    </div>
+                </div>
+                <div class="ranked-flexTT" v-if="summoner.flexTT_tier" v-cloak>
+                    <div class="medal">
+                        <img v-if="flexTT_medal" class="resp-img"
+                             :src="'{% static 'dashboard/images/ranked_medals/' %}' + flexTT_medal">
+                    </div>
+                    <div class="text">
+                        <h5 class="faded">Ranked 3x3 Flex</h5>
+                        <h2 class="rank">[[ summoner.flexTT_tier ]] [[ summoner.flexTT_rank ]]</h2>
+                        <h5 class="winrate">[[ summoner.flexTT_leaguePoints ]]LP |<span> [[ summoner.flexTT_wins ]]W / [[ summoner.flexTT_losses ]]L</span>
+                        </h5>
+                    </div>
+                </div>
+            </div>
+            <ul id="summoner-menu">
+                <li class="general">General</li>
+                <li class="matches">Matches</li>
+                <li class="champions">Champions</li>
+                <li class="achievements">Achievements</li>
+                <span class="selector"></span>
+            </ul>
         </div>
-        <div class="league" v-if="summoner" v-cloak>
-          [[ summoner.soloQ_leagueName ]]
+        <div id="summoner-content-wrapper" class="general">
+            <div class="content-general">
+                <div class="ranked-panel">
+                    <h2>Ranked Solo</h2>
+                    <h5 class="rank" v-if="summoner" v-cloak>[[ summoner.soloQ_tier ]] [[ summoner.soloQ_rank ]]</h5>
+                    <div class="svg-item" v-if="soloQ_ring_values" v-cloak>
+                        <svg width="100%" height="100%" viewBox="0 0 40 40" class="donut">
+                            <circle class="donut-hole" cx="20" cy="20" r="15.91549430918954" fill="#fff"></circle>
+                            <circle class="donut-ring" cx="20" cy="20" r="15.91549430918954" fill="transparent"
+                                    stroke-width="3.5"></circle>
+                            <circle class="donut-segment" cx="20" cy="20" r="15.91549430918954" fill="transparent"
+                                    stroke-width="3.5" :stroke-dasharray="soloQ_ring_values"
+                                    stroke-dashoffset="25"></circle>
+                        </svg>
+                        <div class="inside-svg">
+                            <h2 class="total-LP">[[ summoner.soloQ_leaguePoints ]]LP</h2>
+                            <h5 class="win-loss">[[ summoner.soloQ_wins ]]W / [[ summoner.soloQ_losses ]]L</h5>
+                            <div class="medal">
+                                <img v-if="soloQ_medal" class="resp-img"
+                                     :src="'{% static 'dashboard/images/ranked_medals/' %}' + soloQ_medal">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="league" v-if="summoner" v-cloak>
+                        [[ summoner.soloQ_leagueName ]]
+                    </div>
+                </div>
+                <div class="latest-matches-panel">
+                    <h2>Latest Matches</h2>
+                    <div class="latest-matches" v-if="!matchLoading" v-cloak>
+                        <div class="match" v-for="player in sortedMatches.slice(0,3)">
+                            <div class="champion-splash">
+                                <img :src="'{% static 'dashboard/images/history_splash/' %}' + [[ player.champion.champId ]] + '_0.png'"
+                                     :alt="[[ player.champion.name ]]"/>
+                                <div class="triangle"></div>
+                                <div class="result-wrapper">
+                                    <span class="result" :class="{ win : player.win == 'W' }">[[ player.win ]]</span>
+                                </div>
+                            </div>
+                            <div class="main-info">
+                                <span class="champion">[[ player.champion.name ]]</span>
+                                <span class="duration">[[ player.match.gameDurationTime ]]</span>
+                                <span class="timeAgo">[[ player.timeAgo ]]</span>
+                            </div>
+                            <div class="player-info">
+                                <span class="level">Level [[ player.champLevel ]]</span>
+                                <span class="kda">[[ player.kills ]]/[[ player.deaths ]]/[[ player.assists ]]</span>
+                                <span class="average">[[ player.kda_average ]] KDA</span>
+                            </div>
+                            <div class="sub-info">
+                                <span class="farm">[[ player.totalMinionsKilled ]] ([[ player.cs_pmin ]]) CS</span>
+                                <span class="kill_p">Kill Participation<br><span>50%</span></span>
+                            </div>
+                            <div class="items">
+                                <div class="trinket">
+                                    <img v-if="player.item6.itemId != 0" :src="'{% static 'dashboard/images/items/' %}' + [[ player.item6.itemId ]] + '.png'" :alt="[[ player.item6.name ]]" />
+                                </div>
+                                <div class="item-1">
+                                    <img v-if="player.item0.itemId != 0" :src="'{% static 'dashboard/images/items/' %}' + [[ player.item0.itemId ]] + '.png'" :alt="[[ player.item0.name ]]" />
+                                </div>
+                                <div class="item-2">
+                                    <img v-if="player.item1.itemId != 0" :src="'{% static 'dashboard/images/items/' %}' + [[ player.item1.itemId ]] + '.png'" :alt="[[ player.item1.name ]]" />
+                                </div>
+                                <div class="item-3">
+                                    <img v-if="player.item2.itemId != 0" :src="'{% static 'dashboard/images/items/' %}' + [[ player.item2.itemId ]] + '.png'" :alt="[[ player.item2.name ]]" />
+                                </div>
+                                <div class="item-4">
+                                    <img v-if="player.item3.itemId != 0" :src="'{% static 'dashboard/images/items/' %}' + [[ player.item3.itemId ]] + '.png'" :alt="[[ player.item3.name ]]" />
+                                </div>
+                                <div class="item-5">
+                                    <img v-if="player.item4.itemId != 0" :src="'{% static 'dashboard/images/items/' %}' + [[ player.item4.itemId ]] + '.png'" :alt="[[ player.item4.name ]]" />
+                                </div>
+                                <div class="item-6">
+                                    <img v-if="player.item5.itemId != 0" :src="'{% static 'dashboard/images/items/' %}' + [[ player.item5.itemId ]] + '.png'" :alt="[[ player.item5.name ]]" />
+                                </div>
+                                <div class="summoner-1">
+                                    <img :src="'{% static 'dashboard/images/spells/' %}' + [[ player.spell1Id.image_full ]]" :alt="[[ player.spell1Id ]]" />
+                                </div>
+                                <div class="summoner-2">
+                                    <img :src="'{% static 'dashboard/images/spells/' %}' + [[ player.spell2Id.image_full ]]" :alt="[[ player.spell2Id ]]" />
+                                </div>
+                                <div class="rune-primary">
+                                    <img :src="'{% static 'dashboard/images/' %}' + [[ player.perk0.icon ]]" :alt="[[ player.perk0.name ]]" />
+                                </div>
+                                <div class="rune-secondary">
+                                    <img :src="'{% static 'dashboard/images/perk-images/Styles/' %}' + [[ player.perkSubStyle ]] + '.png'" :alt="[[ player.perk4.name ]]" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="content-matches">
+                Matches
+            </div>
+            <div class="content-champions">
+                Champions
+            </div>
+            <div class="content-achievements">
+                Achievements
+            </div>
         </div>
-      </div>
-      <div class="latest-matches-panel">
-        <h2>Latest Matches</h2>
-        <div class="latest-matches">
-          <div class="match" v-for="match in match_list.slice(0,3)">
-            [[match.gameId]]
-          </div>
-        </div>
-      </div>
     </div>
-    <div class="content-matches">
-      Matches
-    </div>
-    <div class="content-champions">
-      Champions
-    </div>
-    <div class="content-achievements">
-      Achievements
-    </div>
-  </div>
-</div>
 <script>
-var errorVm = new Vue({
-  delimiters: ['[[', ']]'],
-  el: '#errors',
-  data: {
-    isError: false,
-    errorMessage: '',
-  }
-});
+    var errorVm = new Vue({
+        delimiters: ['[[', ']]'],
+        el: '#errors',
+        data: {
+            isError: false,
+            errorMessage: '',
+        }
+    });
 
-var vm = new Vue({
-  delimiters: ['[[', ']]'],
-  el: '#profile',
-  data: {
-    summoner: [],
-    match_list: [],
-    remaining_games: 0,
-    last_updated: '',
-    soloQ_medal: '',
-    soloQ_ring_values: '',
-    flexSR_medal: '',
-    flexTT_medal: '',
-    matchLoading: true,
-    newGamesLoading: false,
-    playerLoading: true,
-    isEmpty: false,
-    isError: false,
-    nameFontSize: '7rem',
-  },
-  methods: {
-    updateSummoner: async function(event) {
-      axios.defaults.xsrfCookieName = 'csrftoken'
-      axios.defaults.xsrfHeaderName = 'X-CSRFToken'
-      vm.matchLoading = true;
-      vm.playerLoading = true;
-      await axios.get('/api/summoners/{{ summoner.summonerName }}?isUpdate=True')
-      .then(async function (updateResponse) {
-        console.log(updateResponse)
-        if (updateResponse.data['isError']){
-          errorVm.isError = true;
-          errorVm.errorMessage = updateResponse.data['errorMessage'] == 'Rate limit exceeded' ? 'Server under heavy load, try again soon.' : updateResponse.data['errorMessage'];
-          vm.isError = true;
-          vm.matchLoading = false;
-          vm.playerLoading = false;
-          setTimeout(function(){
-            errorVm.isError = false;
-          }, 3000);
-          setTimeout(function(){
-            vm.isError = false;
-          }, 3200);
-          console.log(updateResponse.data)
-        } else {
-          console.log(updateResponse.data);
-          vm.summoner = updateResponse.data['summonerInfo']
-          vm.last_updated = moment(updateResponse.data['summonerInfo'].date_updated).fromNow()
-          vm.playerLoading = false;
-          await axios.get('/api/summoners/{{ summoner.summonerName }}').then(response => {
-            if (updateResponse.data['newMatches'].length == 0){
-              vm.matchLoading = false;
-            } else {
-              console.log(updateResponse.data['newMatches']);
-              vm.remaining_games = updateResponse.data['newMatches'].length;
-              vm.createNewMatches(updateResponse.data['newMatches']);
+    var vm = new Vue({
+        delimiters: ['[[', ']]'],
+        el: '#profile',
+        data: {
+            summoner: [],
+            match_list: [],
+            remaining_games: 0,
+            last_updated: '',
+            soloQ_medal: '',
+            soloQ_ring_values: '',
+            flexSR_medal: '',
+            flexTT_medal: '',
+            matchLoading: true,
+            newGamesLoading: false,
+            playerLoading: true,
+            isEmpty: false,
+            isError: false,
+            nameFontSize: '7rem',
+        },
+        computed: {
+            sortedMatches() {
+                return vm.match_list.sort(function (a, b) {
+                    var x = a['timestamp'];
+                    var y = b['timestamp'];
+                    return ((x > y) ? -1 : ((x < y) ? 1 : 0));
+                });
             }
-          })
+        },
+        methods: {
+            updateSummoner: async function (event) {
+                axios.defaults.xsrfCookieName = 'csrftoken'
+                axios.defaults.xsrfHeaderName = 'X-CSRFToken'
+                vm.matchLoading = true;
+                vm.playerLoading = true;
+                await axios.get('/api/summoners/{{ summoner.summonerName }}?isUpdate=True')
+                    .then(async function (updateResponse) {
+                        console.log(updateResponse)
+                        if (updateResponse.data['isError']) {
+                            errorVm.isError = true;
+                            errorVm.errorMessage = updateResponse.data['errorMessage'] == 'Rate limit exceeded' ? 'Server under heavy load, try again soon.' : updateResponse.data['errorMessage'];
+                            vm.isError = true;
+                            vm.matchLoading = false;
+                            vm.playerLoading = false;
+                            setTimeout(function () {
+                                errorVm.isError = false;
+                            }, 3000);
+                            setTimeout(function () {
+                                vm.isError = false;
+                            }, 3200);
+                            console.log(updateResponse.data)
+                        } else {
+                            console.log(updateResponse.data);
+                            vm.summoner = updateResponse.data['summonerInfo']
+                            vm.last_updated = moment(updateResponse.data['summonerInfo'].date_updated).fromNow()
+                            vm.playerLoading = false;
+                            await axios.get('/api/summoners/{{ summoner.summonerName }}').then(response => {
+                                if (updateResponse.data['newMatches'].length == 0) {
+                                    vm.matchLoading = false;
+                                } else {
+                                    console.log(updateResponse.data['newMatches']);
+                                    vm.remaining_games = updateResponse.data['newMatches'].length;
+                                    vm.createNewMatches(updateResponse.data['newMatches']);
+                                }
+                            })
+                        }
+                    })
+            },
+            getSummonerInfo() {
+                axios.get('/api/summoners/{{ summoner.summonerName }}').then(summonerResponse => {
+                    vm.summoner = summonerResponse.data['summonerInfo']
+                    if (vm.summoner.summonerName.length > 14) {
+                        vm.nameFontSize = '5rem';
+                    } else if (vm.summoner.summonerName.length > 10) {
+                        vm.nameFontSize = '6rem';
+                    }
+                    if (this.summoner.soloQ_rank && this.summoner.soloQ_tier) {
+                        var leftover = 100 - parseInt(vm.summoner.soloQ_leaguePoints);
+                        vm.soloQ_ring_values = vm.summoner.soloQ_leaguePoints + ' ' + leftover;
+                        if (this.summoner.soloQ_rank == 'IV') {
+                            number = '4';
+                        } else if (this.summoner.soloQ_rank == 'III') {
+                            number = '3';
+                        } else if (this.summoner.soloQ_rank == 'II') {
+                            number = '2';
+                        } else {
+                            number = '1';
+                        }
+                        this.soloQ_medal = this.summoner.soloQ_tier.toLowerCase() + '_' + number + '.png';
+                    }
+                    vm.last_updated = summonerResponse.data['summonerInfo'].date_updated ? moment(summonerResponse.data['summonerInfo'].date_updated).fromNow() : false;
+                    vm.playerLoading = false;
+                    axios.get('/api/players/{{ summoner.summonerName }}/?minimal=True').then(playerResponse => {
+                        playerResponse.data.forEach(function (player) {
+                            console.log(player);
+
+                            // Build Time Ago value.
+                            player['timeAgo'] = moment(player['match']['timestamp']).fromNow();
+
+                            // Build Win/Loss value.
+                            player['win'] = player['win'] ? 'W' : 'L';
+
+                            // Build Game Duration value.
+                            let duration_seconds = player['match']['gameDuration'] % 60;
+                            let duration_minutes = (player['match']['gameDuration'] - duration_seconds) / 60;
+                            player['match']['gameDurationTime'] = String(duration_minutes) + 'm ' + String(duration_seconds) + 's ';
+
+                            // Build KDA Average value.
+                            player['kda_average'] = ((player['kills'] + player['assists']) / player['deaths']).toFixed(2);
+
+                            // Build CS/pMin value.
+                            player['cs_pmin'] = (player['totalMinionsKilled'] / (duration_minutes + (duration_seconds / 60))).toFixed(1);
+
+                            // Build Rune Primary/Secondary values.
+                            if (player['perkPrimaryStyle'] == 8000){
+                                player['perkPrimaryStyle'] = '7201_Precision';
+                            } else if (player['perkPrimaryStyle'] == 8100) {
+                                player['perkPrimaryStyle'] = '7200_Domination';
+                            } else if (player['perkPrimaryStyle'] == 8200){
+                                player['perkPrimaryStyle'] = '7202_Sorcery';
+                            } else if (player['perkPrimaryStyle'] == 8300){
+                                player['perkPrimaryStyle'] = '7203_Whimsy';
+                            } else if (player['perkPrimaryStyle'] == 8400){
+                                player['perkPrimaryStyle'] = '7204_Resolve';
+                            }
+
+                            if (player['perkSubStyle'] == 8000){
+                                player['perkSubStyle'] = '7201_Precision';
+                            } else if (player['perkSubStyle'] == 8100) {
+                                player['perkSubStyle'] = '7200_Domination';
+                            } else if (player['perkSubStyle'] == 8200){
+                                player['perkSubStyle'] = '7202_Sorcery';
+                            } else if (player['perkSubStyle'] == 8300){
+                                player['perkSubStyle'] = '7203_Whimsy';
+                            } else if (player['perkSubStyle'] == 8400){
+                                player['perkSubStyle'] = '7204_Resolve';
+                            }
+
+                            vm.match_list.push(player);
+                            vm.matchLoading = false;
+                        });
+                    });
+                })
+            },
+            async createNewMatches(newMatchArray) {
+                try {
+                    await axios.post('/api/matches/', {
+                        'gameId': newMatchArray[0]['gameId'],
+                    }).then(response => {
+                        if (response.data['isError']) {
+                            errorVm.isError = true;
+                            errorVm.errorMessage = response.data['errorMessage'] == 'Rate limit exceeded' ? 'Server under heavy load, try again soon.' : response.data['errorMessage'];
+                            vm.isError = true;
+                            vm.matchLoading = false;
+                            setTimeout(function () {
+                                errorVm.isError = false;
+                            }, 3000);
+                            setTimeout(function () {
+                                vm.isError = false;
+                            }, 3200);
+                            return false;
+                        } else if (response.data['ignore']) {
+                            vm.matchLoading = false;
+                            return false;
+                        } else {
+                            axios.get('/api/players/?match=' + newMatchArray[0]['gameId'] + '&player=' + vm.summoner.summonerId).then(playerResponse => {
+                                response.data['newMatch']['summonerPrime'] = playerResponse.data['results'][0];
+                                response.data['newMatch']['timeAgo'] = moment(response.data['newMatch']['timestamp']).fromNow();
+                                vm.match_list.push(response.data['newMatch']);
+                                newMatchArray.shift();
+                                vm.remaining_games = newMatchArray.length;
+                                vm.matchLoading = false;
+                                if (newMatchArray.length > 0) {
+                                    vm.newGamesLoading = true;
+                                    vm.createNewMatches(newMatchArray);
+                                } else {
+                                    vm.newGamesLoading = false;
+                                }
+                            })
+                        }
+                    });
+                } catch (e) {
+                    console.log(e)
+                }
+            }
+        },
+        mounted() {
+            this.getSummonerInfo()
         }
-      })
-    },
-    getSummonerInfo(){
-      axios.get('/api/summoners/{{ summoner.summonerName }}').then(summonerResponse => {
-        vm.summoner = summonerResponse.data['summonerInfo']
-        if (vm.summoner.summonerName.length > 14){
-          vm.nameFontSize = '5rem';
-        } else if (vm.summoner.summonerName.length > 10){
-          vm.nameFontSize = '6rem';
-        }
-        if (this.summoner.soloQ_rank && this.summoner.soloQ_tier){
-          var leftover = 100 - parseInt(vm.summoner.soloQ_leaguePoints);
-          vm.soloQ_ring_values = vm.summoner.soloQ_leaguePoints + ' ' + leftover;
-          if (this.summoner.soloQ_rank == 'IV'){
-            number = '4';
-          } else if (this.summoner.soloQ_rank == 'III'){
-            number = '3';
-          } else if (this.summoner.soloQ_rank == 'II'){
-            number = '2';
-          } else {
-            number = '1';
-          }
-          this.soloQ_medal = this.summoner.soloQ_tier.toLowerCase() + '_' + number + '.png';
-        }
-        vm.last_updated = summonerResponse.data['summonerInfo'].date_updated ? moment(summonerResponse.data['summonerInfo'].date_updated).fromNow() : false;
-        vm.playerLoading = false;
-        vm.getMatchInfo(summonerResponse.data['summonerInfo']['Matches'], summonerResponse.data['summonerInfo']);
-      })
-    },
-    async getMatchInfo(match_list, summoner=null){
-      const promiseArray = [];
-      match_list.slice(-10).forEach(async function (match) {
-        if(vm.match_list.filter(x => x.gameId == match['gameId']) == 0) {
-          promiseArray.push(axios.get('/api/matches/' + match['gameId']));
-        }
-      });
-      Promise.all(promiseArray).then(results => {
-        results.forEach(async function (result) {
-          await axios.get('/api/players/?match=' + result.data['gameId'] + '&player=' + summoner.summonerId).then(playerResponse => {
-            result.data['summonerPrime'] = playerResponse.data['results'][0]
-            result.data['timeAgo'] = moment(result.data['timestamp']).fromNow();
-            vm.match_list.push(result.data);
-          })
-        })
-        vm.match_list.reverse()
-        vm.matchLoading = false;
-      });
-    },
-    async createNewMatches(newMatchArray){
-      try {
-        await axios.post('/api/matches/', {
-          'gameId': newMatchArray[0]['gameId'],
-        }).then(response => {
-          if (response.data['isError']){
-            errorVm.isError = true;
-            errorVm.errorMessage = response.data['errorMessage'] == 'Rate limit exceeded' ? 'Server under heavy load, try again soon.' : response.data['errorMessage'];
-            vm.isError = true;
-            vm.matchLoading = false;
-            setTimeout(function(){
-              errorVm.isError = false;
-            }, 3000);
-            setTimeout(function(){
-              vm.isError = false;
-            }, 3200);
-            return false;
-          } else if (response.data['ignore']){
-            vm.matchLoading = false;
-            return false;
-          } else {
-            axios.get('/api/players/?match=' + newMatchArray[0]['gameId'] + '&player=' + vm.summoner.summonerId).then(playerResponse => {
-              response.data['newMatch']['summonerPrime'] = playerResponse.data['results'][0];
-              response.data['newMatch']['timeAgo'] = moment(response.data['newMatch']['timestamp']).fromNow();
-              vm.match_list.push(response.data['newMatch']);
-              newMatchArray.shift();
-              vm.remaining_games = newMatchArray.length;
-              vm.matchLoading = false;
-              if(newMatchArray.length > 0){
-                vm.newGamesLoading = true;
-                vm.createNewMatches(newMatchArray);
-              } else {
-                vm.newGamesLoading = false;
-              }
-            })
-          }
-        });
-      } catch (e) {
-        ('catch')
-        console.log(e)
-      }
-    }
-  },
-  mounted() {
-    this.getSummonerInfo()
-  }
-})
+    })
 </script>
 {% endblock content %}

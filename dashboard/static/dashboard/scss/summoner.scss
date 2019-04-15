@@ -86,7 +86,7 @@
           }
         }
         a {
-          margin: auto 0px;
+          margin: auto 0;
           color: grey;
         }
       }
@@ -108,10 +108,10 @@
           width: 25%;
           height: 100%;
           display: flex;
-          margin: 0px 5px;
+          margin: 0 5px;
         }
         .text {
-          padding: 5px 0px;
+          padding: 5px 0;
           display: flex;
           justify-content: center;
           flex-direction: column;
@@ -137,7 +137,7 @@
       border: 3px solid #f4f4f4;
       border-radius: 20px;
       width: 100%;
-      padding: 0px;
+      padding: 0;
       display: grid;
       grid-template: auto / 1fr 1fr 1fr 1fr;
       position: relative;
@@ -162,21 +162,21 @@
         bottom: 0;
         height: 10px;
         background-color: $palette-accent;
-        border-radius: 0px;
+        border-radius: 0;
         border-bottom-left-radius: 20px;
         transition: all 0.25s ease;
-        left: 0%;
+        left: 0;
         &.s_matches {
           left: 25%;
-          border-radius: 0px;
+          border-radius: 0;
         }
         &.s_champions {
           left: 50%;
-          border-radius: 0px;
+          border-radius: 0;
         }
         &.s_achievements {
           left: 75%;
-          border-radius: 0px;
+          border-radius: 0;
           border-bottom-right-radius: 20px;
         }
       }
@@ -284,9 +284,165 @@
           display: grid;
           grid-template: 1fr 1fr 1fr / 1fr;
           grid-gap: 10px;
-          padding: 20px 0px;
+          padding: 20px 0;
           .match {
             border: 3px solid #f4f4f4;
+            display: grid;
+            grid-template: auto / 2fr 1.4fr 0.8fr 1fr 1.5fr;
+            grid-gap: 5px;
+            overflow: hidden;
+            border-radius: 10px;
+            .champion-splash {
+              overflow: hidden;
+              position: relative;
+              img {
+                height: 100%;
+                width: auto;
+              }
+              .triangle {
+                width: 0;
+                height: 0;
+                border-left: 4vw solid transparent;
+                border-right: 0;
+                border-top: 6vw solid white;
+                position: absolute;
+                right: 0;
+                top: 0;
+              }
+              .result-wrapper {
+                position: absolute;
+                right: 0;
+                display: flex;
+                height: 100%;
+                top: 0;
+                align-items: center;
+                font-weight: bold;
+                width: 30%;
+                .result {
+                  width: 100%;
+                  background-color: white;
+                  padding: 2px 40px 2px 10px;
+                  text-align: center;
+                  border-radius: 10px;
+                  font-size: 1.8rem;
+                  color: $palette-primary;
+                  &.win {
+                    color: $palette-accent;
+                  }
+                }
+              }
+            }
+            .main-info {
+              display: flex;
+              text-align: center;
+              flex-direction: column;
+              align-self: center;
+              .champion {
+                color: $palette-primary;
+                font-weight: bold;
+                font-size: 2rem;
+              }
+              .timeAgo {
+                font-size: 0.9rem;
+                color: grey;
+              }
+            }
+            .player-info {
+              display: flex;
+              text-align: center;
+              flex-direction: column;
+              align-self: center;
+              .kda {
+                color: $palette-primary;
+                font-weight: bold;
+                font-size: 1.7rem;
+              }
+              .average {
+                color: grey;
+              }
+            }
+            .sub-info {
+              display: flex;
+              text-align: center;
+              flex-direction: column;
+              align-self: center;
+              .farm {
+                font-size: 1.1rem;
+              }
+              .kill_p {
+                font-size: 0.9rem;
+                span {
+                  font-size: 1.2rem;
+                  font-weight: bold;
+                }
+              }
+            }
+            .items {
+              display: grid;
+              grid-template: 1fr 1fr / repeat(6, 1fr);
+              grid-template-areas:
+                "trinket item1 item2 item3 summoner1 rune-primary"
+                "trinket item4 item5 item6 summoner2 rune-secondary";
+              align-items: center;
+              grid-gap: 2px;
+              img {
+                width: 30px;
+                border-radius: 5px;
+              }
+              .trinket, .item-1, .item-2, .item-3, .item-4, .item-5, .item-6, .summoner-1, .summoner-2 {
+                height: 30px;
+                width: 30px;
+                background-color: lightgrey;
+                border-radius: 5px;
+              }
+              .trinket {
+                grid-area: trinket;
+                margin-right: 5px;
+              }
+              .item-1 {
+                grid-area: item1;
+                align-self: end;
+              }
+              .item-2 {
+                grid-area: item2;
+                align-self: end;
+              }
+              .item-3 {
+                grid-area: item3;
+                align-self: end;
+              }
+              .item-4 {
+                grid-area: item4;
+                align-self: start;
+              }
+              .item-5 {
+                grid-area: item5;
+                align-self: start;
+              }
+              .item-6 {
+                grid-area: item6;
+                align-self: start;
+              }
+              .summoner-1 {
+                grid-area: summoner1;
+                align-self: end;
+                margin-left: 5px;
+              }
+              .summoner-2 {
+                grid-area: summoner2;
+                align-self: start;
+                margin-left: 5px;
+
+              }
+              .rune-primary {
+                grid-area: rune-primary;
+                align-self: end;
+              }
+              .rune-secondary {
+                grid-area: rune-secondary;
+                align-self: start;
+              }
+            }
           }
         }
       }
@@ -325,117 +481,3 @@
     }
   }
 }
-
-// #profile {
-//   display: grid;
-//   grid-template: 250px auto / repeat(12, 1fr);
-//   grid-template-areas:
-//     "summonerInfo summonerInfo summonerInfo summonerInfo summonerInfo summonerInfo summonerInfo summonerInfo summonerInfo summonerInfo summonerInfo summonerInfo"
-//     "matches matches matches matches matches matches matches matches matches matches matches matches";
-//   width: 100%;
-//   #summonerInfo {
-//     grid-area: summonerInfo;
-//     display: flex;
-//     width: 100%;
-//     height: 250px;
-//     position: relative;
-//     &.loading {
-//       justify-content: center;
-//     }
-//     .updateButtons {
-//       text-align: center;
-//     }
-//     .avatar {
-//       height: 128px;
-//     }
-//     .statistics {
-//       margin-left: 50px;
-//     }
-//   }
-//   #matches {
-//     grid-area: matches;
-//     margin-top: 50px;
-//     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
-//     .match {
-//       width: 100%;
-//       height: 100px;
-//       background-color: white;
-//       display: grid;
-//       grid-template: auto / 1fr 2fr 1fr 20px;
-//       grid-gap: 0px 10px;
-//       grid-template-areas:
-//       "stats players champ result";
-//       align-items: center;
-//       background-size: cover;
-//       padding-left: 20px;
-//       color: $palette-primary;
-//       background-blend-mode: difference;
-//       &:last-child {
-//         margin-bottom: 0px;
-//       }
-//       .stats {
-//         grid-area: stats;
-//       }
-//       .champ-info {
-//         grid-area: champ;
-//         display: flex;
-//         justify-content: center;
-//         .avatar {
-//           height: 75px;
-//           width: 75px;
-//           border-radius: 50%;
-//           overflow: hidden;
-//           img {
-//             transform: scale(1.2,1.2);
-//           }
-//         }
-//       }
-//       .players {
-//         grid-area: players;
-//         display: grid;
-//         grid-template: repeat(5, 15px) / repeat(2, 1fr);
-//         grid-auto-flow: column;
-//         font-size: 0.6rem;
-//         padding: 10px;
-//         grid-gap: 0px 10px;
-//         // text-shadow: 0px 0px 20px rgba(0, 0, 0, 1);
-//         .player {
-//           text-align: right;
-//           &:nth-child(n+6){
-//             text-align: left;
-//           }
-//         }
-//         a {
-//           color: $palette-primary;
-//         }
-//       }
-//       .result {
-//         grid-area: result;
-//         height: 100%;
-//         width: 100%;
-//       }
-//       &.win {
-//         background-color: rgba(56, 202, 115, 0.2);
-//         .result {
-//           background-color: rgba(56, 202, 115, 0.8);
-//         }
-//       }
-//       &.lose {
-//         background-color: rgba(213, 84, 83, 0.2);
-//         .result {
-//           background-color: rgba(213, 84, 83, 0.8);
-//         }
-//       }
-//     }
-//   }
-//   .summonerInfo_loader {
-//     position: absolute;
-//     height: 100%;
-//     margin: -40px;
-//   }
-//   .matches_loader {
-//     grid-area: matches;
-//     margin-top: 50px;
-//     display: flex;
-//   }
-// }

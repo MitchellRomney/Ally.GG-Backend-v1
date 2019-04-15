@@ -1,12 +1,10 @@
 from django.contrib import admin
 from django.urls import path, include
 from django.conf.urls import url
-from django.views.generic import TemplateView, RedirectView
 from dashboard import views as dashboard
-from django.contrib.auth.models import User
 from django.conf.urls.static import static
 from django.conf import settings
-from rest_framework import routers, serializers, viewsets
+from rest_framework import routers
 
 router = routers.DefaultRouter()
 router.register(r'users', dashboard.UserViewSet)
@@ -16,26 +14,27 @@ router.register(r'players', dashboard.PlayerViewSet)
 router.register(r'champions', dashboard.ChampionViewSet)
 router.register(r'chat/room', dashboard.ChatRoomViewSet)
 
-
 urlpatterns = [
-    path('', dashboard.home, name='home'),
+                  path('', dashboard.home, name='home'),
 
-    path('profiles/<username>/', dashboard.profile, name='profile'),
+                  path('profiles/<username>/', dashboard.profile, name='profile'),
 
-    path('chat/', dashboard.chat, name='chat'),
+                  path('chat/', dashboard.chat, name='chat'),
 
-    path('summoners/', dashboard.summoners, name='summoners'),
+                  path('summoners/', dashboard.summoners, name='summoners'),
 
-    path('summoners/<summonerName>/', dashboard.summonerDetails, name='summonerDetails'),
+                  path('summoners/<summonerName>/', dashboard.summonerDetails, name='summonerDetails'),
 
-    path('admin/', admin.site.urls),
+                  path('admin/', admin.site.urls),
 
-    path('api/', include(router.urls)),
+                  path('api/', include(router.urls)),
 
-    path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+                  url(r'^api/game/$', dashboard.GameView.as_view()),
 
-    url(r'^s3direct/', include('s3direct.urls')),
+                  path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
 
-    url(r'^accounts/', include('registration.backends.simple.urls')),
+                  url(r'^s3direct/', include('s3direct.urls')),
 
-] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+                  url(r'^accounts/', include('registration.backends.simple.urls')),
+
+              ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

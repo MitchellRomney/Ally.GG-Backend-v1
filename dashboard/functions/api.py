@@ -17,7 +17,8 @@ def fetch_riot_api(server, endpoint, version, path, extra='?'):
 
 def fetch_ddragon_api(version, method, option1, option2=None, language='en_US', ):
     target = ''
-    target += '/' + str(option2) if option2 else None
+    if option2:
+        target += '/' + str(option2)
 
     url = 'https://ddragon.leagueoflegends.com/cdn/' + version + '/' + method + '/' + language + '/' \
           + option1 + target + '?api_key=' + settings.RIOT_API_KEY

@@ -1,15 +1,17 @@
 from django.shortcuts import render
 from dashboard.functions.general import *
-from dashboard.functions.champions import *
+from dashboard.functions.game_data import *
 from rest_framework import viewsets
-from django.shortcuts import get_object_or_404
+from rest_framework.views import APIView
 from rest_framework.response import Response
+from django.shortcuts import get_object_or_404
 from dashboard.serializers import *
 from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect, JsonResponse
 from datetime import datetime
 
-globalSettings = Setting.objects.get(name='Global') if Setting.objects.filter(name='Global').count() == 1 else Setting.objects.create(name='Global', latestversion=get_latest_version())
+globalSettings = Setting.objects.get(name='Global') if Setting.objects.filter(
+    name='Global').count() == 1 else Setting.objects.create(name='Global', latestversion=get_latest_version())
 
 
 def home(request):
@@ -38,7 +40,8 @@ def chat(request):
 
 
 def summonerDetails(request, summonerName):
-    summoner = Summoner.objects.get(summonerName__iexact=summonerName) if Summoner.objects.filter(summonerName__iexact=summonerName).count() == 1 else None
+    summoner = Summoner.objects.get(summonerName__iexact=summonerName) if Summoner.objects.filter(
+        summonerName__iexact=summonerName).count() == 1 else None
     if summoner == None:
         # TODO: Display custom error page.
         return HttpResponseRedirect('/')
@@ -67,7 +70,7 @@ class SummonerViewSet(viewsets.ModelViewSet):
         tier = self.request.query_params.getlist('tier', None)
         order = self.request.query_params.get('order_by', None)
         if tier is not None:
-            queryset = queryset.filter(soloQ_tier__in=tier).order_by('soloQ_tier','-soloQ_leaguePoints')
+            queryset = queryset.filter(soloQ_tier__in=tier).order_by('soloQ_tier', '-soloQ_leaguePoints')
         if order is not None:
             queryset = Summoner.objects.all().order_by('-' + order).exclude(**{order: None})
         return queryset
@@ -76,7 +79,7 @@ class SummonerViewSet(viewsets.ModelViewSet):
         add = add_summoner(request.data['method'], request.data['value'])
         if add['isError'] != True:
             summoner = Summoner.objects.get(summonerId=add['summonerId'])
-            update = update_summoner(summoner.puuid)
+            update_summoner(summoner.puuid)
             return JsonResponse(add, status=201)
         else:
             return JsonResponse(add)
@@ -102,7 +105,7 @@ class SummonerViewSet(viewsets.ModelViewSet):
             for match in latestMatches:
                 existingMatch = Match.objects.filter(gameId=match['gameId'])
                 if existingMatch.count() == 0:
-                    match['timestamp'] = datetime.fromtimestamp(match['timestamp']/1000.)
+                    match['timestamp'] = datetime.fromtimestamp(match['timestamp'] / 1000.)
                     newMatches.append(match)
 
             serializer = SummonerSerializer(updatedSummoner, context={'request': request})
@@ -144,9 +147,8 @@ class MatchViewSet(viewsets.ModelViewSet):
             serializer = MatchSerializer(match, context={'request': request})
 
             if match:
-                matchClean = check_match_integrity(match)
+                check_match_integrity(match)
 
-            response = {}
             response = fetch
             response['newMatch'] = serializer.data
             return Response(response)
@@ -177,22 +179,27 @@ class PlayerViewSet(viewsets.ModelViewSet):
     def retrieve(self, request, pk=None):
         isSummoner = Summoner.objects.all().filter(summonerName__iexact=pk)
         if isSummoner != 0:
+            minimal = self.request.query_params.get('minimal', None)
             summoner = Summoner.objects.get(summonerName__iexact=pk)
-            queryset = Player.objects.filter(summoner=summoner.summonerId).order_by('match__gameId')
-            serializer = MatchPlayerSerializer(queryset, many=True, context={'request': request})
+            queryset = Player.objects.filter(summoner=summoner.summonerId).order_by('-match__timestamp')
+            serializer = MinimalPlayerSerializer(queryset, many=True,
+                                                 context={'request': request}) if minimal else MatchPlayerSerializer(
+                queryset, many=True, context={'request': request})
             return Response(serializer.data)
+
+
+class GameView(APIView):
+    def post(self, request):
+        is_update = request.data['isUpdate']
+        if is_update:
+            response = update_game_data(globalSettings.latestVersion)
+            return Response(response)
+        return Response('Error, there is no endpoint here.')
 
 
 class ChampionViewSet(viewsets.ModelViewSet):
     queryset = Champion.objects.all().order_by('champId')
     serializer_class = ChampionSerializer
-
-    def create(self, request):
-        isUpdate = request.data['isUpdate']
-        if isUpdate == True:
-            response = update_champions(globalSettings.latestVersion)
-            return Response(response)
-        return Response('Error, there is no endpoint here.')
 
     def retrieve(self, request, pk=None):
         queryset = Champion.objects.filter(champId__iexact=pk)
@@ -221,7 +228,7 @@ class ChatRoomViewSet(viewsets.ModelViewSet):
         # Make GET request for both users, if user doesn't exist create it.
         # Make GET request for room that contains ONLY those 2 users, if doesn't exist create it.
         # Create Database object with the RoomID from the Room GET/POST and connect to the 2 user profiles.
-        #return Response({'redirect': True, 'url': 'chat/'})
+        # return Response({'redirect': True, 'url': 'chat/'})
         return Response(True)
 
     def retrieve(self, request, pk=None):
