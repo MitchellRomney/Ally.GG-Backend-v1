@@ -10,6 +10,10 @@ from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect, JsonResponse
 from datetime import datetime
 
+#globalSettings = Setting.objects.get(name='Global') if Setting.objects.filter(
+#    name='Global').count() == 1 else Setting.objects.create(name='Global', latestversion=get_latest_version())
+
+
 def home(request):
     return render(request, 'dashboard/home.html', {
     })
@@ -191,8 +195,6 @@ class PlayerViewSet(viewsets.ModelViewSet):
 
 
 class GameView(APIView):
-    globalSettings = Setting.objects.get(name='Global') if Setting.objects.filter(
-        name='Global').count() == 1 else Setting.objects.create(name='Global', latestversion=get_latest_version())
     def post(self, request):
         is_update = request.data['isUpdate']
         if is_update:
