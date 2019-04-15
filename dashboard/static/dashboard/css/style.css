@@ -70,7 +70,7 @@
           #profile .top-wrapper .title .user .avatar img {
             border-radius: 50%; }
         #profile .top-wrapper .title .user a {
-          margin: auto 0;
+          margin: auto 0px;
           color: grey; }
     #profile .top-wrapper .ranked-stats {
       grid-area: ranked;
@@ -89,9 +89,9 @@
           width: 25%;
           height: 100%;
           display: flex;
-          margin: 0 5px; }
+          margin: 0px 5px; }
         #profile .top-wrapper .ranked-stats .ranked-solo .text, #profile .top-wrapper .ranked-stats .ranked-flexSR .text, #profile .top-wrapper .ranked-stats .ranked-flexTT .text {
-          padding: 5px 0;
+          padding: 5px 0px;
           display: flex;
           justify-content: center;
           flex-direction: column; }
@@ -109,7 +109,7 @@
       border: 3px solid #f4f4f4;
       border-radius: 20px;
       width: 100%;
-      padding: 0;
+      padding: 0px;
       display: grid;
       grid-template: auto / 1fr 1fr 1fr 1fr;
       position: relative; }
@@ -132,19 +132,19 @@
         bottom: 0;
         height: 10px;
         background-color: #f93d7c;
-        border-radius: 0;
+        border-radius: 0px;
         border-bottom-left-radius: 20px;
         transition: all 0.25s ease;
-        left: 0; }
+        left: 0%; }
         #profile .top-wrapper #summoner-menu .selector.s_matches {
           left: 25%;
-          border-radius: 0; }
+          border-radius: 0px; }
         #profile .top-wrapper #summoner-menu .selector.s_champions {
           left: 50%;
-          border-radius: 0; }
+          border-radius: 0px; }
         #profile .top-wrapper #summoner-menu .selector.s_achievements {
           left: 75%;
-          border-radius: 0;
+          border-radius: 0px;
           border-bottom-right-radius: 20px; }
       #profile .top-wrapper #summoner-menu.s_matches .matches {
         opacity: 1;
@@ -226,132 +226,9 @@
           display: grid;
           grid-template: 1fr 1fr 1fr / 1fr;
           grid-gap: 10px;
-          padding: 20px 0; }
+          padding: 20px 0px; }
           #profile #summoner-content-wrapper .content-general .latest-matches-panel .latest-matches .match {
-            border: 3px solid #f4f4f4;
-            display: grid;
-            grid-template: auto / 2fr 1.4fr 0.8fr 1fr 1.5fr;
-            grid-gap: 5px;
-            overflow: hidden;
-            border-radius: 10px; }
-            #profile #summoner-content-wrapper .content-general .latest-matches-panel .latest-matches .match .champion-splash {
-              overflow: hidden;
-              position: relative; }
-              #profile #summoner-content-wrapper .content-general .latest-matches-panel .latest-matches .match .champion-splash img {
-                height: 100%;
-                width: auto; }
-              #profile #summoner-content-wrapper .content-general .latest-matches-panel .latest-matches .match .champion-splash .triangle {
-                width: 0;
-                height: 0;
-                border-left: 4vw solid transparent;
-                border-right: 0;
-                border-top: 6vw solid white;
-                position: absolute;
-                right: 0;
-                top: 0; }
-              #profile #summoner-content-wrapper .content-general .latest-matches-panel .latest-matches .match .champion-splash .result-wrapper {
-                position: absolute;
-                right: 0;
-                display: flex;
-                height: 100%;
-                top: 0;
-                align-items: center;
-                font-weight: bold;
-                width: 30%; }
-                #profile #summoner-content-wrapper .content-general .latest-matches-panel .latest-matches .match .champion-splash .result-wrapper .result {
-                  width: 100%;
-                  background-color: white;
-                  padding: 2px 40px 2px 10px;
-                  text-align: center;
-                  border-radius: 10px;
-                  font-size: 1.8rem;
-                  color: #333343; }
-                  #profile #summoner-content-wrapper .content-general .latest-matches-panel .latest-matches .match .champion-splash .result-wrapper .result.win {
-                    color: #f93d7c; }
-            #profile #summoner-content-wrapper .content-general .latest-matches-panel .latest-matches .match .main-info {
-              display: flex;
-              text-align: center;
-              flex-direction: column;
-              align-self: center; }
-              #profile #summoner-content-wrapper .content-general .latest-matches-panel .latest-matches .match .main-info .champion {
-                color: #333343;
-                font-weight: bold;
-                font-size: 2rem; }
-              #profile #summoner-content-wrapper .content-general .latest-matches-panel .latest-matches .match .main-info .timeAgo {
-                font-size: 0.9rem;
-                color: grey; }
-            #profile #summoner-content-wrapper .content-general .latest-matches-panel .latest-matches .match .player-info {
-              display: flex;
-              text-align: center;
-              flex-direction: column;
-              align-self: center; }
-              #profile #summoner-content-wrapper .content-general .latest-matches-panel .latest-matches .match .player-info .kda {
-                color: #333343;
-                font-weight: bold;
-                font-size: 1.7rem; }
-              #profile #summoner-content-wrapper .content-general .latest-matches-panel .latest-matches .match .player-info .average {
-                color: grey; }
-            #profile #summoner-content-wrapper .content-general .latest-matches-panel .latest-matches .match .sub-info {
-              display: flex;
-              text-align: center;
-              flex-direction: column;
-              align-self: center; }
-              #profile #summoner-content-wrapper .content-general .latest-matches-panel .latest-matches .match .sub-info .farm {
-                font-size: 1.1rem; }
-              #profile #summoner-content-wrapper .content-general .latest-matches-panel .latest-matches .match .sub-info .kill_p {
-                font-size: 0.9rem; }
-                #profile #summoner-content-wrapper .content-general .latest-matches-panel .latest-matches .match .sub-info .kill_p span {
-                  font-size: 1.2rem;
-                  font-weight: bold; }
-            #profile #summoner-content-wrapper .content-general .latest-matches-panel .latest-matches .match .items {
-              display: grid;
-              grid-template: 1fr 1fr/repeat(6, 1fr);
-              grid-template-areas: "trinket item1 item2 item3 summoner1 rune-primary" "trinket item4 item5 item6 summoner2 rune-secondary";
-              align-items: center;
-              grid-gap: 2px; }
-              #profile #summoner-content-wrapper .content-general .latest-matches-panel .latest-matches .match .items img {
-                width: 30px;
-                border-radius: 5px; }
-              #profile #summoner-content-wrapper .content-general .latest-matches-panel .latest-matches .match .items .trinket, #profile #summoner-content-wrapper .content-general .latest-matches-panel .latest-matches .match .items .item-1, #profile #summoner-content-wrapper .content-general .latest-matches-panel .latest-matches .match .items .item-2, #profile #summoner-content-wrapper .content-general .latest-matches-panel .latest-matches .match .items .item-3, #profile #summoner-content-wrapper .content-general .latest-matches-panel .latest-matches .match .items .item-4, #profile #summoner-content-wrapper .content-general .latest-matches-panel .latest-matches .match .items .item-5, #profile #summoner-content-wrapper .content-general .latest-matches-panel .latest-matches .match .items .item-6, #profile #summoner-content-wrapper .content-general .latest-matches-panel .latest-matches .match .items .summoner-1, #profile #summoner-content-wrapper .content-general .latest-matches-panel .latest-matches .match .items .summoner-2 {
-                height: 30px;
-                width: 30px;
-                background-color: lightgrey;
-                border-radius: 5px; }
-              #profile #summoner-content-wrapper .content-general .latest-matches-panel .latest-matches .match .items .trinket {
-                grid-area: trinket;
-                margin-right: 5px; }
-              #profile #summoner-content-wrapper .content-general .latest-matches-panel .latest-matches .match .items .item-1 {
-                grid-area: item1;
-                align-self: end; }
-              #profile #summoner-content-wrapper .content-general .latest-matches-panel .latest-matches .match .items .item-2 {
-                grid-area: item2;
-                align-self: end; }
-              #profile #summoner-content-wrapper .content-general .latest-matches-panel .latest-matches .match .items .item-3 {
-                grid-area: item3;
-                align-self: end; }
-              #profile #summoner-content-wrapper .content-general .latest-matches-panel .latest-matches .match .items .item-4 {
-                grid-area: item4;
-                align-self: start; }
-              #profile #summoner-content-wrapper .content-general .latest-matches-panel .latest-matches .match .items .item-5 {
-                grid-area: item5;
-                align-self: start; }
-              #profile #summoner-content-wrapper .content-general .latest-matches-panel .latest-matches .match .items .item-6 {
-                grid-area: item6;
-                align-self: start; }
-              #profile #summoner-content-wrapper .content-general .latest-matches-panel .latest-matches .match .items .summoner-1 {
-                grid-area: summoner1;
-                align-self: end;
-                margin-left: 5px; }
-              #profile #summoner-content-wrapper .content-general .latest-matches-panel .latest-matches .match .items .summoner-2 {
-                grid-area: summoner2;
-                align-self: start;
-                margin-left: 5px; }
-              #profile #summoner-content-wrapper .content-general .latest-matches-panel .latest-matches .match .items .rune-primary {
-                grid-area: rune-primary;
-                align-self: end; }
-              #profile #summoner-content-wrapper .content-general .latest-matches-panel .latest-matches .match .items .rune-secondary {
-                grid-area: rune-secondary;
-                align-self: start; }
+            border: 3px solid #f4f4f4; }
     #profile #summoner-content-wrapper.general .content-general {
       display: grid; }
     #profile #summoner-content-wrapper.general .content-matches, #profile #summoner-content-wrapper.general .content-champions, #profile #summoner-content-wrapper.general .content-achievements {

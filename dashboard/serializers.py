@@ -1,6 +1,11 @@
+from django.contrib.auth.models import User
 from dashboard.models import *
+from dashboard.serializers import *
 from rest_framework import serializers
 from rest_framework.pagination import PageNumberPagination
+from datetime import datetime
+from django.utils import timezone
+import time, timeago
 
 class MatchSummonerSerializer(serializers.ModelSerializer):
     class Meta:
@@ -75,100 +80,14 @@ class ChampionSerializer(serializers.ModelSerializer):
             'stats_attackspeed',
         )
 
-class MinimalChampionSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Champion
-        fields = (
-            'name',
-            'champId',
-            'key',
-            'title',
-            'blurb',
-
-            # Images
-            'image_full',
-            'image_sprite',
-        )
-
-class MinimalMatchSerializer(serializers.ModelSerializer):
-    queue = serializers.CharField(source='get_queueId_display')
-    season = serializers.CharField(source='get_seasonId_display')
-    map = serializers.CharField(source='get_mapId_display')
-
-    class Meta:
-        model = Match
-        fields = (
-            'platformId',
-            'gameId',
-            'queue',
-            'season',
-            'map',
-            'gameMode',
-            'gameType',
-            'gameVersion',
-            'gameDuration',
-            'timestamp',
-            'date_created',
-        )
-class MinimalSummonerSpellSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = SummonerSpell
-        fields = (
-            'key',
-            'name',
-            'image_full',
-            'description',
-        )
-
-
-class MinimalRuneSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Rune
-        fields = (
-            'runeId',
-            'name',
-            'icon',
-            'shortDesc',
-        )
-
-
-class MinimalItemSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Item
-        fields = (
-            'itemId',
-            'name',
-            'image_full',
-            'description',
-        )
-
-
 class MinimalPlayerSerializer(serializers.ModelSerializer):
-    match = MinimalMatchSerializer()
-    gameId = serializers.ReadOnlyField(source='match.gameId')
-    champion = MinimalChampionSerializer()
-    spell1Id = MinimalSummonerSpellSerializer()
-    spell2Id = MinimalSummonerSpellSerializer()
-    item0 = MinimalItemSerializer()
-    item1 = MinimalItemSerializer()
-    item2 = MinimalItemSerializer()
-    item3 = MinimalItemSerializer()
-    item4 = MinimalItemSerializer()
-    item5 = MinimalItemSerializer()
-    item6 = MinimalItemSerializer()
-    perk0 = MinimalRuneSerializer()
-    perk1 = MinimalRuneSerializer()
-    perk2 = MinimalRuneSerializer()
-    perk3 = MinimalRuneSerializer()
-    perk4 = MinimalRuneSerializer()
-    perk5 = MinimalRuneSerializer()
-
+    
     class Meta:
         model = Player
         fields = (
             'match',
             'gameId',
-            'win',
+            'won',
             'kills',
             'deaths',
             'assists',
@@ -185,14 +104,6 @@ class MinimalPlayerSerializer(serializers.ModelSerializer):
             'item4',
             'item5',
             'item6',
-            'perk0',
-            'perk1',
-            'perk2',
-            'perk3',
-            'perk4',
-            'perk5',
-            'perkPrimaryStyle',
-            'perkSubStyle',
         )
 
 class MatchPlayerSerializer(serializers.ModelSerializer):

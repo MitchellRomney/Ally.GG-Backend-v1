@@ -1,5 +1,5 @@
 from django.contrib import admin
-from django.contrib.auth.models import Group
+from django.contrib.auth.models import Group, User
 from dashboard.models import *
 
 class TeamInline(admin.TabularInline):
@@ -63,17 +63,6 @@ class ChatRoomAdmin(admin.ModelAdmin):
     model = ChatRoom
     list_display = ('roomId', 'date_created', 'date_updated',)
 
-class RuneAdmin(admin.ModelAdmin):
-    model = Rune
-    list_display = ('name','version')
-
-class ItemAdmin(admin.ModelAdmin):
-    model = Item
-    list_display = ('name', 'version')
-
-class SummonerSpellAdmin(admin.ModelAdmin):
-    model = SummonerSpell
-    list_display = ('name', 'version')
 
 admin.site.register(Profile, ProfileAdmin)
 admin.site.register(Summoner, SummonerAdmin)
@@ -83,7 +72,4 @@ admin.site.register(Player, PlayerAdmin)
 admin.site.register(Champion, ChampionAdmin)
 admin.site.register(Setting, SettingAdmin)
 admin.site.register(ChatRoom, ChatRoomAdmin)
-admin.site.register(Rune, RuneAdmin)
-admin.site.register(Item, ItemAdmin)
-admin.site.register(SummonerSpell, SummonerSpellAdmin)
 admin.site.unregister(Group)
