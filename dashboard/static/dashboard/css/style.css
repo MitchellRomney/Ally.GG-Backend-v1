@@ -643,6 +643,15 @@
                 transform: rotate(90deg);
         right: 17px; }
 
+#home .buttons {
+  display: flex;
+  justify-content: space-between; }
+  #home .buttons .warning {
+    background-color: #D55453;
+    color: white;
+    font-weight: bold;
+    border-radius: 5px; }
+
 #home .panels {
   display: grid;
   grid-template: auto/repeat(3, 1fr);

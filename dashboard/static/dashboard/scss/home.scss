@@ -1,4 +1,14 @@
 #home {
+  .buttons {
+    display: flex;
+    justify-content: space-between;
+    .warning {
+      background-color: #D55453;
+      color: white;
+      font-weight: bold;
+      border-radius: 5px;
+    }
+  }
   .panels {
     display: grid;
     grid-template: auto / repeat(3, 1fr);

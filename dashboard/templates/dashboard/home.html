@@ -8,7 +8,10 @@
     <div id="home">
         <h1>Homepage</h1>
         {% if request.user.is_superuser %}
-            <button name="action" v-on:click="update_game_data" type="submit">Update Game Data</button>
+            <div class="buttons">
+                <button name="action" v-on:click="update_game_data" type="submit">Update Game Data</button>
+                <button name="action" v-on:click="deleteMatches" type="submit" class="warning">Delete Matches</button>
+            </div>
         {% endif %}
         <div class="panels">
             <div class="panel">
@@ -37,6 +40,15 @@
                     axios.defaults.xsrfHeaderName = 'X-CSRFToken';
                     axios.post('/api/game/', {
                         isUpdate: true,
+                    }).then(response => {
+                        console.log(response);
+                    });
+                },
+                deleteMatches: function (event) {
+                    axios.defaults.xsrfCookieName = 'csrftoken';
+                    axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+                    axios.post('/api/matches/', {
+                        delete_all: true,
                     }).then(response => {
                         console.log(response);
                     });
