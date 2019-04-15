@@ -136,7 +136,7 @@ class MatchViewSet(viewsets.ModelViewSet):
         return queryset
 
     def create(self, request):
-        deleteAll = request.data['delete_all']
+        deleteAll = request.data['delete_all'] if 'delete_all' in request.data else None
         if deleteAll == True:
             print('Deleting 5000 matches.')
             Match.objects.filter(pk__in=Match.objects.all().values_list('pk')[:5000]).delete()
