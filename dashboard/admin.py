@@ -23,7 +23,7 @@ class MatchInline(admin.TabularInline):
 
 class SummonerAdmin(admin.ModelAdmin):
     model = Summoner
-    list_display = ('summonerName', 'date_created', 'date_updated')
+    list_display = ('summonerName', 'soloQ_tier', 'flexTT_tier', 'flexSR_tier', 'date_created', 'date_updated')
     readonly_fields = ('summonerId', 'accountId', 'puuid', 'date_created', 'date_updated')
     inlines = [
         MatchInline

@@ -1,44 +1,52 @@
 from __future__ import absolute_import, unicode_literals
 from celery import task
 from dashboard.functions.general import *
+from dashboard.functions.game_data import *
 from django.shortcuts import get_object_or_404
 
 @task
-def task_updateSummoners():
+def task_update_summoners():
+    champions = Champion.objects.all()
+    runes = Rune.objects.all()
+    summoner_spells = SummonerSpell.objects.all()
+    items = Item.objects.all()
+    ranked_tiers = RankedTier.objects.all()
+
+    if champions.count() == 0 or runes.count() == 0 or summoner_spells.count() == 0 or items.count() == 0 \
+            or ranked_tiers.count() == 0:
+        update_game_data(get_latest_version())
+
     summoner = Summoner.objects.filter(date_updated=None).order_by('date_created')[:1].get()
 
     update_summoner(summoner.puuid)
 
-    latestMatches = fetch_match_list(summoner.puuid)
+    latest_matches = fetch_match_list(summoner.puuid)
 
-    if 'isError' in latestMatches:
-        if latestMatches['isError']:
+    if 'isError' in latest_matches:
+        if latest_matches['isError']:
             return None
 
-    for match in latestMatches:
-        existingMatch = Match.objects.filter(gameId=match['gameId'])
-        if existingMatch.count() == 0:
-            fetch = fetch_match(match['gameId'])
-
+    for match in latest_matches:
+        existing_match = Match.objects.filter(gameId=match['gameId'])
+        if existing_match.count() == 0:
             queryset = Match.objects.filter(gameId=match['gameId'])
-            newMatch = get_object_or_404(queryset, gameId=match['gameId'])
-
-            if newMatch:
-                matchClean = check_match_integrity(newMatch)
+            new_match = get_object_or_404(queryset, gameId=match['gameId'])
+            if new_match:
+                check_match_integrity(new_match)
 
     return None
 
 @task
-def task_updateVersion():
-    globalSettings = Setting.objects.get(name='Global') if Setting.objects.filter(name='Global').count() == 1 else None
-    if globalSettings:
-        latestVersion = get_latest_version()
-        if latestVersion != globalSettings.latestVersion:
-            globalSettings.latestVersion = latestVersion
-            globalSettings.save()
-            print(Fore.GREEN + 'New Version: ' + Style.RESET_ALL + latestVersion)
+def task_update_version():
+    global_settings = Setting.objects.get(name='Global') if Setting.objects.filter(name='Global').count() == 1 else None
+    if global_settings:
+        latest_version = get_latest_version()
+        if latest_version != global_settings.latestVersion:
+            global_settings.latestVersion = latest_version
+            global_settings.save()
+            print(Fore.GREEN + 'New Version: ' + Style.RESET_ALL + latest_version)
         else:
             print(Fore.YELLOW + 'Current Version up to date.')
     else:
-        globalSettings = Setting.objects.create(name='Global', latestVersion=get_latest_version())
-        print(Fore.GREEN + 'New Version: ' + Style.RESET_ALL + globalSettings.latestVersion)
+        global_settings = Setting.objects.create(name='Global', latestVersion=get_latest_version())
+        print(Fore.GREEN + 'New Version: ' + Style.RESET_ALL + global_settings.latestVersion)

@@ -29,6 +29,9 @@ class RankedTier(models.Model):
     name = models.CharField(max_length=255, blank=False)
     order = models.IntegerField()
 
+    def __str__(self):
+        return self.name
+
 class ChatRoom(models.Model):
     members = models.ManyToManyField('Profile', related_name='Members')
     roomId = models.CharField(max_length=255, blank=False)
@@ -198,10 +201,10 @@ class Item(models.Model):
 
 class Champion(models.Model):
     # General
-    version = models.CharField(max_length=255, blank=False) # What version did we gather this data from (should be latest).
-    champId = models.CharField(max_length=255, blank=False) # Basically champion name without spaces and extras.
+    version = models.CharField(max_length=255, blank=False)  # Champion updated version (should be latest).
+    champId = models.CharField(max_length=255, blank=False)  # Basically champion name without spaces and extras.
     name = models.CharField(max_length=255, blank=False)
-    key = models.CharField(max_length=255, blank=False) # Numerical ID
+    key = models.CharField(max_length=255, blank=False)  # Numerical ID
     title = models.CharField(max_length=255, blank=False)
     blurb = models.TextField(max_length=255, blank=False)
     info_attack = models.BigIntegerField(blank=False)
@@ -255,7 +258,7 @@ class Summoner(models.Model):
     # IDs
     user_profile = models.ForeignKey(Profile, related_name="Summoners", on_delete=models.SET_NULL, null=True, blank=True)
     summonerName = models.CharField(max_length=255, blank=False)
-    summonerId = models.CharField(max_length=255, primary_key=True, unique=True, blank=False) # Same as Id in some cases.
+    summonerId = models.CharField(max_length=255, primary_key=True, unique=True, blank=False)  # 'ID' sometimes.
     puuid = models.CharField(max_length=255, unique=True, blank=False)
     accountId = models.CharField(max_length=255, unique=True, blank=False)
 
@@ -264,22 +267,11 @@ class Summoner(models.Model):
     profileIconId = models.BigIntegerField(blank=True, default=1)
     summonerLevel = models.CharField(max_length=255, blank=True)
 
-    TIERS = (
-        ('CHALLENGER', 'Challenger'),
-        ('GRANDMASTER', 'Grandmaster'),
-        ('MASTER', 'Master'),
-        ('DIAMOND', 'Diamond'),
-        ('PLATINUM', 'Platinum'),
-        ('GOLD', 'Gold'),
-        ('SILVER', 'Silver'),
-        ('BRONZE', 'Bronze'),
-        ('IRON', 'Iron'),
-    )
-
     # SoloQ
     soloQ_leagueId = models.CharField(max_length=255, blank=True)
     soloQ_leagueName = models.CharField(max_length=255, blank=True)
-    soloQ_tier = models.CharField(max_length=20, choices=TIERS, null=True, blank=True)
+    soloQ_tier = models.ForeignKey(RankedTier, related_name="Summoners_SoloQ", on_delete=models.SET_NULL,
+                                   null=True, blank=True, default=None)
     soloQ_hotStreak = models.BooleanField(default=False)
     soloQ_wins = models.BigIntegerField(null=True, blank=True, default=0)
     soloQ_losses = models.BigIntegerField(null=True, blank=True, default=0)
@@ -292,7 +284,8 @@ class Summoner(models.Model):
     # Flex SR
     flexSR_leagueId = models.CharField(max_length=255, blank=True)
     flexSR_leagueName = models.CharField(max_length=255, blank=True)
-    flexSR_tier = models.CharField(max_length=20, choices=TIERS, null=True, blank=True)
+    flexSR_tier = models.ForeignKey(RankedTier, related_name="Summoners_FlexSR", on_delete=models.SET_NULL,
+                                   null=True, blank=True, default=None)
     flexSR_hotStreak = models.BooleanField(default=False)
     flexSR_wins = models.BigIntegerField(null=True, blank=True, default=0)
     flexSR_losses = models.BigIntegerField(null=True, blank=True, default=0)
@@ -305,7 +298,8 @@ class Summoner(models.Model):
     # Flex TT
     flexTT_leagueId = models.CharField(max_length=255, blank=True)
     flexTT_leagueName = models.CharField(max_length=255, blank=True)
-    flexTT_tier = models.CharField(max_length=20, choices=TIERS, null=True, blank=True)
+    flexTT_tier = models.ForeignKey(RankedTier, related_name="Summoners_FlexTT", on_delete=models.SET_NULL,
+                                   null=True, blank=True, default=None)
     flexTT_hotStreak = models.BooleanField(default=False)
     flexTT_wins = models.BigIntegerField(null=True, blank=True, default=0)
     flexTT_losses = models.BigIntegerField(null=True, blank=True, default=0)

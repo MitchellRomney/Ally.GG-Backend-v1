@@ -38,12 +38,12 @@ S3DIRECT_DESTINATIONS = {
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
 CELERY_BEAT_SCHEDULE = {
-    'task_updateSummoners': {
-        'task': 'dashboard.tasks.task_updateSummoners',
+    'task_update_summoners': {
+        'task': 'dashboard.tasks.task_update_summoners',
         'schedule': crontab(minute='*/5'),
     },
-    'task_updateVersion': {
-        'task': 'dashboard.tasks.task_updateVersion',
+    'task_update_version': {
+        'task': 'dashboard.tasks.task_update_version',
         'schedule': crontab(minute='*/5'),
     },
 }

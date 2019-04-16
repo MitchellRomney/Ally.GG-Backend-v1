@@ -87,7 +87,7 @@ def update_summoner(puuid):
                 if summoner.soloQ_leagueId != queue['leagueId'] else summoner.soloQ_leagueId
             summoner.soloQ_leagueName = queue['leagueName'] \
                 if summoner.soloQ_leagueName != queue['leagueName'] else summoner.soloQ_leagueName
-            summoner.soloQ_tier = queue['tier'] \
+            summoner.soloQ_tier = RankedTier.objects.get(key=queue['tier']) \
                 if summoner.soloQ_tier != queue['tier'] else summoner.soloQ_tier
             summoner.soloQ_hotStreak = queue['hotStreak'] \
                 if summoner.soloQ_hotStreak != queue['hotStreak'] else summoner.soloQ_hotStreak
@@ -110,7 +110,7 @@ def update_summoner(puuid):
                 if summoner.flexSR_leagueId != queue['leagueId'] else summoner.flexSR_leagueId
             summoner.flexSR_leagueName = queue['leagueName'] \
                 if summoner.flexSR_leagueName != queue['leagueName'] else summoner.flexSR_leagueName
-            summoner.flexSR_tier = queue['tier'] \
+            summoner.flexSR_tier = RankedTier.objects.get(key=queue['tier']) \
                 if summoner.flexSR_tier != queue['tier'] else summoner.flexSR_tier
             summoner.flexSR_hotStreak = queue['hotStreak'] \
                 if summoner.flexSR_hotStreak != queue['hotStreak'] else summoner.flexSR_hotStreak
@@ -133,7 +133,7 @@ def update_summoner(puuid):
                 if summoner.flexTT_leagueId != queue['leagueId'] else summoner.flexTT_leagueId
             summoner.flexTT_leagueName = queue['leagueName'] \
                 if summoner.flexTT_leagueName != queue['leagueName'] else summoner.flexTT_leagueName
-            summoner.flexTT_tier = queue['tier'] \
+            summoner.flexTT_tier = RankedTier.objects.get(key=queue['tier']) \
                 if summoner.flexTT_tier != queue['tier'] else summoner.flexTT_tier
             summoner.flexTT_hotStreak = queue['hotStreak'] \
                 if summoner.flexTT_hotStreak != queue['hotStreak'] else summoner.flexTT_hotStreak
