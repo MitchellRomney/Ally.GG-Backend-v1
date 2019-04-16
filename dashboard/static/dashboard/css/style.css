@@ -230,7 +230,7 @@
           #profile #summoner-content-wrapper .content-general .latest-matches-panel .latest-matches .match {
             border: 3px solid #f4f4f4;
             display: grid;
-            grid-template: auto / 2fr 1.4fr 0.8fr 1fr 1.5fr;
+            grid-template: auto / 2.2fr 1.4fr 0.8fr 1fr 1.5fr;
             grid-gap: 5px;
             overflow: hidden;
             border-radius: 10px; }
@@ -243,7 +243,7 @@
               #profile #summoner-content-wrapper .content-general .latest-matches-panel .latest-matches .match .champion-splash .triangle {
                 width: 0;
                 height: 0;
-                border-left: 4vw solid transparent;
+                border-left: 3vw solid transparent;
                 border-right: 0;
                 border-top: 6vw solid white;
                 position: absolute;
@@ -348,10 +348,12 @@
                 margin-left: 5px; }
               #profile #summoner-content-wrapper .content-general .latest-matches-panel .latest-matches .match .items .rune-primary {
                 grid-area: rune-primary;
-                align-self: end; }
+                align-self: end;
+                margin: 0 5px; }
               #profile #summoner-content-wrapper .content-general .latest-matches-panel .latest-matches .match .items .rune-secondary {
                 grid-area: rune-secondary;
-                align-self: start; }
+                align-self: start;
+                margin: 0 5px; }
     #profile #summoner-content-wrapper.general .content-general {
       display: grid; }
     #profile #summoner-content-wrapper.general .content-matches, #profile #summoner-content-wrapper.general .content-champions, #profile #summoner-content-wrapper.general .content-achievements {

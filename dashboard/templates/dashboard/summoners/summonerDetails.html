@@ -221,8 +221,8 @@
         computed: {
             sortedMatches() {
                 return vm.match_list.sort(function (a, b) {
-                    var x = a['timestamp'];
-                    var y = b['timestamp'];
+                    var x = a['match']['timestamp'];
+                    var y = b['match']['timestamp'];
                     return ((x > y) ? -1 : ((x < y) ? 1 : 0));
                 });
             }
@@ -296,6 +296,8 @@
 
                             // Build Time Ago value.
                             player['timeAgo'] = moment(player['match']['timestamp']).fromNow();
+
+                            player['match']['timestamp'] = new Date(player['match']['timestamp']);
 
                             // Build Win/Loss value.
                             player['win'] = player['win'] ? 'W' : 'L';

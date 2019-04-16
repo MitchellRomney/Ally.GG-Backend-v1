@@ -1,6 +1,7 @@
 ### Custom ###
 *.sqlite3
 celerybeat-schedule.db
+*.psd
 
 ### Django ###
 *.log

@@ -122,10 +122,6 @@ def fetch_match(game_id):
 
             for participant in match_info['participants']:
                 if participant['participantId'] == participant_info['participantId']:
-                    champion = Champion.objects.get(key=participant['championId'])
-
-                    summoner = Summoner.objects.get(summonerId=participant_info['player']['summonerId'])
-
                     new_player = Player(
                         # Key IDs & Participant Identity
                         match=new_match,
@@ -133,14 +129,14 @@ def fetch_match(game_id):
                         platformId=participant_info['player']['platformId'],
                         matchHistoryUri=participant_info['player']['matchHistoryUri'],
                         participantId=participant_info['participantId'],
-                        summoner=summoner,
+                        summoner=Summoner.objects.get(summonerId=participant_info['player']['summonerId']),
 
                         team=participant_team,
 
                         # General Player Information
-                        spell1Id=participant['spell1Id'],
-                        spell2Id=participant['spell2Id'],
-                        champion=champion,
+                        spell1Id=SummonerSpell.objects.get(key=participant['spell1Id']),
+                        spell2Id=SummonerSpell.objects.get(key=participant['spell2Id']),
+                        champion=Champion.objects.get(key=participant['championId']),
 
                         # Minions
                         totalMinionsKilled=participant['stats']['totalMinionsKilled'],
@@ -268,13 +264,13 @@ def fetch_match(game_id):
                         totalScoreRank=participant['stats']['totalScoreRank'],
 
                         # Items
-                        item0=participant['stats']['item0'],
-                        item1=participant['stats']['item1'],
-                        item2=participant['stats']['item2'],
-                        item3=participant['stats']['item3'],
-                        item4=participant['stats']['item4'],
-                        item5=participant['stats']['item5'],
-                        item6=participant['stats']['item6'],
+                        item0=Item.objects.get(itemId=participant['stats']['item0']),
+                        item1=Item.objects.get(itemId=participant['stats']['item1']),
+                        item2=Item.objects.get(itemId=participant['stats']['item2']),
+                        item3=Item.objects.get(itemId=participant['stats']['item3']),
+                        item4=Item.objects.get(itemId=participant['stats']['item4']),
+                        item5=Item.objects.get(itemId=participant['stats']['item5']),
+                        item6=Item.objects.get(itemId=participant['stats']['item6']),
 
                         # Other
                         longestTimeSpentLiving=participant['stats']['longestTimeSpentLiving'],

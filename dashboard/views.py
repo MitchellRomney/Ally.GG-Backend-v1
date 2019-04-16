@@ -136,12 +136,12 @@ class MatchViewSet(viewsets.ModelViewSet):
         return queryset
 
     def create(self, request):
-        deleteAll = request.data['delete_all'] if 'delete_all' in request.data else None
-        if deleteAll == True:
-            print('Deleting 5000 matches.')
-            Match.objects.filter(pk__in=Match.objects.all().values_list('pk')[:5000]).delete()
-            print('5000 Matches Deleted')
-            return Response('All Matches Deleted')
+        if 'delete_all' in request.data:
+            if request.data['delete_all'] == True:
+                print('Deleting 5000 matches.')
+                Match.objects.filter(pk__in=Match.objects.all().values_list('pk')[:5000]).delete()
+                print('5000 Matches Deleted')
+                return Response('All Matches Deleted')
         existingMatch = Match.objects.filter(gameId=request.data['gameId'])
         if existingMatch.count() == 0:
             fetch = fetch_match(request.data['gameId'])
