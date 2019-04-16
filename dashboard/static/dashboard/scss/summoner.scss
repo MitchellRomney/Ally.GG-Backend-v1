@@ -288,7 +288,7 @@
           .match {
             border: 3px solid #f4f4f4;
             display: grid;
-            grid-template: auto / 2.2fr 1.4fr 0.8fr 1fr 1.5fr;
+            grid-template: auto / 2.2fr 1fr 0.8fr 1fr 1.5fr;
             grid-gap: 5px;
             overflow: hidden;
             border-radius: 10px;
@@ -340,7 +340,7 @@
               .champion {
                 color: $palette-primary;
                 font-weight: bold;
-                font-size: 2rem;
+                font-size: 1.2rem;
               }
               .timeAgo {
                 font-size: 0.9rem;
@@ -393,11 +393,11 @@
                 height: 30px;
                 width: 30px;
                 background-color: lightgrey;
-                border-radius: 5px;
+                border-radius: 4px;
               }
               .trinket {
                 grid-area: trinket;
-                margin-right: 5px;
+                margin-right: 4px;
               }
               .item-1 {
                 grid-area: item1;
@@ -426,23 +426,23 @@
               .summoner-1 {
                 grid-area: summoner1;
                 align-self: end;
-                margin-left: 5px;
+                margin-left: 4px;
               }
               .summoner-2 {
                 grid-area: summoner2;
                 align-self: start;
-                margin-left: 5px;
+                margin-left: 4px;
 
               }
               .rune-primary {
                 grid-area: rune-primary;
                 align-self: end;
-                margin: 0 5px;
+                margin: 0 4px;
               }
               .rune-secondary {
                 grid-area: rune-secondary;
                 align-self: start;
-                margin: 0 5px;
+                margin: 0 4px;
               }
             }
           }

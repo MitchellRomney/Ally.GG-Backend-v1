@@ -230,7 +230,7 @@
           #profile #summoner-content-wrapper .content-general .latest-matches-panel .latest-matches .match {
             border: 3px solid #f4f4f4;
             display: grid;
-            grid-template: auto / 2.2fr 1.4fr 0.8fr 1fr 1.5fr;
+            grid-template: auto / 2.2fr 1fr 0.8fr 1fr 1.5fr;
             grid-gap: 5px;
             overflow: hidden;
             border-radius: 10px; }
@@ -276,7 +276,7 @@
               #profile #summoner-content-wrapper .content-general .latest-matches-panel .latest-matches .match .main-info .champion {
                 color: #333343;
                 font-weight: bold;
-                font-size: 2rem; }
+                font-size: 1.2rem; }
               #profile #summoner-content-wrapper .content-general .latest-matches-panel .latest-matches .match .main-info .timeAgo {
                 font-size: 0.9rem;
                 color: grey; }
@@ -316,10 +316,10 @@
                 height: 30px;
                 width: 30px;
                 background-color: lightgrey;
-                border-radius: 5px; }
+                border-radius: 4px; }
               #profile #summoner-content-wrapper .content-general .latest-matches-panel .latest-matches .match .items .trinket {
                 grid-area: trinket;
-                margin-right: 5px; }
+                margin-right: 4px; }
               #profile #summoner-content-wrapper .content-general .latest-matches-panel .latest-matches .match .items .item-1 {
                 grid-area: item1;
                 align-self: end; }
@@ -341,19 +341,19 @@
               #profile #summoner-content-wrapper .content-general .latest-matches-panel .latest-matches .match .items .summoner-1 {
                 grid-area: summoner1;
                 align-self: end;
-                margin-left: 5px; }
+                margin-left: 4px; }
               #profile #summoner-content-wrapper .content-general .latest-matches-panel .latest-matches .match .items .summoner-2 {
                 grid-area: summoner2;
                 align-self: start;
-                margin-left: 5px; }
+                margin-left: 4px; }
               #profile #summoner-content-wrapper .content-general .latest-matches-panel .latest-matches .match .items .rune-primary {
                 grid-area: rune-primary;
                 align-self: end;
-                margin: 0 5px; }
+                margin: 0 4px; }
               #profile #summoner-content-wrapper .content-general .latest-matches-panel .latest-matches .match .items .rune-secondary {
                 grid-area: rune-secondary;
                 align-self: start;
-                margin: 0 5px; }
+                margin: 0 4px; }
     #profile #summoner-content-wrapper.general .content-general {
       display: grid; }
     #profile #summoner-content-wrapper.general .content-matches, #profile #summoner-content-wrapper.general .content-champions, #profile #summoner-content-wrapper.general .content-achievements {
@@ -850,7 +850,7 @@ input:focus, textarea:focus, select:focus {
       position: absolute;
       top: 100px;
       right: 0;
-      left: 16.66%;
+      left: 5%;
       height: 100px;
       pointer-events: none; }
       #wrapper #page-content-wrapper #errors .error-wrapper {
