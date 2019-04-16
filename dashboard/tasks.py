@@ -29,6 +29,7 @@ def task_update_summoners():
     for match in latest_matches:
         existing_match = Match.objects.filter(gameId=match['gameId'])
         if existing_match.count() == 0:
+            fetch_match(match['gameId'])
             queryset = Match.objects.filter(gameId=match['gameId'])
             new_match = get_object_or_404(queryset, gameId=match['gameId'])
             if new_match:
