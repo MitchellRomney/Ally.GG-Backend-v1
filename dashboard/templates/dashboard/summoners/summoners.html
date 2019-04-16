@@ -43,7 +43,7 @@ Summoner Stats, Find Allies, Message Friends - {{ block.super }}
             </tr>
             <tr v-for="summoner in topPlayers">
               <th scope="row"><a :href="summoner.summonerName">[[ summoner.summonerName ]]</a></th>
-              <td>[[ summoner.soloQ_tier ]]</td>
+              <td>[[ summoner.soloQ_tier ]] [[ summoner.soloQ_rank ]]</td>
               <td>[[ summoner.soloQ_wins ]]</td>
               <td>[[ summoner.soloQ_losses ]]</td>
               <td>[[ summoner.soloQ_leaguePoints ]]</td>
@@ -104,7 +104,7 @@ var vm = new Vue({
       // Setup variables and grab first page.
       const results = [];
       page = 1
-      let op = await axios.get('/api/summoners?tier=CHALLENGER&tier=GRANDMASTER&tier=MASTER&page_size=100');
+      let op = await axios.get('/api/summoners?tier=CHALLENGER&tier=GRANDMASTER&tier=MASTER&tier=DIAMOND&tier=PLATINUM&page_size=100');
       next = op.data.next
       results.push(op.data.results)
 

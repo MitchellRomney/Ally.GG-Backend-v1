@@ -4,14 +4,14 @@ from colorama import Fore, Style
 
 
 def update_game_data(version):
-    # Create empty Rune and Item objects in case they haven't been created yet.
-    if Rune.objects.filter(runeId=0).count() == 0:
-        Rune.objects.create(runeId=0, name="No Rune")
+    check_champions(version)
+    check_runes(version)
+    check_items(version)
+    check_summoner_spells(version)
+    check_ranked_tiers()
 
-    if Item.objects.filter(itemId=0).count() == 0:
-        Item.objects.create(itemId=0,name="No Item")
 
-    # Create/Update all champions.
+def check_champions(version):  # Create/Update all champions.
     champions_info = fetch_ddragon_api(version, 'data', 'champion.json')
     for champion, value in champions_info['data'].items():
 
@@ -124,7 +124,12 @@ def update_game_data(version):
             else:
                 print(Fore.CYAN + 'Champion already up to date: ' + Style.RESET_ALL + existing_champion.name)
 
-    # Create/Update all runes.
+
+def check_runes(version):  # Create/Update all runes.
+
+    if Rune.objects.filter(runeId=0).count() == 0:
+        Rune.objects.create(runeId=0, name="No Rune")
+
     runes_info = fetch_ddragon_api(version, 'data', 'runesReforged.json')
     for tree in runes_info:
         for slot in tree['slots']:
@@ -165,7 +170,12 @@ def update_game_data(version):
                     else:
                         print(Fore.CYAN + 'Rune already up to date: ' + Style.RESET_ALL + existing_rune.name)
 
-    # Create/Update all items.
+
+def check_items(version):  # Create/Update all items.
+
+    if Item.objects.filter(itemId=0).count() == 0:
+        Item.objects.create(itemId=0,name="No Item")
+
     item_info = fetch_ddragon_api(version, 'data', 'item.json')
     for item, value in item_info['data'].items():
         existing_item = Item.objects.filter(itemId=item)
@@ -316,7 +326,8 @@ def update_game_data(version):
         else:
             print(Fore.CYAN + 'Item already up to date: ' + Style.RESET_ALL + existing_item.name)
 
-    # Create/Update all summoner spells.
+
+def check_summoner_spells(version):  # Create/Update all summoner spells.
     summoner_spell_info = fetch_ddragon_api(version, 'data', 'summoner.json')
     for spell, value in summoner_spell_info['data'].items():
         existing_spell = SummonerSpell.objects.filter(key=value['key'])
@@ -366,3 +377,87 @@ def update_game_data(version):
 
         else:
             print(Fore.CYAN + 'Spell already up to date: ' + Style.RESET_ALL + existing_spell.name)
+
+
+def check_ranked_tiers():  # Create Ranked tiers if they don't exist.
+
+    # - Challenger
+    existing_challenger = RankedTier.objects.filter(key='CHALLENGER')
+    if existing_challenger.count() == 0:
+        RankedTier.objects.create(
+            key='CHALLENGER',
+            name='Challenger',
+            order=1,
+        )
+
+    # - Grandmaster
+    existing_grandmaster = RankedTier.objects.filter(key='GRANDMASTER')
+    if existing_grandmaster.count() == 0:
+        RankedTier.objects.create(
+            key='GRANDMASTER',
+            name='Grandmaster',
+            order=2,
+        )
+
+    # - Master
+    existing_master = RankedTier.objects.filter(key='MASTER')
+    if existing_master.count() == 0:
+        RankedTier.objects.create(
+            key='MASTER',
+            name='Master',
+            order=3,
+        )
+
+    # - Diamond
+    existing_diamond = RankedTier.objects.filter(key='DIAMOND')
+    if existing_diamond.count() == 0:
+        RankedTier.objects.create(
+            key='DIAMOND',
+            name='Diamond',
+            order=4,
+        )
+
+    # - Platinum
+    existing_platinum = RankedTier.objects.filter(key='PLATINUM')
+    if existing_platinum.count() == 0:
+        RankedTier.objects.create(
+            key='PLATINUM',
+            name='Platinum',
+            order=5,
+        )
+
+    # - Gold
+    existing_gold = RankedTier.objects.filter(key='GOLD')
+    if existing_gold.count() == 0:
+        RankedTier.objects.create(
+            key='GOLD',
+            name='Gold',
+            order=6,
+        )
+
+    # - Silver
+    existing_silver = RankedTier.objects.filter(key='SILVER')
+    if existing_silver.count() == 0:
+        RankedTier.objects.create(
+            key='SILVER',
+            name='Silver',
+            order=7,
+        )
+
+    # - Bronze
+    existing_bronze = RankedTier.objects.filter(key='BRONZE')
+    if existing_bronze.count() == 0:
+        RankedTier.objects.create(
+            key='BRONZE',
+            name='Bronze',
+            order=8,
+        )
+
+    # - Iron
+    existing_iron = RankedTier.objects.filter(key='IRON')
+    if existing_iron.count() == 0:
+        RankedTier.objects.create(
+            key='IRON',
+            name='Iron',
+            order=9,
+        )

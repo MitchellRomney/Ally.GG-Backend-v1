@@ -24,6 +24,11 @@ class Profile(models.Model):
     def __str__(self):
         return self.user.username
 
+class RankedTier(models.Model):
+    key = models.CharField(primary_key=True, max_length=255, blank=False)
+    name = models.CharField(max_length=255, blank=False)
+    order = models.IntegerField()
+
 class ChatRoom(models.Model):
     members = models.ManyToManyField('Profile', related_name='Members')
     roomId = models.CharField(max_length=255, blank=False)
