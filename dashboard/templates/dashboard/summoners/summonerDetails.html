@@ -269,11 +269,14 @@
             getSummonerInfo() {
                 axios.get('/api/summoners/{{ summoner.summonerName }}').then(summonerResponse => {
                     vm.summoner = summonerResponse.data['summonerInfo']
+
+                    // Get font size for username depending on username length.
                     if (vm.summoner.summonerName.length > 14) {
                         vm.nameFontSize = '5rem';
                     } else if (vm.summoner.summonerName.length > 10) {
                         vm.nameFontSize = '6rem';
                     }
+                    // Get Solo Queue tier medal.
                     if (this.summoner.soloQ_rank && this.summoner.soloQ_tier) {
                         var leftover = 100 - parseInt(vm.summoner.soloQ_leaguePoints);
                         vm.soloQ_ring_values = vm.summoner.soloQ_leaguePoints + ' ' + leftover;
@@ -287,6 +290,38 @@
                             number = '1';
                         }
                         this.soloQ_medal = this.summoner.soloQ_tier.toLowerCase() + '_' + number + '.png';
+                    }
+
+                    // Get Flex 5v5 tier medal.
+                    if (this.summoner.flexSR_rank && this.summoner.flexSR_tier) {
+                        // var leftover = 100 - parseInt(vm.summoner.flexSR_leaguePoints);
+                        // vm.flexSR_ring_values = vm.summoner.flexSR_leaguePoints + ' ' + leftover;
+                        if (this.summoner.flexSR_rank == 'IV') {
+                            number = '4';
+                        } else if (this.summoner.flexSR_rank == 'III') {
+                            number = '3';
+                        } else if (this.summoner.flexSR_rank == 'II') {
+                            number = '2';
+                        } else {
+                            number = '1';
+                        }
+                        this.flexSR_medal = this.summoner.flexSR_tier.toLowerCase() + '_' + number + '.png';
+                    }
+
+                    // Get Flex 3v3 tier medal.
+                    if (this.summoner.flexTT_rank && this.summoner.flexTT_tier) {
+                        // var leftover = 100 - parseInt(vm.summoner.flexTT_leaguePoints);
+                        // vm.flexTT_ring_values = vm.summoner.flexTT_leaguePoints + ' ' + leftover;
+                        if (this.summoner.flexTT_rank == 'IV') {
+                            number = '4';
+                        } else if (this.summoner.flexTT_rank == 'III') {
+                            number = '3';
+                        } else if (this.summoner.flexTT_rank == 'II') {
+                            number = '2';
+                        } else {
+                            number = '1';
+                        }
+                        this.flexTT_medal = this.summoner.flexTT_tier.toLowerCase() + '_' + number + '.png';
                     }
                     vm.last_updated = summonerResponse.data['summonerInfo'].date_updated ? moment(summonerResponse.data['summonerInfo'].date_updated).fromNow() : false;
                     vm.playerLoading = false;

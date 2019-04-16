@@ -70,7 +70,7 @@ class SummonerViewSet(viewsets.ModelViewSet):
         tier = self.request.query_params.getlist('tier', None)
         order = self.request.query_params.get('order_by', None)
         if tier is not None:
-            queryset = queryset.filter(soloQ_tier__in=tier).order_by('soloQ_tier', '-soloQ_leaguePoints')
+            queryset = queryset.filter(soloQ_tier__key__in=tier).order_by('soloQ_tier__order', 'soloQ_rank', '-soloQ_leaguePoints')
         if order is not None:
             queryset = Summoner.objects.all().order_by('-' + order).exclude(**{order: None})
         return queryset
