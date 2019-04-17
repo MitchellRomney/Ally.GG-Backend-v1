@@ -18,9 +18,9 @@ def task_update_summoners():
 
     summoner = Summoner.objects.filter(date_updated=None).order_by('date_created')[:1].get()
 
-    update_summoner(summoner.puuid)
+    update_summoner(summoner.summonerId)
 
-    latest_matches = fetch_match_list(summoner.puuid)
+    latest_matches = fetch_match_list(summoner.SummonerId)
 
     if 'isError' in latest_matches:
         if latest_matches['isError']:
