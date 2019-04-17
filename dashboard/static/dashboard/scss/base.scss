@@ -76,13 +76,15 @@ input:focus, textarea:focus, select:focus {
 
 #wrapper {
   display: grid;
-  grid-template: 100px auto / 5% repeat(12, 1fr);
+  grid-template: 100px auto 100px / repeat(12, 1fr);
   grid-template-areas:
   "tnav tnav tnav tnav tnav tnav tnav tnav tnav tnav tnav tnav"
-  "nav nav nav . main main main main main main main .";
+  ". main main main main main main main main main main ."
+  "nav nav nav nav nav nav nav nav nav nav nav nav";
   min-height: 100vh;
   background-color: $palette-secondary;
   @media #{$bp-lg}{
+    grid-template: 100px auto / 5% repeat(12, 1fr);
     grid-template-areas:
     "tnav tnav tnav tnav tnav tnav tnav tnav tnav tnav tnav tnav tnav"
     "nav . main main main main main main main main main main .";

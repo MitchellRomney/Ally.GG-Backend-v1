@@ -39,12 +39,14 @@ def add_summoner(method, value):
             )
         except IntegrityError:
             existing_summoner = Summoner.objects.get(summonerId=summoner_info['id'])
+            update_summoner(existing_summoner.puuid)
             return {
                 'isError': True,
                 'errorMessage': 'Summoner already exists.',
                 'summonerId': existing_summoner.summonerId
             }
 
+        update_summoner(new_summoner.puuid)
         print(Fore.GREEN + 'New Summoner Created: ' + Style.RESET_ALL + new_summoner.summonerName)
         return {
             'isError': False,
@@ -53,6 +55,7 @@ def add_summoner(method, value):
         }
 
     existing_summoner = Summoner.objects.get(summonerId=summoner_info['id'])
+    update_summoner(existing_summoner.puuid)
     return {
         'isError': True,
         'errorMessage': 'Summoner already exists.',

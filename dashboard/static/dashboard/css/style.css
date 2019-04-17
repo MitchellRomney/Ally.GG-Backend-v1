@@ -167,32 +167,32 @@
   #profile #summoner-content-wrapper {
     width: 100%;
     margin-top: 20px; }
-    #profile #summoner-content-wrapper .content-general {
+    #profile #summoner-content-wrapper .content-general, #profile #summoner-content-wrapper .content-matches {
       display: grid;
       grid-gap: 20px;
       grid-template: 1fr 1fr/repeat(3, 1fr);
       min-height: 100vh;
       grid-template-areas: "ranked matches matches" ". . ."; }
-      #profile #summoner-content-wrapper .content-general .ranked-panel {
+      #profile #summoner-content-wrapper .content-general .ranked-panel, #profile #summoner-content-wrapper .content-matches .ranked-panel {
         grid-area: ranked;
         background-color: white;
         border: 3px solid #f4f4f4;
         border-radius: 20px;
         padding: 20px; }
-        #profile #summoner-content-wrapper .content-general .ranked-panel .rank {
+        #profile #summoner-content-wrapper .content-general .ranked-panel .rank, #profile #summoner-content-wrapper .content-matches .ranked-panel .rank {
           color: #f93d7c;
           margin-top: 5px; }
-        #profile #summoner-content-wrapper .content-general .ranked-panel .league {
+        #profile #summoner-content-wrapper .content-general .ranked-panel .league, #profile #summoner-content-wrapper .content-matches .ranked-panel .league {
           text-align: right;
           color: grey; }
-        #profile #summoner-content-wrapper .content-general .ranked-panel .svg-item {
+        #profile #summoner-content-wrapper .content-general .ranked-panel .svg-item, #profile #summoner-content-wrapper .content-matches .ranked-panel .svg-item {
           width: 100%;
           height: 36vh;
           position: relative;
           display: flex;
           align-items: center;
           justify-content: center; }
-          #profile #summoner-content-wrapper .content-general .ranked-panel .svg-item .donut-segment {
+          #profile #summoner-content-wrapper .content-general .ranked-panel .svg-item .donut-segment, #profile #summoner-content-wrapper .content-matches .ranked-panel .svg-item .donut-segment {
             animation: donut-chart-fill 1s reverse ease-in;
             -webkit-transform-origin: center;
                     transform-origin: center;
@@ -200,160 +200,159 @@
             -webkit-transform: scaleX(-1);
                     transform: scaleX(-1);
             stroke-linecap: round; }
-          #profile #summoner-content-wrapper .content-general .ranked-panel .svg-item .donut-ring {
+          #profile #summoner-content-wrapper .content-general .ranked-panel .svg-item .donut-ring, #profile #summoner-content-wrapper .content-matches .ranked-panel .svg-item .donut-ring {
             stroke: lightgrey; }
-          #profile #summoner-content-wrapper .content-general .ranked-panel .svg-item .inside-svg {
+          #profile #summoner-content-wrapper .content-general .ranked-panel .svg-item .inside-svg, #profile #summoner-content-wrapper .content-matches .ranked-panel .svg-item .inside-svg {
             position: absolute;
             top: 25%;
             text-align: center; }
-            #profile #summoner-content-wrapper .content-general .ranked-panel .svg-item .inside-svg .total-LP {
+            #profile #summoner-content-wrapper .content-general .ranked-panel .svg-item .inside-svg .total-LP, #profile #summoner-content-wrapper .content-matches .ranked-panel .svg-item .inside-svg .total-LP {
               font-size: 2.5rem;
               color: #333343; }
-            #profile #summoner-content-wrapper .content-general .ranked-panel .svg-item .inside-svg .win-loss {
+            #profile #summoner-content-wrapper .content-general .ranked-panel .svg-item .inside-svg .win-loss, #profile #summoner-content-wrapper .content-matches .ranked-panel .svg-item .inside-svg .win-loss {
               color: grey;
               font-size: 1rem;
               font-weight: normal; }
-            #profile #summoner-content-wrapper .content-general .ranked-panel .svg-item .inside-svg .medal {
+            #profile #summoner-content-wrapper .content-general .ranked-panel .svg-item .inside-svg .medal, #profile #summoner-content-wrapper .content-matches .ranked-panel .svg-item .inside-svg .medal {
               width: 7vw; }
-      #profile #summoner-content-wrapper .content-general .latest-matches-panel {
+      #profile #summoner-content-wrapper .content-general .latest-matches-panel, #profile #summoner-content-wrapper .content-matches .latest-matches-panel {
         grid-area: matches;
         background-color: white;
         border: 3px solid #f4f4f4;
         border-radius: 20px;
         padding: 20px; }
-        #profile #summoner-content-wrapper .content-general .latest-matches-panel .latest-matches {
-          height: 100%;
+      #profile #summoner-content-wrapper .content-general .latest-matches, #profile #summoner-content-wrapper .content-matches .latest-matches {
+        height: 100%;
+        display: grid;
+        grid-template: 1fr 1fr 1fr / 1fr;
+        grid-gap: 10px;
+        padding: 20px 0; }
+        #profile #summoner-content-wrapper .content-general .latest-matches .match, #profile #summoner-content-wrapper .content-matches .latest-matches .match {
+          border: 3px solid #f4f4f4;
           display: grid;
-          grid-template: 1fr 1fr 1fr / 1fr;
-          grid-gap: 10px;
-          padding: 20px 0; }
-          #profile #summoner-content-wrapper .content-general .latest-matches-panel .latest-matches .match {
-            border: 3px solid #f4f4f4;
-            display: grid;
-            grid-template: auto / 2.2fr 1fr 0.8fr 1fr 1.5fr;
-            grid-gap: 5px;
+          grid-template: auto / 2.2fr 1fr 0.8fr 1fr 1.5fr;
+          grid-gap: 5px;
+          overflow: hidden;
+          border-radius: 10px; }
+          #profile #summoner-content-wrapper .content-general .latest-matches .match .champion-splash, #profile #summoner-content-wrapper .content-matches .latest-matches .match .champion-splash {
             overflow: hidden;
-            border-radius: 10px; }
-            #profile #summoner-content-wrapper .content-general .latest-matches-panel .latest-matches .match .champion-splash {
-              overflow: hidden;
-              position: relative; }
-              #profile #summoner-content-wrapper .content-general .latest-matches-panel .latest-matches .match .champion-splash img {
-                height: 100%;
-                width: auto; }
-              #profile #summoner-content-wrapper .content-general .latest-matches-panel .latest-matches .match .champion-splash .triangle {
-                width: 0;
-                height: 0;
-                border-left: 3vw solid transparent;
-                border-right: 0;
-                border-top: 6vw solid white;
-                position: absolute;
-                right: 0;
-                top: 0; }
-              #profile #summoner-content-wrapper .content-general .latest-matches-panel .latest-matches .match .champion-splash .result-wrapper {
-                position: absolute;
-                right: 0;
-                display: flex;
-                height: 100%;
-                top: 0;
-                align-items: center;
-                font-weight: bold;
-                width: 30%; }
-                #profile #summoner-content-wrapper .content-general .latest-matches-panel .latest-matches .match .champion-splash .result-wrapper .result {
-                  width: 100%;
-                  background-color: white;
-                  padding: 2px 40px 2px 10px;
-                  text-align: center;
-                  border-radius: 10px;
-                  font-size: 1.8rem;
-                  color: #333343; }
-                  #profile #summoner-content-wrapper .content-general .latest-matches-panel .latest-matches .match .champion-splash .result-wrapper .result.win {
-                    color: #f93d7c; }
-            #profile #summoner-content-wrapper .content-general .latest-matches-panel .latest-matches .match .main-info {
+            position: relative;
+            background-position: center;
+            background-size: cover; }
+            #profile #summoner-content-wrapper .content-general .latest-matches .match .champion-splash .triangle, #profile #summoner-content-wrapper .content-matches .latest-matches .match .champion-splash .triangle {
+              width: 0;
+              height: 0;
+              border-left: 3vw solid transparent;
+              border-right: 0;
+              border-top: 6vw solid white;
+              position: absolute;
+              right: 0;
+              top: 0; }
+            #profile #summoner-content-wrapper .content-general .latest-matches .match .champion-splash .result-wrapper, #profile #summoner-content-wrapper .content-matches .latest-matches .match .champion-splash .result-wrapper {
+              position: absolute;
+              right: 0;
               display: flex;
-              text-align: center;
-              flex-direction: column;
-              align-self: center; }
-              #profile #summoner-content-wrapper .content-general .latest-matches-panel .latest-matches .match .main-info .champion {
-                color: #333343;
-                font-weight: bold;
-                font-size: 1.2rem; }
-              #profile #summoner-content-wrapper .content-general .latest-matches-panel .latest-matches .match .main-info .timeAgo {
-                font-size: 0.9rem;
-                color: grey; }
-            #profile #summoner-content-wrapper .content-general .latest-matches-panel .latest-matches .match .player-info {
-              display: flex;
-              text-align: center;
-              flex-direction: column;
-              align-self: center; }
-              #profile #summoner-content-wrapper .content-general .latest-matches-panel .latest-matches .match .player-info .kda {
-                color: #333343;
-                font-weight: bold;
-                font-size: 1.7rem; }
-              #profile #summoner-content-wrapper .content-general .latest-matches-panel .latest-matches .match .player-info .average {
-                color: grey; }
-            #profile #summoner-content-wrapper .content-general .latest-matches-panel .latest-matches .match .sub-info {
-              display: flex;
-              text-align: center;
-              flex-direction: column;
-              align-self: center; }
-              #profile #summoner-content-wrapper .content-general .latest-matches-panel .latest-matches .match .sub-info .farm {
-                font-size: 1.1rem; }
-              #profile #summoner-content-wrapper .content-general .latest-matches-panel .latest-matches .match .sub-info .kill_p {
-                font-size: 0.9rem; }
-                #profile #summoner-content-wrapper .content-general .latest-matches-panel .latest-matches .match .sub-info .kill_p span {
-                  font-size: 1.2rem;
-                  font-weight: bold; }
-            #profile #summoner-content-wrapper .content-general .latest-matches-panel .latest-matches .match .items {
-              display: grid;
-              grid-template: 1fr 1fr/repeat(6, 1fr);
-              grid-template-areas: "trinket item1 item2 item3 summoner1 rune-primary" "trinket item4 item5 item6 summoner2 rune-secondary";
+              height: 100%;
+              top: 0;
               align-items: center;
-              grid-gap: 2px; }
-              #profile #summoner-content-wrapper .content-general .latest-matches-panel .latest-matches .match .items img {
-                width: 30px;
-                border-radius: 5px; }
-              #profile #summoner-content-wrapper .content-general .latest-matches-panel .latest-matches .match .items .trinket, #profile #summoner-content-wrapper .content-general .latest-matches-panel .latest-matches .match .items .item-1, #profile #summoner-content-wrapper .content-general .latest-matches-panel .latest-matches .match .items .item-2, #profile #summoner-content-wrapper .content-general .latest-matches-panel .latest-matches .match .items .item-3, #profile #summoner-content-wrapper .content-general .latest-matches-panel .latest-matches .match .items .item-4, #profile #summoner-content-wrapper .content-general .latest-matches-panel .latest-matches .match .items .item-5, #profile #summoner-content-wrapper .content-general .latest-matches-panel .latest-matches .match .items .item-6, #profile #summoner-content-wrapper .content-general .latest-matches-panel .latest-matches .match .items .summoner-1, #profile #summoner-content-wrapper .content-general .latest-matches-panel .latest-matches .match .items .summoner-2 {
-                height: 30px;
-                width: 30px;
-                background-color: lightgrey;
-                border-radius: 4px; }
-              #profile #summoner-content-wrapper .content-general .latest-matches-panel .latest-matches .match .items .trinket {
-                grid-area: trinket;
-                margin-right: 4px; }
-              #profile #summoner-content-wrapper .content-general .latest-matches-panel .latest-matches .match .items .item-1 {
-                grid-area: item1;
-                align-self: end; }
-              #profile #summoner-content-wrapper .content-general .latest-matches-panel .latest-matches .match .items .item-2 {
-                grid-area: item2;
-                align-self: end; }
-              #profile #summoner-content-wrapper .content-general .latest-matches-panel .latest-matches .match .items .item-3 {
-                grid-area: item3;
-                align-self: end; }
-              #profile #summoner-content-wrapper .content-general .latest-matches-panel .latest-matches .match .items .item-4 {
-                grid-area: item4;
-                align-self: start; }
-              #profile #summoner-content-wrapper .content-general .latest-matches-panel .latest-matches .match .items .item-5 {
-                grid-area: item5;
-                align-self: start; }
-              #profile #summoner-content-wrapper .content-general .latest-matches-panel .latest-matches .match .items .item-6 {
-                grid-area: item6;
-                align-self: start; }
-              #profile #summoner-content-wrapper .content-general .latest-matches-panel .latest-matches .match .items .summoner-1 {
-                grid-area: summoner1;
-                align-self: end;
-                margin-left: 4px; }
-              #profile #summoner-content-wrapper .content-general .latest-matches-panel .latest-matches .match .items .summoner-2 {
-                grid-area: summoner2;
-                align-self: start;
-                margin-left: 4px; }
-              #profile #summoner-content-wrapper .content-general .latest-matches-panel .latest-matches .match .items .rune-primary {
-                grid-area: rune-primary;
-                align-self: end;
-                margin: 0 4px; }
-              #profile #summoner-content-wrapper .content-general .latest-matches-panel .latest-matches .match .items .rune-secondary {
-                grid-area: rune-secondary;
-                align-self: start;
-                margin: 0 4px; }
+              font-weight: bold;
+              width: 30%; }
+              #profile #summoner-content-wrapper .content-general .latest-matches .match .champion-splash .result-wrapper .result, #profile #summoner-content-wrapper .content-matches .latest-matches .match .champion-splash .result-wrapper .result {
+                width: 100%;
+                background-color: white;
+                padding: 2px 40px 2px 10px;
+                text-align: center;
+                border-radius: 10px;
+                font-size: 1.8rem;
+                color: #333343; }
+                #profile #summoner-content-wrapper .content-general .latest-matches .match .champion-splash .result-wrapper .result.win, #profile #summoner-content-wrapper .content-matches .latest-matches .match .champion-splash .result-wrapper .result.win {
+                  color: #f93d7c; }
+          #profile #summoner-content-wrapper .content-general .latest-matches .match .main-info, #profile #summoner-content-wrapper .content-matches .latest-matches .match .main-info {
+            display: flex;
+            text-align: center;
+            flex-direction: column;
+            align-self: center; }
+            #profile #summoner-content-wrapper .content-general .latest-matches .match .main-info .champion, #profile #summoner-content-wrapper .content-matches .latest-matches .match .main-info .champion {
+              color: #333343;
+              font-weight: bold;
+              font-size: 1.2rem; }
+            #profile #summoner-content-wrapper .content-general .latest-matches .match .main-info .timeAgo, #profile #summoner-content-wrapper .content-matches .latest-matches .match .main-info .timeAgo {
+              font-size: 0.9rem;
+              color: grey; }
+          #profile #summoner-content-wrapper .content-general .latest-matches .match .player-info, #profile #summoner-content-wrapper .content-matches .latest-matches .match .player-info {
+            display: flex;
+            text-align: center;
+            flex-direction: column;
+            align-self: center; }
+            #profile #summoner-content-wrapper .content-general .latest-matches .match .player-info .kda, #profile #summoner-content-wrapper .content-matches .latest-matches .match .player-info .kda {
+              color: #333343;
+              font-weight: bold;
+              font-size: 1.7rem; }
+            #profile #summoner-content-wrapper .content-general .latest-matches .match .player-info .average, #profile #summoner-content-wrapper .content-matches .latest-matches .match .player-info .average {
+              color: grey; }
+          #profile #summoner-content-wrapper .content-general .latest-matches .match .sub-info, #profile #summoner-content-wrapper .content-matches .latest-matches .match .sub-info {
+            display: flex;
+            text-align: center;
+            flex-direction: column;
+            align-self: center; }
+            #profile #summoner-content-wrapper .content-general .latest-matches .match .sub-info .farm, #profile #summoner-content-wrapper .content-matches .latest-matches .match .sub-info .farm {
+              font-size: 1.1rem; }
+            #profile #summoner-content-wrapper .content-general .latest-matches .match .sub-info .kill_p, #profile #summoner-content-wrapper .content-matches .latest-matches .match .sub-info .kill_p {
+              font-size: 0.9rem; }
+              #profile #summoner-content-wrapper .content-general .latest-matches .match .sub-info .kill_p span, #profile #summoner-content-wrapper .content-matches .latest-matches .match .sub-info .kill_p span {
+                font-size: 1.2rem;
+                font-weight: bold; }
+          #profile #summoner-content-wrapper .content-general .latest-matches .match .items, #profile #summoner-content-wrapper .content-matches .latest-matches .match .items {
+            display: grid;
+            grid-template: 1fr 1fr/repeat(6, 1fr);
+            grid-template-areas: "trinket item1 item2 item3 summoner1 rune-primary" "trinket item4 item5 item6 summoner2 rune-secondary";
+            align-items: center;
+            grid-gap: 2px; }
+            #profile #summoner-content-wrapper .content-general .latest-matches .match .items img, #profile #summoner-content-wrapper .content-matches .latest-matches .match .items img {
+              width: 30px;
+              border-radius: 5px; }
+            #profile #summoner-content-wrapper .content-general .latest-matches .match .items .trinket, #profile #summoner-content-wrapper .content-general .latest-matches .match .items .item-1, #profile #summoner-content-wrapper .content-general .latest-matches .match .items .item-2, #profile #summoner-content-wrapper .content-general .latest-matches .match .items .item-3, #profile #summoner-content-wrapper .content-general .latest-matches .match .items .item-4, #profile #summoner-content-wrapper .content-general .latest-matches .match .items .item-5, #profile #summoner-content-wrapper .content-general .latest-matches .match .items .item-6, #profile #summoner-content-wrapper .content-general .latest-matches .match .items .summoner-1, #profile #summoner-content-wrapper .content-general .latest-matches .match .items .summoner-2, #profile #summoner-content-wrapper .content-matches .latest-matches .match .items .trinket, #profile #summoner-content-wrapper .content-matches .latest-matches .match .items .item-1, #profile #summoner-content-wrapper .content-matches .latest-matches .match .items .item-2, #profile #summoner-content-wrapper .content-matches .latest-matches .match .items .item-3, #profile #summoner-content-wrapper .content-matches .latest-matches .match .items .item-4, #profile #summoner-content-wrapper .content-matches .latest-matches .match .items .item-5, #profile #summoner-content-wrapper .content-matches .latest-matches .match .items .item-6, #profile #summoner-content-wrapper .content-matches .latest-matches .match .items .summoner-1, #profile #summoner-content-wrapper .content-matches .latest-matches .match .items .summoner-2 {
+              height: 30px;
+              width: 30px;
+              background-color: lightgrey;
+              border-radius: 4px; }
+            #profile #summoner-content-wrapper .content-general .latest-matches .match .items .trinket, #profile #summoner-content-wrapper .content-matches .latest-matches .match .items .trinket {
+              grid-area: trinket;
+              margin-right: 4px; }
+            #profile #summoner-content-wrapper .content-general .latest-matches .match .items .item-1, #profile #summoner-content-wrapper .content-matches .latest-matches .match .items .item-1 {
+              grid-area: item1;
+              align-self: end; }
+            #profile #summoner-content-wrapper .content-general .latest-matches .match .items .item-2, #profile #summoner-content-wrapper .content-matches .latest-matches .match .items .item-2 {
+              grid-area: item2;
+              align-self: end; }
+            #profile #summoner-content-wrapper .content-general .latest-matches .match .items .item-3, #profile #summoner-content-wrapper .content-matches .latest-matches .match .items .item-3 {
+              grid-area: item3;
+              align-self: end; }
+            #profile #summoner-content-wrapper .content-general .latest-matches .match .items .item-4, #profile #summoner-content-wrapper .content-matches .latest-matches .match .items .item-4 {
+              grid-area: item4;
+              align-self: start; }
+            #profile #summoner-content-wrapper .content-general .latest-matches .match .items .item-5, #profile #summoner-content-wrapper .content-matches .latest-matches .match .items .item-5 {
+              grid-area: item5;
+              align-self: start; }
+            #profile #summoner-content-wrapper .content-general .latest-matches .match .items .item-6, #profile #summoner-content-wrapper .content-matches .latest-matches .match .items .item-6 {
+              grid-area: item6;
+              align-self: start; }
+            #profile #summoner-content-wrapper .content-general .latest-matches .match .items .summoner-1, #profile #summoner-content-wrapper .content-matches .latest-matches .match .items .summoner-1 {
+              grid-area: summoner1;
+              align-self: end;
+              margin-left: 4px; }
+            #profile #summoner-content-wrapper .content-general .latest-matches .match .items .summoner-2, #profile #summoner-content-wrapper .content-matches .latest-matches .match .items .summoner-2 {
+              grid-area: summoner2;
+              align-self: start;
+              margin-left: 4px; }
+            #profile #summoner-content-wrapper .content-general .latest-matches .match .items .rune-primary, #profile #summoner-content-wrapper .content-matches .latest-matches .match .items .rune-primary {
+              grid-area: rune-primary;
+              align-self: end;
+              margin: 0 4px; }
+            #profile #summoner-content-wrapper .content-general .latest-matches .match .items .rune-secondary, #profile #summoner-content-wrapper .content-matches .latest-matches .match .items .rune-secondary {
+              grid-area: rune-secondary;
+              align-self: start;
+              margin: 0 4px; }
     #profile #summoner-content-wrapper.general .content-general {
       display: grid; }
     #profile #summoner-content-wrapper.general .content-matches, #profile #summoner-content-wrapper.general .content-champions, #profile #summoner-content-wrapper.general .content-achievements {
@@ -560,12 +559,18 @@
   grid-area: nav;
   background-color: white;
   color: #333343;
-  width: 5%;
+  width: 100%;
   position: fixed;
   bottom: 0;
-  top: 100px;
+  height: 100px;
   z-index: 1000;
   border-right: #e2e2e2 solid 5px; }
+  @media (min-width: 992px) {
+    #sidebar {
+      bottom: 0;
+      height: 100%;
+      top: 100px;
+      width: 5%; } }
   #sidebar a {
     color: #333343; }
   #sidebar .profile .avatar img {
@@ -753,12 +758,13 @@ input:focus, textarea:focus, select:focus {
 
 #wrapper {
   display: grid;
-  grid-template: 100px auto/5% repeat(12, 1fr);
-  grid-template-areas: "tnav tnav tnav tnav tnav tnav tnav tnav tnav tnav tnav tnav" "nav nav nav . main main main main main main main .";
+  grid-template: 100px auto 100px/repeat(12, 1fr);
+  grid-template-areas: "tnav tnav tnav tnav tnav tnav tnav tnav tnav tnav tnav tnav" ". main main main main main main main main main main ." "nav nav nav nav nav nav nav nav nav nav nav nav";
   min-height: 100vh;
   background-color: #F6F7FB; }
   @media (min-width: 992px) {
     #wrapper {
+      grid-template: 100px auto/5% repeat(12, 1fr);
       grid-template-areas: "tnav tnav tnav tnav tnav tnav tnav tnav tnav tnav tnav tnav tnav" "nav . main main main main main main main main main main ."; } }
   #wrapper #top-nav {
     grid-area: tnav;
