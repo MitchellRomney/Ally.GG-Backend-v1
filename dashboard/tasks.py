@@ -20,7 +20,7 @@ def task_update_summoners():
 
     update_summoner(summoner.summonerId)
 
-    latest_matches = fetch_match_list(summoner.SummonerId)
+    latest_matches = fetch_match_list(summoner.summonerId)
 
     if 'isError' in latest_matches:
         if latest_matches['isError']:
