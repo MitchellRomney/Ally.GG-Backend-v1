@@ -117,7 +117,7 @@
                     <h2>Latest Matches</h2>
                     <div class="latest-matches" v-if="!matchLoading" v-cloak>
                         <div class="match" v-for="player in sortedMatches.slice(0,3)">
-                            <div class="champion-splash" :style="{ 'background-image': 'url('/static/dashboard/images/history_splash/Tristana_0.png')' }">
+                            <div class="champion-splash" :style="{ 'background-image': 'url(\'/static/dashboard/images/history_splash/' + player.champion.champId + '_0.png\')' }">
                                 <div class="triangle"></div>
                                 <div class="result-wrapper">
                                     <span class="result" :class="{ win : player.win == 'W' }">[[ player.win ]]</span>

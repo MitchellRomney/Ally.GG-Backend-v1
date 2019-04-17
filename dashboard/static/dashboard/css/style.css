@@ -31,7 +31,8 @@
         margin-bottom: 5px;
         height: 100%; }
         #profile .top-wrapper .avatar-wrapper .avatar img {
-          border-radius: 10px; }
+          border-radius: 10px;
+          width: 100%; }
         #profile .top-wrapper .avatar-wrapper .avatar .level {
           position: absolute;
           bottom: -10px;
@@ -233,7 +234,8 @@
           grid-template: auto / 2.2fr 1fr 0.8fr 1fr 1.5fr;
           grid-gap: 5px;
           overflow: hidden;
-          border-radius: 10px; }
+          border-radius: 10px;
+          background-color: white; }
           #profile #summoner-content-wrapper .content-general .latest-matches .match .champion-splash, #profile #summoner-content-wrapper .content-matches .latest-matches .match .champion-splash {
             overflow: hidden;
             position: relative;

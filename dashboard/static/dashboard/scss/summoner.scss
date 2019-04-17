@@ -39,6 +39,7 @@
         height: 100%;
         img {
           border-radius: 10px;
+          width: 100%;
         }
         .level {
           position: absolute;
@@ -293,6 +294,7 @@
           grid-gap: 5px;
           overflow: hidden;
           border-radius: 10px;
+          background-color: white;
           .champion-splash {
             overflow: hidden;
             position: relative;

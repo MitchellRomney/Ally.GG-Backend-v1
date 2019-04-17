@@ -79,7 +79,7 @@ class SummonerViewSet(viewsets.ModelViewSet):
         add = add_summoner(request.data['method'], request.data['value'])
         if add['isError'] != True:
             summoner = Summoner.objects.get(summonerId=add['summonerId'])
-            update_summoner(summoner.puuid)
+            update_summoner(summoner.summonerId)
             return JsonResponse(add, status=201)
         else:
             return JsonResponse(add)
@@ -91,13 +91,13 @@ class SummonerViewSet(viewsets.ModelViewSet):
 
         response = {}
         if isUpdate == 'True':
-            response = update_summoner(summoner.puuid)
+            response = update_summoner(summoner.summonerId)
             newSummonerId = response['summonerId']
             updatedSummoner = Summoner.objects.get(summonerId=newSummonerId)
             if updatedSummoner.summonerName.lower() != pk.lower():
                 return HttpResponseRedirect('/summoners/' + updatedSummoner.summonerName)
 
-            latestMatches = fetch_match_list(summoner.puuid)
+            latestMatches = fetch_match_list(summoner.summonerId)
             if 'isError' in latestMatches:
                 if latestMatches['isError']:
                     return JsonResponse(latestMatches)

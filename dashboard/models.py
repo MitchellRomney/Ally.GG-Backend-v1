@@ -259,12 +259,12 @@ class Summoner(models.Model):
     user_profile = models.ForeignKey(Profile, related_name="Summoners", on_delete=models.SET_NULL, null=True, blank=True)
     summonerName = models.CharField(max_length=255, blank=False)
     summonerId = models.CharField(max_length=255, primary_key=True, unique=True, blank=False)  # 'ID' sometimes.
-    puuid = models.CharField(max_length=255, unique=True, blank=False)
-    accountId = models.CharField(max_length=255, unique=True, blank=False)
+    puuid = models.CharField(max_length=255, unique=True, blank=True, null=True)
+    accountId = models.CharField(max_length=255, unique=True, blank=True, null=True)
 
     # General
     server = models.CharField(max_length=255, blank=False)
-    profileIconId = models.BigIntegerField(blank=True, default=1)
+    profileIconId = models.BigIntegerField(blank=True, default=0)
     summonerLevel = models.CharField(max_length=255, blank=True)
 
     # SoloQ

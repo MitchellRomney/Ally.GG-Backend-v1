@@ -21,8 +21,8 @@ def check_match_integrity(match):
         return True
 
 
-def fetch_match_list(puuid):
-    summoner = Summoner.objects.get(puuid=puuid)
+def fetch_match_list(summonerId):
+    summoner = Summoner.objects.get(summonerId=summonerId)
     print(Fore.YELLOW + 'Fetching Summoner Matches: ' + Style.RESET_ALL + summoner.summonerName)
 
     matches = fetch_riot_api('OC1', 'match', 'v4', 'matchlists/by-account/' + summoner.accountId, '?endIndex=10')
