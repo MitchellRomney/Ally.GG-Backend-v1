@@ -15,7 +15,6 @@ def fetch_riot_api(server, endpoint, version, path, extra='?'):
           + Style.RESET_ALL + url)
 
     response = requests.get(url)
-    print(response.headers)
 
     if 'X-Method-Rate-Limit-Count' in response.headers:
         print(Fore.MAGENTA + 'App Rate Limit Count: '

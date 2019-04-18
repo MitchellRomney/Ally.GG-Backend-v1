@@ -23,7 +23,7 @@ def check_match_integrity(match):
 
 def fetch_match_list(summonerId):
     summoner = Summoner.objects.get(summonerId=summonerId)
-    print(Fore.YELLOW + 'Fetching Summoner Matches: ' + Style.RESET_ALL + summoner.summonerName)
+    # print(Fore.YELLOW + 'Fetching Summoner Matches: ' + Style.RESET_ALL + summoner.summonerName)
 
     matches = fetch_riot_api('OC1', 'match', 'v4', 'matchlists/by-account/' + summoner.accountId, '?endIndex=10')
     if 'status' in matches:
@@ -35,7 +35,7 @@ def fetch_match_list(summonerId):
 def fetch_match(game_id):
     existing_match_count = Match.objects.filter(gameId=game_id).count()
     if existing_match_count == 0:
-        print(Fore.YELLOW + 'Building Match: ' + Style.RESET_ALL + str(game_id))
+        # print(Fore.YELLOW + 'Building Match: ' + Style.RESET_ALL + str(game_id))
 
         match_info = fetch_riot_api('OC1', 'match', 'v4', 'matches/' + str(game_id))
 
@@ -51,19 +51,26 @@ def fetch_match(game_id):
 
         timestamp = datetime.fromtimestamp(match_info['gameCreation'] / 1000.)
 
-        new_match = Match.objects.create(
-            gameId=match_info['gameId'],
-            platformId=match_info['platformId'],
-            queueId=match_info['queueId'],
-            seasonId=match_info['seasonId'],
-            mapId=match_info['mapId'],
+        try:
+            new_match = Match.objects.create(
+                gameId=match_info['gameId'],
+                platformId=match_info['platformId'],
+                queueId=match_info['queueId'],
+                seasonId=match_info['seasonId'],
+                mapId=match_info['mapId'],
 
-            gameMode=match_info['gameMode'],
-            gameType=match_info['gameType'],
-            gameVersion=match_info['gameVersion'],
-            gameDuration=match_info['gameDuration'],
-            timestamp=timestamp,
-        )
+                gameMode=match_info['gameMode'],
+                gameType=match_info['gameType'],
+                gameVersion=match_info['gameVersion'],
+                gameDuration=match_info['gameDuration'],
+                timestamp=timestamp,
+            )
+        except IntegrityError:  # Creating Matches so fast it doubled up.
+            return {
+                'isError': False,
+                'errorMessage': None,
+                'ignore': True
+            }
 
         for player in match_info['participantIdentities']:
             existing_summoner = Summoner.objects.filter(summonerId=player['player']['summonerId'])
@@ -112,7 +119,7 @@ def fetch_match(game_id):
             )
 
             new_team.save()
-            print(Fore.GREEN + 'New Team Created:' + Style.RESET_ALL + str(new_team))
+            # print(Fore.GREEN + 'New Team Created:' + Style.RESET_ALL + str(new_team))
 
         # Create the Player info for the match.
         for participant_info in match_info['participantIdentities']:
@@ -282,6 +289,7 @@ def fetch_match(game_id):
 
                     new_player.save()
 
-                    print(Fore.GREEN + 'New Match Player Created: ' + Style.RESET_ALL + str(new_player.summoner))
+                    # print(Fore.GREEN + 'New Match Player Created: ' + Style.RESET_ALL + str(new_player.summoner))
 
+    print(Fore.YELLOW + 'Match Created: ' + Style.RESET_ALL + str(new_match.gameId))
     return {'isError': False, 'errorMessage': None, 'ignore': False}

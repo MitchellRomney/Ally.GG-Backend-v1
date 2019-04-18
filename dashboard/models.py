@@ -322,7 +322,7 @@ class Summoner(models.Model):
 class Match(models.Model):
     # IDs
     platformId = models.CharField(max_length=255, blank=False) # Server
-    gameId = models.BigIntegerField(blank=False)
+    gameId = models.BigIntegerField(blank=False, unique=True)
     QUEUES = (
         (0, 'Custom'),
         (72, '1v1 Snowdown Showdown'),
