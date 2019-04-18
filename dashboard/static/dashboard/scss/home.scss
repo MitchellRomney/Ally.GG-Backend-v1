@@ -14,5 +14,8 @@
     grid-template: auto / repeat(3, 1fr);
     grid-gap: 20px;
     margin-top: 50px;
+    @media #{$bp-md}{
+      grid-template: auto / 1fr;
+    }
   }
 }

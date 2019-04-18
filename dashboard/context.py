@@ -12,9 +12,9 @@ def global_context(request):
     return {
     'DEBUG': settings.DEBUG,
     'GSETTINGS': globalSettings,
-    'SUMMONER_COUNT': "{:,}".format(int(Summoner.objects.all().count()), 0),
-    'TOTAL_KILLS': "{:,}".format(int(total_kills['kills__sum']), 0),
-    'MATCH_COUNT': "{:,}".format(int(Match.objects.all().count()), 0),
+    'SUMMONER_COUNT': "{:,}".format(int(Summoner.objects.all().count()), 0) if Summoner.objects.all().count() != 0 else 0,
+    'TOTAL_KILLS': "{:,}".format(int(total_kills['kills__sum']), 0) if total_kills['kills__sum'] else 0,
+    'MATCH_COUNT': "{:,}".format(int(Match.objects.all().count()), 0) if Match.objects.all().count() != 0 else 0,
     'MY_PROFILE': profile,
     'MY_SUMMONERS': Summoner.objects.filter(user_profile=profile) if isProfile else None,
     'CURRENT_PATCH': globalSettings.latestVersion,

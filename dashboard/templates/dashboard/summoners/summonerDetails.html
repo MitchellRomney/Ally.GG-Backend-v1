@@ -38,6 +38,8 @@
                         <a href="/profiles/{{ summoner.user_profile.user.username }}">{{ summoner.user_profile.first_name }} {{ summoner.user_profile.last_name }}</a>
                     </div>
                 {% endif %}
+                <span class="updated">Last Updated: <span v-if="last_updated" v-cloak>[[ last_updated ]]</span></span>
+                <button v-on:click="updateSummoner">Update Summoner</button>
             </div>
             <div class="ranked-stats">
                 <div class="ranked-solo">
@@ -310,7 +312,7 @@
                 playerLoading: true,
                 isEmpty: false,
                 isError: false,
-                nameFontSize: '7rem',
+                nameFontSize: '',
             },
             computed: {
                 sortedMatches() {
@@ -365,11 +367,24 @@
                         vm.summoner = summonerResponse.data['summonerInfo']
 
                         // Get font size for username depending on username length.
-                        if (vm.summoner.summonerName.length > 14) {
-                            vm.nameFontSize = '5rem';
-                        } else if (vm.summoner.summonerName.length > 10) {
-                            vm.nameFontSize = '6rem';
+                        if (document.documentElement.clientWidth >= 768){
+                            if (vm.summoner.summonerName.length > 14) {
+                                vm.nameFontSize = '5rem';
+                            } else if (vm.summoner.summonerName.length > 10) {
+                                vm.nameFontSize = '6rem';
+                            } else {
+                                vm.nameFontSize = '7rem';
+                            }
+                        } else {
+                            if (vm.summoner.summonerName.length > 14) {
+                                vm.nameFontSize = '1.5rem';
+                            } else if (vm.summoner.summonerName.length > 10) {
+                                vm.nameFontSize = '2.5rem';
+                            } else {
+                                vm.nameFontSize = '3.5rem';
+                            }
                         }
+
                         // Get Solo Queue tier medal.
                         if (this.summoner.soloQ_rank && this.summoner.soloQ_tier) {
                             var leftover = 100 - parseInt(vm.summoner.soloQ_leaguePoints);

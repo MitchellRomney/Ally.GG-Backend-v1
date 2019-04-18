@@ -83,8 +83,8 @@ input:focus, textarea:focus, select:focus {
   "nav nav nav nav nav nav nav nav nav nav nav nav";
   min-height: 100vh;
   background-color: $palette-secondary;
-  @media #{$bp-lg}{
-    grid-template: 100px auto / 5% repeat(12, 1fr);
+  @media #{$bp-md}{
+    grid-template: 100px auto / 100px repeat(12, 1fr);
     grid-template-areas:
     "tnav tnav tnav tnav tnav tnav tnav tnav tnav tnav tnav tnav tnav"
     "nav . main main main main main main main main main main .";
@@ -98,18 +98,18 @@ input:focus, textarea:focus, select:focus {
     display: grid;
     grid-template: auto / repeat(12, 1fr);
     grid-template-areas:
-    "logo logo logo . . . . . . profile profile .";
+    "logo logo logo logo logo logo . . . profile profile .";
     position: fixed;
     height: 100px;
     width: 100%;
-    @media #{$bp-lg}{
-      grid-template-areas:
-      "logo logo . . . . . . . profile profile .";
-    }
     .logo {
       grid-area: logo;
-      padding: 30px;
-      height: 100px;
+      display: flex;
+      padding: 25px;
+      img {
+        align-self: center;
+        margin-left: 0;
+      }
     }
     .profile {
       grid-area: profile;

@@ -11,8 +11,22 @@ def fetch_riot_api(server, endpoint, version, path, extra='?'):
     url = 'https://' + server + '.api.riotgames.com/lol/' + endpoint + '/' + version + '/' + path + extra \
           + 'api_key=' + settings.RIOT_API_KEY
 
-    print(Fore.MAGENTA + '[RIOT API]: ' + Style.RESET_ALL + url)
-    return json.loads(json.dumps(requests.get(url).json()))
+    print(Fore.MAGENTA + '[RIOT API]: '
+          + Style.RESET_ALL + url)
+
+    response = requests.get(url)
+    print(response.headers)
+
+    if 'X-Method-Rate-Limit-Count' in response.headers:
+        print(Fore.MAGENTA + 'App Rate Limit Count: '
+              + Style.RESET_ALL + response.headers['X-App-Rate-Limit-Count']
+              + Fore.MAGENTA + ' / Method Rate Limit Count: '
+              + Style.RESET_ALL + response.headers['X-Method-Rate-Limit-Count'])
+    else:
+        print(Fore.MAGENTA + 'App Rate Limit Count: '
+              + Style.RESET_ALL + response.headers['X-App-Rate-Limit-Count'])
+
+    return json.loads(json.dumps(response.json()))
 
 
 def fetch_ddragon_api(version, method, option1, option2=None, language='en_US', ):

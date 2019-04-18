@@ -16,20 +16,29 @@
     width: 100%;
     grid-gap: 10px 15px;
     grid-template: 120px 95px 95px/repeat(12, 1fr);
-    grid-template-areas: "avatar avatar avatar title title title title title title title title title" "avatar avatar avatar ranked ranked ranked ranked ranked ranked ranked ranked ranked" "avatar avatar avatar menu menu menu menu menu menu menu menu menu"; }
+    grid-template-areas: "avatar avatar avatar avatar title title title title title title title title" "ranked ranked ranked ranked ranked ranked ranked ranked ranked ranked ranked ranked" "menu menu menu menu menu menu menu menu menu menu menu menu"; }
+    @media (min-width: 768px) {
+      #profile .top-wrapper {
+        grid-template-areas: "avatar avatar avatar title title title title title title title title title" "avatar avatar avatar ranked ranked ranked ranked ranked ranked ranked ranked ranked" "avatar avatar avatar menu menu menu menu menu menu menu menu menu"; } }
     #profile .top-wrapper .avatar-wrapper {
       grid-area: avatar;
-      padding: 20px 40px;
+      padding: 5px 10px;
       background-color: white;
       border: 3px solid #f4f4f4;
       border-radius: 20px;
       text-align: center;
       display: flex;
       flex-direction: column; }
+      @media (min-width: 768px) {
+        #profile .top-wrapper .avatar-wrapper {
+          padding: 20px 40px; } }
       #profile .top-wrapper .avatar-wrapper .avatar {
         position: relative;
-        margin-bottom: 5px;
-        height: 100%; }
+        margin: auto;
+        width: 100%; }
+        @media (min-width: 768px) {
+          #profile .top-wrapper .avatar-wrapper .avatar {
+            height: 100%; } }
         #profile .top-wrapper .avatar-wrapper .avatar img {
           border-radius: 10px;
           width: 100%; }
@@ -40,8 +49,11 @@
           padding: 2px 20px;
           background-color: white;
           border-top-left-radius: 10px;
-          font-size: 2rem;
+          font-size: 1rem;
           font-weight: bold; }
+          @media (min-width: 768px) {
+            #profile .top-wrapper .avatar-wrapper .avatar .level {
+              font-size: 2rem; } }
       #profile .top-wrapper .avatar-wrapper button {
         width: 100%;
         background-color: #f93d7c;
@@ -51,15 +63,27 @@
         font-weight: bold;
         border-radius: 10px;
         margin-top: 5px;
-        cursor: pointer; }
+        cursor: pointer;
+        display: none; }
+        @media (min-width: 768px) {
+          #profile .top-wrapper .avatar-wrapper button {
+            display: block; } }
       #profile .top-wrapper .avatar-wrapper .updated {
         font-size: 0.8rem;
         opacity: 0.8;
-        margin-top: auto; }
+        margin-top: auto;
+        display: none; }
+        @media (min-width: 768px) {
+          #profile .top-wrapper .avatar-wrapper .updated {
+            display: block; } }
     #profile .top-wrapper .title {
       grid-area: title;
       display: flex;
-      align-items: center; }
+      align-items: center;
+      flex-wrap: wrap; }
+      @media (min-width: 768px) {
+        #profile .top-wrapper .title {
+          justify-content: flex-start; } }
       #profile .top-wrapper .title .summonerName {
         font-family: Roboto-Black, sans-serif; }
       #profile .top-wrapper .title .user {
@@ -73,6 +97,26 @@
         #profile .top-wrapper .title .user a {
           margin: auto 0;
           color: grey; }
+      #profile .top-wrapper .title button {
+        width: 100%;
+        background-color: #f93d7c;
+        padding: 8px;
+        color: white;
+        font-size: 0.8rem;
+        font-weight: bold;
+        border-radius: 10px;
+        margin-top: 5px;
+        cursor: pointer; }
+        @media (min-width: 768px) {
+          #profile .top-wrapper .title button {
+            display: none; } }
+      #profile .top-wrapper .title .updated {
+        font-size: 0.8rem;
+        opacity: 0.8;
+        margin-top: auto; }
+        @media (min-width: 768px) {
+          #profile .top-wrapper .title .updated {
+            display: none; } }
     #profile .top-wrapper .ranked-stats {
       grid-area: ranked;
       display: flex; }
@@ -567,12 +611,12 @@
   height: 100px;
   z-index: 1000;
   border-right: #e2e2e2 solid 5px; }
-  @media (min-width: 992px) {
+  @media (min-width: 768px) {
     #sidebar {
       bottom: 0;
       height: 100%;
       top: 100px;
-      width: 5%; } }
+      width: 100px; } }
   #sidebar a {
     color: #333343; }
   #sidebar .profile .avatar img {
@@ -582,45 +626,65 @@
     height: 50%;
     border-radius: 50% !important; }
   #sidebar .sidebar-wrapper {
-    margin-top: 25px; }
-    #sidebar .sidebar-wrapper ul {
-      list-style-type: none;
-      padding: 0;
-      margin: 0; }
+    height: 100%; }
+    @media (min-width: 768px) {
+      #sidebar .sidebar-wrapper {
+        margin-top: 25px; } }
     #sidebar .sidebar-wrapper .sidebar-menu {
-      padding-bottom: 10px; }
-      #sidebar .sidebar-wrapper .sidebar-menu ul li {
-        height: 60px;
-        display: flex; }
-        #sidebar .sidebar-wrapper .sidebar-menu ul li a {
-          display: flex;
-          align-items: center;
+      height: 100%; }
+      @media (min-width: 768px) {
+        #sidebar .sidebar-wrapper .sidebar-menu {
+          padding-bottom: 10px; } }
+      #sidebar .sidebar-wrapper .sidebar-menu ul {
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+        justify-content: space-evenly;
+        display: flex;
+        height: 100%; }
+        @media (min-width: 768px) {
+          #sidebar .sidebar-wrapper .sidebar-menu ul {
+            display: block; } }
+        #sidebar .sidebar-wrapper .sidebar-menu ul li {
+          height: 100%;
           width: 100%;
-          text-decoration: none;
-          position: relative;
-          opacity: 0.6; }
-          #sidebar .sidebar-wrapper .sidebar-menu ul li a i {
-            font-size: 1.5rem;
-            width: 30px;
-            height: 30px;
-            line-height: 30px;
-            text-align: center;
-            border-radius: 4px;
-            margin: auto; }
-          #sidebar .sidebar-wrapper .sidebar-menu ul li a:hover i::before {
-            display: inline-block;
-            -webkit-animation: swing ease-in-out 0.5s 1 alternate;
-                    animation: swing ease-in-out 0.5s 1 alternate; }
-          #sidebar .sidebar-wrapper .sidebar-menu ul li a span.label, #sidebar .sidebar-wrapper .sidebar-menu ul li a span.badge {
-            float: right;
-            margin-top: 8px;
-            margin-left: 5px; }
-        #sidebar .sidebar-wrapper .sidebar-menu ul li.active {
-          border-left: 3px solid #f93d7c; }
-          #sidebar .sidebar-wrapper .sidebar-menu ul li.active a {
-            opacity: 1; }
-            #sidebar .sidebar-wrapper .sidebar-menu ul li.active a i {
-              color: #f93d7c; }
+          display: flex; }
+          @media (min-width: 768px) {
+            #sidebar .sidebar-wrapper .sidebar-menu ul li {
+              height: 60px; } }
+          #sidebar .sidebar-wrapper .sidebar-menu ul li a {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            text-decoration: none;
+            position: relative;
+            opacity: 0.6; }
+            #sidebar .sidebar-wrapper .sidebar-menu ul li a i {
+              font-size: 1.5rem;
+              width: 30px;
+              height: 30px;
+              line-height: 30px;
+              text-align: center;
+              border-radius: 4px;
+              margin: auto; }
+            #sidebar .sidebar-wrapper .sidebar-menu ul li a:hover i::before {
+              display: inline-block;
+              -webkit-animation: swing ease-in-out 0.5s 1 alternate;
+                      animation: swing ease-in-out 0.5s 1 alternate; }
+            #sidebar .sidebar-wrapper .sidebar-menu ul li a span.label, #sidebar .sidebar-wrapper .sidebar-menu ul li a span.badge {
+              float: right;
+              margin-top: 8px;
+              margin-left: 5px; }
+          #sidebar .sidebar-wrapper .sidebar-menu ul li.active {
+            border-top: 5px solid #f93d7c; }
+            @media (min-width: 768px) {
+              #sidebar .sidebar-wrapper .sidebar-menu ul li.active {
+                border-left: 3px solid #f93d7c;
+                border-top: unset; } }
+            #sidebar .sidebar-wrapper .sidebar-menu ul li.active a {
+              opacity: 1; }
+              #sidebar .sidebar-wrapper .sidebar-menu ul li.active a i {
+                color: #f93d7c; }
       #sidebar .sidebar-wrapper .sidebar-menu .sidebar-dropdown .dropdown-title:after {
         font-family: "Font Awesome 5 Free";
         font-weight: 900;
@@ -666,6 +730,9 @@
   grid-template: auto/repeat(3, 1fr);
   grid-gap: 20px;
   margin-top: 50px; }
+  @media (min-width: 768px) {
+    #home .panels {
+      grid-template: auto / 1fr; } }
 
 #chat {
   display: grid;
@@ -764,9 +831,9 @@ input:focus, textarea:focus, select:focus {
   grid-template-areas: "tnav tnav tnav tnav tnav tnav tnav tnav tnav tnav tnav tnav" ". main main main main main main main main main main ." "nav nav nav nav nav nav nav nav nav nav nav nav";
   min-height: 100vh;
   background-color: #F6F7FB; }
-  @media (min-width: 992px) {
+  @media (min-width: 768px) {
     #wrapper {
-      grid-template: 100px auto/5% repeat(12, 1fr);
+      grid-template: 100px auto/100px repeat(12, 1fr);
       grid-template-areas: "tnav tnav tnav tnav tnav tnav tnav tnav tnav tnav tnav tnav tnav" "nav . main main main main main main main main main main ."; } }
   #wrapper #top-nav {
     grid-area: tnav;
@@ -776,17 +843,17 @@ input:focus, textarea:focus, select:focus {
     border-bottom: #e2e2e2 solid 5px;
     display: grid;
     grid-template: auto/repeat(12, 1fr);
-    grid-template-areas: "logo logo logo . . . . . . profile profile .";
+    grid-template-areas: "logo logo logo logo logo logo . . . profile profile .";
     position: fixed;
     height: 100px;
     width: 100%; }
-    @media (min-width: 992px) {
-      #wrapper #top-nav {
-        grid-template-areas: "logo logo . . . . . . . profile profile ."; } }
     #wrapper #top-nav .logo {
       grid-area: logo;
-      padding: 30px;
-      height: 100px; }
+      display: flex;
+      padding: 25px; }
+      #wrapper #top-nav .logo img {
+        align-self: center;
+        margin-left: 0; }
     #wrapper #top-nav .profile {
       grid-area: profile;
       display: flex;

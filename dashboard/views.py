@@ -76,6 +76,12 @@ class SummonerViewSet(viewsets.ModelViewSet):
         return queryset
 
     def create(self, request):
+        if 'delete_all' in request.data:
+            if request.data['delete_all'] == True:
+                print('Deleting 20000 summoners.')
+                Summoner.objects.filter(pk__in=Summoner.objects.all().values_list('pk')[:20000]).delete()
+                print('20000 Matches Deleted')
+                return Response('20000 Matches Deleted')
         add = add_summoner(request.data['method'], request.data['value'])
         if add['isError'] != True:
             summoner = Summoner.objects.get(summonerId=add['summonerId'])
