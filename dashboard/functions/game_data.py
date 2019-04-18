@@ -180,9 +180,9 @@ def check_items(version):  # Create/Update all items.
     for item, value in item_info['data'].items():
         existing_item = Item.objects.filter(itemId=item)
         if existing_item.count() == 0:
-            existing_item = Item(itemId=item)
-            existing_item.save()
-
+            Item.objects.create(
+                itemId=item,
+            )
             print(Fore.GREEN + 'New item added: ' + Style.RESET_ALL + value['name'])
 
         existing_item = Item.objects.get(itemId=item)
