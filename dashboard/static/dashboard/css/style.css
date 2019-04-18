@@ -727,12 +727,12 @@
 
 #home .panels {
   display: grid;
-  grid-template: auto/repeat(3, 1fr);
+  grid-template: auto / 1fr;
   grid-gap: 20px;
   margin-top: 50px; }
   @media (min-width: 768px) {
     #home .panels {
-      grid-template: auto / 1fr; } }
+      grid-template: auto/repeat(6, 1fr); } }
 
 #chat {
   display: grid;
