@@ -61,7 +61,7 @@
                 deleteSummoners: function (event) {
                     axios.defaults.xsrfCookieName = 'csrftoken';
                     axios.defaults.xsrfHeaderName = 'X-CSRFToken';
-                    axios.post('/api/matches/', {
+                    axios.post('/api/summoners/', {
                         delete_all: true,
                     }).then(response => {
                         console.log(response);
