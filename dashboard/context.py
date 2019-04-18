@@ -13,6 +13,8 @@ def global_context(request):
         'DEBUG': settings.DEBUG,
         'GSETTINGS': globalSettings,
         'SUMMONER_COUNT': "{:,}".format(int(Summoner.objects.all().count()), 0) if Summoner.objects.all().count() != 0 else 0,
+        'UNRANKED_COUNT': "{:,}".format(int(Summoner.objects.filter(soloQ_tier=None).count()),
+                                    0) if Summoner.objects.all().count() != 0 else 0,
         'IRON_COUNT': "{:,}".format(int(Summoner.objects.filter(soloQ_tier__name='Iron').count()),
                                       0) if Summoner.objects.all().count() != 0 else 0,
         'BRONZE_COUNT': "{:,}".format(int(Summoner.objects.filter(soloQ_tier__name='Bronze').count()),
