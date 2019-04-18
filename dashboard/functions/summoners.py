@@ -64,7 +64,7 @@ def update_summoner(summonerId):
     summoner = Summoner.objects.get(summonerId=summonerId)
     print(Fore.YELLOW + 'Updating Summoner: ' + Style.RESET_ALL + summoner.summonerName)
 
-    summoner_info = fetch_riot_api('OC1', 'summoner', 'v4', 'summoners/by-summoner/' + summonerId)
+    summoner_info = fetch_riot_api('OC1', 'summoner', 'v4', 'summoners/' + summonerId)
     if 'status' in summoner_info:
         print(Fore.RED + '[ERROR]: ' + Style.RESET_ALL + summoner_info['status']['message'] + '.')
         return {'isError': True, 'errorMessage': summoner_info['status']['message']}
