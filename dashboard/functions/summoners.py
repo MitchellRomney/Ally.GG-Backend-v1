@@ -11,7 +11,7 @@ def add_summoner(method, value):
         existing_summoner = Summoner.objects.filter(summonerId=value)
         if existing_summoner.count() == 0:
             summoner_info = fetch_riot_api('OC1', 'league', 'v4', 'positions/by-summoner/' + value)
-            if summoner_info:  # Will be empty if user has never played ranked.
+            if summoner_info.length != 0:  # Will be empty if user has never played ranked.
                 try:
                     summoner = Summoner.objects.create(
                         # General
