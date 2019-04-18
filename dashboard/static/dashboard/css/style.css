@@ -325,6 +325,8 @@
             #profile #summoner-content-wrapper .content-general .latest-matches .match .main-info .timeAgo, #profile #summoner-content-wrapper .content-matches .latest-matches .match .main-info .timeAgo {
               font-size: 0.9rem;
               color: grey; }
+            #profile #summoner-content-wrapper .content-general .latest-matches .match .main-info .queue, #profile #summoner-content-wrapper .content-matches .latest-matches .match .main-info .queue {
+              font-size: 0.8rem; }
           #profile #summoner-content-wrapper .content-general .latest-matches .match .player-info, #profile #summoner-content-wrapper .content-matches .latest-matches .match .player-info {
             display: flex;
             text-align: center;
