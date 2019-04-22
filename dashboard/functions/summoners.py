@@ -62,6 +62,10 @@ def add_summoner(method, value):
 
 def update_summoner(summonerId):
     summoner = Summoner.objects.get(summonerId=summonerId)
+
+    summoner.date_updated = timezone.now()
+    summoner.save()
+
     print(Fore.YELLOW + 'Updating Summoner: ' + Style.RESET_ALL + summoner.summonerName)
 
     summoner_info = fetch_riot_api('OC1', 'summoner', 'v4', 'summoners/' + summonerId)
@@ -151,8 +155,6 @@ def update_summoner(summonerId):
                 if summoner.flexTT_freshBlood != queue['freshBlood'] else summoner.flexTT_freshBlood
             summoner.flexTT_leaguePoints = queue['leaguePoints'] \
                 if summoner.flexTT_leaguePoints != queue['leaguePoints'] else summoner.flexTT_leaguePoints
-
-    summoner.date_updated = timezone.now()
 
     summoner.save()
 

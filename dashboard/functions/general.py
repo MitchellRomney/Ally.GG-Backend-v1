@@ -51,21 +51,24 @@ def fetch_match(game_id):
 
         timestamp = datetime.fromtimestamp(match_info['gameCreation'] / 1000.)
 
-        try:
-            new_match = Match.objects.create(
-                gameId=match_info['gameId'],
-                platformId=match_info['platformId'],
-                queueId=match_info['queueId'],
-                seasonId=match_info['seasonId'],
-                mapId=match_info['mapId'],
+        new_match = Match(
+            gameId=match_info['gameId'],
+            platformId=match_info['platformId'],
+            queueId=match_info['queueId'],
+            seasonId=match_info['seasonId'],
+            mapId=match_info['mapId'],
 
-                gameMode=match_info['gameMode'],
-                gameType=match_info['gameType'],
-                gameVersion=match_info['gameVersion'],
-                gameDuration=match_info['gameDuration'],
-                timestamp=timestamp,
-            )
-        except IntegrityError:  # Creating Matches so fast it doubled up.
+            gameMode=match_info['gameMode'],
+            gameType=match_info['gameType'],
+            gameVersion=match_info['gameVersion'],
+            gameDuration=match_info['gameDuration'],
+            timestamp=timestamp,
+        )
+
+        # Creating Matches so fast it doubled up.
+        try:
+            new_match.save()
+        except IntegrityError:
             return {
                 'isError': False,
                 'errorMessage': None,

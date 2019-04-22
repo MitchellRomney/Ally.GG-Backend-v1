@@ -10,6 +10,7 @@ from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect, JsonResponse
 from datetime import datetime
 
+
 def home(request):
     return render(request, 'dashboard/home.html', {
     })
