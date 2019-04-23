@@ -1,14 +1,20 @@
 from django.shortcuts import render
 from dashboard.functions.general import *
 from dashboard.functions.game_data import *
+from dashboard.functions.utilities import *
 from rest_framework import viewsets
 from rest_framework.views import APIView
-from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
+from rest_framework.response import Response
 from dashboard.serializers import *
 from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect, JsonResponse
 from datetime import datetime
+
+
+if db_table_exists('Setting'):
+    global_settings = Setting.objects.get(name='Global') if Setting.objects.filter(name='Global').count() == 1 \
+        else Setting.objects.create(name='Global', latestVersion=get_latest_version())
 
 
 def home(request):
@@ -201,8 +207,6 @@ class GameView(APIView):
     def post(self, request):
         is_update = request.data['isUpdate']
         if is_update:
-            global_settings = Setting.objects.get(name='Global') if Setting.objects.filter(name='Global').count() == 1 \
-                else Setting.objects.create(name='Global', latestversion=get_latest_version())
             response = update_game_data(global_settings.latestVersion)
             return Response(response)
         return Response('Error, there is no endpoint here.')
