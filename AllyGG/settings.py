@@ -1,5 +1,12 @@
 import os
+import sentry_sdk
 from celery.schedules import crontab
+from sentry_sdk.integrations.django import DjangoIntegration
+
+sentry_sdk.init(
+    dsn="https://ee789799be9c4c3ab7411232f46b164c@sentry.io/1444367",
+    integrations=[DjangoIntegration()]
+)
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
