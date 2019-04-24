@@ -10,8 +10,13 @@
         {% if request.user.is_superuser %}
             <div class="buttons">
                 <button name="action" v-on:click="update_game_data" type="submit">Update Game Data</button>
+                <div>
+                    <input type="text" value="" v-model="addPatchItems"/>
+                    <button v-on:click="patchItems">Patch Items</button>
+                </div>
                 <button name="action" v-on:click="deleteMatches" type="submit" class="warning">Delete Matches</button>
-                <button name="action" v-on:click="deleteSummoners" type="submit" class="warning">Delete Summoners</button>
+                <button name="action" v-on:click="deleteSummoners" type="submit" class="warning">Delete Summoners
+                </button>
             </div>
         {% endif %}
         <div class="panels">
@@ -78,7 +83,9 @@
         var vm = new Vue({
             delimiters: ['[[', ']]'],
             el: '#home',
-            data: {},
+            data: {
+                addPatchItems: '',
+            },
             methods: {
                 update_game_data: function (event) {
                     axios.defaults.xsrfCookieName = 'csrftoken';
@@ -107,6 +114,11 @@
                         console.log(response);
                     });
                 },
+                patchItems: function (event) {
+                    axios.defaults.xsrfCookieName = 'csrftoken'
+                    axios.defaults.xsrfHeaderName = 'X-CSRFToken'
+                    axios.get('/api/items?method=patchItems&patch=' + this.addPatchItems)
+                }
             }
         })
     </script>

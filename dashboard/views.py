@@ -222,6 +222,21 @@ class ChampionViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
 
+class ItemViewSet(viewsets.ModelViewSet):
+    queryset = Item.objects.all().order_by('itemId')
+    serializer_class = MinimalItemSerializer
+
+    def retrieve(self, request, pk=None):
+        queryset = Item.objects.filter(itemId=pk)
+        serializer = MinimalItemSerializer(queryset, many=True, context={'request': request})
+
+        method = self.request.query_params.get('method')
+        if method == 'patchItems':  # TODO: Add this functionality.
+            return
+        
+        return Response(serializer.data)
+
+
 class ChatRoomViewSet(viewsets.ModelViewSet):
     queryset = ChatRoom.objects.all().order_by('-date_updated')
     serializer_class = ChatRoomSerializer

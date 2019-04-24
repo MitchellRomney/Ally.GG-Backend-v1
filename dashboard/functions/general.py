@@ -230,12 +230,18 @@ def fetch_match(game_id):
                             deaths=participant['stats']['deaths'],
 
                             # Perks
-                            perk0=Rune.objects.get(runeId=participant['stats']['perk0']) if 'perk0' in participant['stats'] else 0,
-                            perk1=Rune.objects.get(runeId=participant['stats']['perk1']) if 'perk1' in participant['stats'] else 0,
-                            perk2=Rune.objects.get(runeId=participant['stats']['perk2']) if 'perk2' in participant['stats'] else 0,
-                            perk3=Rune.objects.get(runeId=participant['stats']['perk3']) if 'perk3' in participant['stats'] else 0,
-                            perk4=Rune.objects.get(runeId=participant['stats']['perk4']) if 'perk4' in participant['stats'] else 0,
-                            perk5=Rune.objects.get(runeId=participant['stats']['perk5']) if 'perk5' in participant['stats'] else 0,
+                            perk0=Rune.objects.get(runeId=participant['stats']['perk0'])
+                            if 'perk0' in participant['stats'] else Rune.objects.get(runeId=0),
+                            perk1=Rune.objects.get(runeId=participant['stats']['perk1'])
+                            if 'perk1' in participant['stats'] else Rune.objects.get(runeId=0),
+                            perk2=Rune.objects.get(runeId=participant['stats']['perk2'])
+                            if 'perk2' in participant['stats'] else Rune.objects.get(runeId=0),
+                            perk3=Rune.objects.get(runeId=participant['stats']['perk3'])
+                            if 'perk3' in participant['stats'] else Rune.objects.get(runeId=0),
+                            perk4=Rune.objects.get(runeId=participant['stats']['perk4'])
+                            if 'perk4' in participant['stats'] else Rune.objects.get(runeId=0),
+                            perk5=Rune.objects.get(runeId=participant['stats']['perk5'])
+                            if 'perk5' in participant['stats'] else Rune.objects.get(runeId=0),
                             statPerk0=participant['stats']['statPerk0'] if 'statPerk0' in participant['stats'] else 0,
                             statPerk1=participant['stats']['statPerk1'] if 'statPerk0' in participant['stats'] else 0,
                             statPerk2=participant['stats']['statPerk1'] if 'statPerk0' in participant['stats'] else 0,
