@@ -2,7 +2,11 @@ from AllyGG.settings import *
 import sentry_sdk
 import dj_database_url
 
-sentry_sdk.init(environment="Production")
+sentry_sdk.init(
+    dsn="https://ee789799be9c4c3ab7411232f46b164c@sentry.io/1444367",
+    integrations=[DjangoIntegration()],
+    environment='Production',
+)
 
 DATABASES['default'] = dj_database_url.config()
 
@@ -43,7 +47,7 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 CELERY_BEAT_SCHEDULE = {
     'task_update_summoners': {
         'task': 'dashboard.tasks.task_update_summoners',
-        'schedule': 2.0,
+        'schedule': 5.0,
     },
     'task_update_version': {
         'task': 'dashboard.tasks.task_update_version',
