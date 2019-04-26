@@ -4,6 +4,8 @@ from datetime import datetime
 from colorama import Fore, Style
 import requests
 import json
+import re
+import pytz
 
 
 def get_latest_version():
@@ -39,6 +41,8 @@ def fetch_match(game_id):
         # print(Fore.YELLOW + 'Building Match: ' + Style.RESET_ALL + str(game_id))
 
         match_info = fetch_riot_api('OC1', 'match', 'v4', 'matches/' + str(game_id))
+        patch_regex = re.compile("\d\.\d{1,2}\.\d")
+        patch = patch_regex.findall(match_info["gameVersion"])[0]
 
         if 'status' in match_info:
             print(Fore.RED + '[ERROR]: ' + Style.RESET_ALL + match_info['status']['message'] + '.')
@@ -50,7 +54,7 @@ def fetch_match(game_id):
             print(Fore.CYAN + 'Match is Co-Op vs AI, skipping.' + Style.RESET_ALL)
             return {'isError': False, 'errorMessage': None, 'ignore': True}
 
-        timestamp = datetime.fromtimestamp(match_info['gameCreation'] / 1000.)
+        timestamp = datetime.utcfromtimestamp(match_info['gameCreation'] / 1000.).replace(tzinfo=pytz.UTC)
 
         new_match = Match(
             gameId=match_info['gameId'],
@@ -137,7 +141,7 @@ def fetch_match(game_id):
             for participant in match_info['participants']:
                 if participant['participantId'] == participant_info['participantId']:
                     try:
-                        new_player = Player.objects.create(
+                        new_player = Player(
                             # Key IDs & Participant Identity
                             match=new_match,
                             currentPlatformId=participant_info['player']['currentPlatformId'],
@@ -284,15 +288,6 @@ def fetch_match(game_id):
                             totalPlayerScore=participant['stats']['totalPlayerScore'],
                             totalScoreRank=participant['stats']['totalScoreRank'],
 
-                            # Items
-                            item0=Item.objects.get(itemId=participant['stats']['item0']),
-                            item1=Item.objects.get(itemId=participant['stats']['item1']),
-                            item2=Item.objects.get(itemId=participant['stats']['item2']),
-                            item3=Item.objects.get(itemId=participant['stats']['item3']),
-                            item4=Item.objects.get(itemId=participant['stats']['item4']),
-                            item5=Item.objects.get(itemId=participant['stats']['item5']),
-                            item6=Item.objects.get(itemId=participant['stats']['item6']),
-
                             # Other
                             longestTimeSpentLiving=participant['stats']['longestTimeSpentLiving'],
                             goldEarned=participant['stats']['goldEarned'],
@@ -300,6 +295,52 @@ def fetch_match(game_id):
                             win=participant['stats']['win'],
                             champLevel=participant['stats']['champLevel'],
                         )
+
+                        # Items
+                        if Item.objects.filter(itemId=participant['stats']['item0']).count() != 0:
+                            new_player.item0 = Item.objects.get(itemId=participant['stats']['item0'])
+                        else:
+                            check_items(patch)
+                            new_player.item0 = Item.objects.get(itemId=participant['stats']['item0'])
+
+                        if Item.objects.filter(itemId=participant['stats']['item1']).count() != 0:
+                            new_player.item1 = Item.objects.get(itemId=participant['stats']['item1'])
+                        else:
+                            check_items(patch)
+                            new_player.item1 = Item.objects.get(itemId=participant['stats']['item1'])
+
+                        if Item.objects.filter(itemId=participant['stats']['item2']).count() != 0:
+                            new_player.item2 = Item.objects.get(itemId=participant['stats']['item2'])
+                        else:
+                            check_items(patch)
+                            new_player.item2 = Item.objects.get(itemId=participant['stats']['item2'])
+
+                        if Item.objects.filter(itemId=participant['stats']['item3']).count() != 0:
+                            new_player.item3 = Item.objects.get(itemId=participant['stats']['item3'])
+                        else:
+                            check_items(patch)
+                            new_player.item3 = Item.objects.get(itemId=participant['stats']['item3'])
+
+                        if Item.objects.filter(itemId=participant['stats']['item4']).count() != 0:
+                            new_player.item4 = Item.objects.get(itemId=participant['stats']['item4'])
+                        else:
+                            check_items(patch)
+                            new_player.item4 = Item.objects.get(itemId=participant['stats']['item4'])
+
+                        if Item.objects.filter(itemId=participant['stats']['item5']).count() != 0:
+                            new_player.item5 = Item.objects.get(itemId=participant['stats']['item5'])
+                        else:
+                            check_items(patch)
+                            new_player.item5 = Item.objects.get(itemId=participant['stats']['item5'])
+
+                        if Item.objects.filter(itemId=participant['stats']['item6']).count() != 0:
+                            new_player.item6 = Item.objects.get(itemId=participant['stats']['item6'])
+                        else:
+                            check_items(patch)
+                            new_player.item6 = Item.objects.get(itemId=participant['stats']['item6'])
+
+                        new_player.save()
+
                     except Exception as e:
                         with configure_scope() as scope:
                             scope.set_extra('Match Info JSON', match_info)

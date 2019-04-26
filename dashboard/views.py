@@ -185,6 +185,7 @@ class PlayerViewSet(viewsets.ModelViewSet):
         queryset = Player.objects.all()
         matchId = self.request.query_params.get('match', None)
         summonerId = self.request.query_params.get('player', None)
+
         if matchId is not None and summonerId is not None:
             match = Match.objects.get(gameId=matchId)
             summoner = Summoner.objects.get(summonerId=summonerId)
@@ -226,13 +227,21 @@ class ItemViewSet(viewsets.ModelViewSet):
     queryset = Item.objects.all().order_by('itemId')
     serializer_class = MinimalItemSerializer
 
+    def get_queryset(self):
+        method = self.request.query_params.get('method')
+        patch = self.request.query_params.get('patch')
+
+        print(method)
+        print(patch)
+
+        if method == 'patchItems' and patch:
+            check_items(patch)
+
+        return Item.objects.all().order_by('itemId')
+
     def retrieve(self, request, pk=None):
         queryset = Item.objects.filter(itemId=pk)
         serializer = MinimalItemSerializer(queryset, many=True, context={'request': request})
-
-        method = self.request.query_params.get('method')
-        if method == 'patchItems':  # TODO: Add this functionality.
-            return
         
         return Response(serializer.data)
 

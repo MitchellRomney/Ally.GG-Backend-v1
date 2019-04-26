@@ -187,7 +187,7 @@ def check_items(version):  # Create/Update all items.
 
         existing_item = Item.objects.get(itemId=item)
 
-        if existing_item.version != version:
+        if existing_item.version < version:
             existing_item.version = version
             existing_item.itemId = item
             existing_item.name = value['name']
@@ -219,11 +219,12 @@ def check_items(version):  # Create/Update all items.
 
             existing_item.tags = value['tags'] if 'tags' in value else False
 
-            existing_item.maps_1 = value['maps']['1'] if '1' in value['maps'] else False
-            existing_item.maps_8 = value['maps']['8'] if '8' in value['maps'] else False
-            existing_item.maps_10 = value['maps']['10'] if '10' in value['maps'] else False
-            existing_item.maps_11 = value['maps']['11'] if '11' in value['maps'] else False
-            existing_item.maps_12 = value['maps']['12'] if '12' in value['maps'] else False
+            if 'maps' in value:
+                existing_item.maps_1 = value['maps']['1'] if '1' in value['maps'] else False
+                existing_item.maps_8 = value['maps']['8'] if '8' in value['maps'] else False
+                existing_item.maps_10 = value['maps']['10'] if '10' in value['maps'] else False
+                existing_item.maps_11 = value['maps']['11'] if '11' in value['maps'] else False
+                existing_item.maps_12 = value['maps']['12'] if '12' in value['maps'] else False
 
             existing_item.FlatHPPoolMod = value['stats']['FlatHPPoolMod'] if 'FlatHPPoolMod' in value['stats'] else 0
             existing_item.rFlatHPModPerLevel = value['stats']['rFlatHPModPerLevel'] if 'rFlatHPModPerLevel' in value['stats'] else 0
