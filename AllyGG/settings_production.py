@@ -1,5 +1,8 @@
 from AllyGG.settings import *
+import sentry_sdk
 import dj_database_url
+
+sentry_sdk.init(environment="Production")
 
 DATABASES['default'] = dj_database_url.config()
 
