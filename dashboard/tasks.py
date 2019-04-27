@@ -28,7 +28,7 @@ def task_update_summoners():
 
     for match in latest_matches:
         existing_match = Match.objects.filter(gameId=match['gameId'])
-        if existing_match.count() == 0:
+        if existing_match.count() == 0 and match['queueId'] != 850:  # 850 is Co-Op vs AI (TODO: Add functionality)
             fetch_match(match['gameId'])
             queryset = Match.objects.filter(gameId=match['gameId'])
             new_match = get_object_or_404(queryset, gameId=match['gameId'])
