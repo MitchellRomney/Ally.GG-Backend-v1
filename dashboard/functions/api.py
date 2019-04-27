@@ -21,7 +21,7 @@ def fetch_riot_api(server, endpoint, version, path, extra='?'):
               + Style.RESET_ALL + response.headers['X-App-Rate-Limit-Count']
               + Fore.MAGENTA + ' / Method Rate Limit Count: '
               + Style.RESET_ALL + response.headers['X-Method-Rate-Limit-Count'])
-    else if 'X-App-Rate-Limit-Count' in response.headers:
+    elif 'X-App-Rate-Limit-Count' in response.headers:
         print(Fore.MAGENTA + 'App Rate Limit Count: '
               + Style.RESET_ALL + response.headers['X-App-Rate-Limit-Count'])
 
