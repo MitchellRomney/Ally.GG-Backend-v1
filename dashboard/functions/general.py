@@ -48,7 +48,7 @@ def fetch_match(game_id):
 
         patch = re.compile('\d\.\d{1,2}\.').findall(match_info["gameVersion"])[0]
         patch += '1'
-        
+
         timestamp = datetime.utcfromtimestamp(match_info['gameCreation'] / 1000.).replace(tzinfo=pytz.UTC)
 
         if Match.objects.filter(gameId=game_id).count() == 0:
@@ -329,5 +329,5 @@ def fetch_match(game_id):
                                 scope.set_extra('Match Info JSON', match_info)
                                 capture_exception(e)
 
-    print(Fore.YELLOW + 'Match Created: ' + Style.RESET_ALL + str(new_match.gameId))
+    print(Fore.YELLOW + 'Match Created: ' + Style.RESET_ALL + str(game_id))
     return {'isError': False, 'errorMessage': None, 'ignore': False}
