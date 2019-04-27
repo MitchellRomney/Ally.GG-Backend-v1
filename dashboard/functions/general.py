@@ -3,6 +3,7 @@ from django.db.models import Count
 from sentry_sdk import capture_exception, configure_scope
 from datetime import datetime
 from colorama import Fore, Style
+from sentry_sdk import capture_message
 import requests
 import json
 import re
@@ -20,6 +21,7 @@ def check_match_integrity(match):
     bots = Match.objects.filter(gameId=match.gameId).annotate(bots_count=Count('bots'))
     teams = Team.objects.filter(match=match)
     if (players.count() + bots[0].bots_count) != 10 or teams.count() != 2:
+        capture_message('Match deleted. Players: ' + players.count + ', Bots: ' + bots[0].bots_count + ' & Teams: ' + teams.count() + '.')
         match.delete()
         return False
     else:
