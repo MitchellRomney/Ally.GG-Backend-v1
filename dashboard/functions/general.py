@@ -1,4 +1,5 @@
 from dashboard.functions.game_data import *
+from django.db.models import Count
 from sentry_sdk import capture_exception, configure_scope
 from datetime import datetime
 from colorama import Fore, Style
@@ -16,22 +17,18 @@ def get_latest_version():
 
 def check_match_integrity(match):
     players = Player.objects.filter(match=match)
+    bots = Match.objects.filter(gameId=match.gameId).annotate(bots_count=Count('bots'))
     teams = Team.objects.filter(match=match)
-    if players.count() != 10 or teams.count() != 2:
+    if (players.count() + bots[0].bots_count) != 10 or teams.count() != 2:
         match.delete()
         return False
     else:
         return True
 
 
-def fetch_match_list(summonerId):
-    summoner = Summoner.objects.get(summonerId=summonerId)
-    # print(Fore.YELLOW + 'Fetching Summoner Matches: ' + Style.RESET_ALL + summoner.summonerName)
-
+def fetch_match_list(summoner_id):
+    summoner = Summoner.objects.get(summonerId=summoner_id)
     matches = fetch_riot_api('OC1', 'match', 'v4', 'matchlists/by-account/' + summoner.accountId, '?endIndex=10')
-    if 'status' in matches:
-        return {'isError': True, 'errorMessage': matches['status']['message'], 'ignore': False}
-
     return matches['matches']
 
 
@@ -40,14 +37,7 @@ def fetch_match(game_id):
 
         match_info = fetch_riot_api('OC1', 'match', 'v4', 'matches/' + str(game_id))
 
-        # TODO: Add functionality for Co-Op vs AI games.
-        # Checking for Co-Op vs AI queue ID.
-        if match_info['queueId'] == 850:
-            print(Fore.CYAN + 'Match is Co-Op vs AI, skipping.' + Style.RESET_ALL)
-            return {'isError': False, 'errorMessage': None, 'ignore': True}
-
-        patch = re.compile('\d\.\d{1,2}\.').findall(match_info["gameVersion"])[0]
-        patch += '1'
+        patch = re.compile('\d\.\d{1,2}\.').findall(match_info["gameVersion"])[0] + '1'
 
         timestamp = datetime.utcfromtimestamp(match_info['gameCreation'] / 1000.).replace(tzinfo=pytz.UTC)
 
@@ -67,21 +57,12 @@ def fetch_match(game_id):
             )
 
             for player in match_info['participantIdentities']:
-                existing_summoner = Summoner.objects.filter(summonerId=player['player']['summonerId'])
-
-                if existing_summoner.count() == 0:
-                    add_response = add_summoner('SummonerId', player['player']['summonerId'])
-                    if add_response['isError']:  # If there is an error.
-                        if add_response['errorMessage'] == 'Summoner already exists.':
-                            summoner = Summoner.objects.get(summonerId=player['player']['summonerId'])
-                        else:  # Else, serious error. Report it to the user.
-                            return {'isError': True, 'errorMessage': add_response['errorMessage'], 'ignore': False}
-                    else:
-                        summoner = Summoner.objects.get(summonerId=player['player']['summonerId'])
+                if player['player']['accountId'] != '0':
+                    if Summoner.objects.filter(summonerId=player['player']['summonerId']).count() == 0:
+                        add_summoner('SummonerId', player['player']['summonerId'])
+                    new_match.players.add(Summoner.objects.get(summonerId=player['player']['summonerId']))
                 else:
-                    summoner = Summoner.objects.get(summonerId=player['player']['summonerId'])
-
-                new_match.players.add(summoner)
+                    new_match.bots.add(Champion.objects.get(champId=player['player']['summonerName']))
 
             # Create the Teams
             for team in match_info['teams']:

@@ -11,27 +11,18 @@ def task_update_summoners():
     summoner_spells = SummonerSpell.objects.all()
     items = Item.objects.all()
     ranked_tiers = RankedTier.objects.all()
-
     if champions.count() == 0 or runes.count() == 0 or summoner_spells.count() == 0 or items.count() == 0 \
             or ranked_tiers.count() == 0:
         update_game_data(get_latest_version())
 
     summoner = Summoner.objects.filter(date_updated=None).order_by('date_created')[:1].get()
-
     update_summoner(summoner.summonerId)
-
     latest_matches = fetch_match_list(summoner.summonerId)
 
-    if 'isError' in latest_matches:
-        if latest_matches['isError']:
-            return None
-
     for match in latest_matches:
-        existing_match = Match.objects.filter(gameId=match['gameId'])
-        if existing_match.count() == 0 and match['queue'] != 850:  # 850 is Co-Op vs AI (TODO: Add functionality)
+        if Match.objects.filter(gameId=match['gameId']).count():
             fetch_match(match['gameId'])
-            queryset = Match.objects.filter(gameId=match['gameId'])
-            new_match = get_object_or_404(queryset, gameId=match['gameId'])
+            new_match = Match.objects.filter(gameId=match['gameId'])[:1].get()
             if new_match:
                 check_match_integrity(new_match)
 

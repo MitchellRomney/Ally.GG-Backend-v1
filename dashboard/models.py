@@ -409,6 +409,7 @@ class Match(models.Model):
 
     # Players
     players = models.ManyToManyField('Summoner', related_name='Matches')
+    bots = models.ManyToManyField('Champion', related_name='Matches_bots')
 
     # Match Information
     gameMode = models.CharField(max_length=255, blank=False)
