@@ -51,7 +51,7 @@ def fetch_match(game_id):
 
         timestamp = datetime.utcfromtimestamp(match_info['gameCreation'] / 1000.).replace(tzinfo=pytz.UTC)
 
-        if Match.objects.filter(gameId=game_id).count() == 0:
+        if Match.objects.filter(gameId=game_id).count() == 0 and match_info['seasonId'] >= 10:
             new_match = Match.objects.create(
                 gameId=match_info['gameId'],
                 platformId=match_info['platformId'],
