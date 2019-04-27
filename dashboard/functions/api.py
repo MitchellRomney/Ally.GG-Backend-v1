@@ -25,7 +25,13 @@ def fetch_riot_api(server, endpoint, version, path, extra='?'):
         print(Fore.MAGENTA + 'App Rate Limit Count: '
               + Style.RESET_ALL + response.headers['X-App-Rate-Limit-Count'])
 
-    return json.loads(json.dumps(response.json()))
+    parsed_response = json.loads(json.dumps(response.json()))
+
+    if 'status' in parsed_response:
+        print(Fore.RED + '[ERROR]: ' + Style.RESET_ALL + parsed_response['status']['message'] + '.')
+        return {'isError': True, 'errorMessage': parsed_response['status']['message'], 'ignore': False}
+
+    return parsed_response
 
 
 def fetch_ddragon_api(version, method, option1, option2=None, language='en_US', ):
