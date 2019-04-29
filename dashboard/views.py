@@ -1,7 +1,6 @@
 from django.shortcuts import render
 from dashboard.functions.general import *
 from dashboard.functions.game_data import *
-from dashboard.functions.utilities import *
 from rest_framework import viewsets
 from rest_framework.views import APIView
 from django.shortcuts import get_object_or_404
@@ -10,10 +9,40 @@ from dashboard.serializers import *
 from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect, JsonResponse
 from datetime import datetime
+from django.db.models import Sum
 
 
 def home(request):
+    global_settings = Setting.objects.get(name='Global') if Setting.objects.filter(name='Global').count() == 1 \
+        else Setting.objects.create(name='Global', latestVersion=get_latest_version())
+    total_kills = Player.objects.aggregate(Sum('kills'))
     return render(request, 'dashboard/home.html', {
+        'global_settings': global_settings,
+        'summoner_count': "{:,}".format(int(Summoner.objects.all().count()),
+                                        0) if Summoner.objects.all().count() != 0 else 0,
+        'unranked_count': "{:,}".format(int(Summoner.objects.filter(soloQ_tier=None).count()),
+                                        0) if Summoner.objects.all().count() != 0 else 0,
+        'iron_count': "{:,}".format(int(Summoner.objects.filter(soloQ_tier__name='Iron').count()),
+                                    0) if Summoner.objects.all().count() != 0 else 0,
+        'bronze_count': "{:,}".format(int(Summoner.objects.filter(soloQ_tier__name='Bronze').count()),
+                                      0) if Summoner.objects.all().count() != 0 else 0,
+        'silver_count': "{:,}".format(int(Summoner.objects.filter(soloQ_tier__name='Silver').count()),
+                                      0) if Summoner.objects.all().count() != 0 else 0,
+        'gold_count': "{:,}".format(int(Summoner.objects.filter(soloQ_tier__name='Gold').count()),
+                                    0) if Summoner.objects.all().count() != 0 else 0,
+        'platinum_count': "{:,}".format(int(Summoner.objects.filter(soloQ_tier__name='Platinum').count()),
+                                        0) if Summoner.objects.all().count() != 0 else 0,
+        'diamond_count': "{:,}".format(int(Summoner.objects.filter(soloQ_tier__name='Diamond').count()),
+                                       0) if Summoner.objects.all().count() != 0 else 0,
+        'master_count': "{:,}".format(int(Summoner.objects.filter(soloQ_tier__name='Master').count()),
+                                      0) if Summoner.objects.all().count() != 0 else 0,
+        'grandmaster_count': "{:,}".format(int(Summoner.objects.filter(soloQ_tier__name='Grandmaster').count()),
+                                           0) if Summoner.objects.all().count() != 0 else 0,
+        'challenger_count': "{:,}".format(int(Summoner.objects.filter(soloQ_tier__name='Challenger').count()),
+                                          0) if Summoner.objects.all().count() != 0 else 0,
+        'total_kills': "{:,}".format(int(total_kills['kills__sum']), 0) if total_kills['kills__sum'] else 0,
+        'match_count': "{:,}".format(int(Match.objects.all().count()), 0) if Match.objects.all().count() != 0 else 0,
+        'current_patch': global_settings.latestVersion,
     })
 
 
