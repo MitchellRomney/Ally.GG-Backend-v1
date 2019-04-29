@@ -1,5 +1,6 @@
 from django.conf import settings
 from colorama import Fore, Style
+from sentry_sdk import configure_scope
 import requests
 import json
 
