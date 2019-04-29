@@ -21,7 +21,6 @@ def check_match_integrity(match):
     bots = Match.objects.filter(gameId=match.gameId).annotate(bots_count=Count('bots'))
     teams = Team.objects.filter(match=match)
     if (players.count() + bots[0].bots_count) != 10 or teams.count() != 2:
-        capture_message('Match deleted. Players: ' + players.count + ', Bots: ' + bots[0].bots_count + ' & Teams: ' + teams.count() + '.')
         match.delete()
         return False
     else:
