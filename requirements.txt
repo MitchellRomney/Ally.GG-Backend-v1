@@ -19,3 +19,4 @@ redis==3.2.1
 Pillow==6.0.0
 django-s3direct==1.1.2
 sentry-sdk==0.7.10
+pylibmc==1.6.0
