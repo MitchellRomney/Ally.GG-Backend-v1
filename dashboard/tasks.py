@@ -2,7 +2,9 @@ from __future__ import absolute_import, unicode_literals
 from celery import task
 from dashboard.functions.general import *
 from dashboard.functions.game_data import *
-from django.shortcuts import get_object_or_404
+from dynamic_preferences.registries import global_preferences_registry
+from django.db.models import Sum
+
 
 @task
 def task_update_summoners():
@@ -30,15 +32,28 @@ def task_update_summoners():
 
 @task
 def task_update_version():
-    global_settings = Setting.objects.get(name='Global') if Setting.objects.filter(name='Global').count() == 1 else None
-    if global_settings:
-        latest_version = get_latest_version()
-        if latest_version != global_settings.latestVersion:
-            global_settings.latestVersion = latest_version
-            global_settings.save()
-            print(Fore.GREEN + 'New Version: ' + Style.RESET_ALL + latest_version)
-        else:
-            print(Fore.YELLOW + 'Current Version up to date.')
+    global_preferences = global_preferences_registry.manager()
+    latest_version = get_latest_version()
+    if latest_version != global_preferences['LATEST_PATCH']:
+        global_preferences['LATEST_PATCH'] = latest_version
+        print(Fore.GREEN + 'New Version: ' + Style.RESET_ALL + latest_version)
     else:
-        global_settings = Setting.objects.create(name='Global', latestVersion=get_latest_version())
-        print(Fore.GREEN + 'New Version: ' + Style.RESET_ALL + global_settings.latestVersion)
+        print(Fore.YELLOW + 'Current Version up to date.')
+
+@task
+def task_update_stats():
+    total_kills = Player.objects.aggregate(Sum('kills'))
+
+    global_preferences = global_preferences_registry.manager()
+    global_preferences['stats__IRON_COUNT'] = "{:,}".format(int(Summoner.objects.filter(soloQ_tier__name='Iron').count()), 0)
+    global_preferences['stats__BRONZE_COUNT'] = "{:,}".format(int(Summoner.objects.filter(soloQ_tier__name='Bronze').count()), 0)
+    global_preferences['stats__SILVER_COUNT'] = "{:,}".format(int(Summoner.objects.filter(soloQ_tier__name='Silver').count()), 0)
+    global_preferences['stats__GOLD_COUNT'] = "{:,}".format(int(Summoner.objects.filter(soloQ_tier__name='Gold').count()), 0)
+    global_preferences['stats__PLATINUM_COUNT'] = "{:,}".format(int(Summoner.objects.filter(soloQ_tier__name='Platinum').count()), 0)
+    global_preferences['stats__DIAMOND_COUNT'] = "{:,}".format(int(Summoner.objects.filter(soloQ_tier__name='Diamond').count()), 0)
+    global_preferences['stats__MASTER_COUNT'] = "{:,}".format(int(Summoner.objects.filter(soloQ_tier__name='Master').count()), 0)
+    global_preferences['stats__GRANDMASTER_COUNT'] = "{:,}".format(int(Summoner.objects.filter(soloQ_tier__name='Grandmaster').count()), 0)
+    global_preferences['stats__CHALLENGER_COUNT'] = "{:,}".format(int(Summoner.objects.filter(soloQ_tier__name='Challenger').count()), 0)
+    global_preferences['stats__SUMMONER_COUNT'] = "{:,}".format(int(Summoner.objects.all().count()), 0)
+    global_preferences['stats__MATCH_COUNT'] = "{:,}".format(int(Match.objects.all().count()), 0)
+    global_preferences['stats__TOTAL_KILLS'] = "{:,}".format(int(total_kills['kills__sum']), 0) if total_kills['kills__sum'] else 0

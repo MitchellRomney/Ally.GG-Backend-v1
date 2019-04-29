@@ -53,6 +53,10 @@ CELERY_BEAT_SCHEDULE = {
         'task': 'dashboard.tasks.task_update_version',
         'schedule': crontab(minute='*/1'),
     },
+    'task_update_stats': {
+        'task': 'dashboard.tasks.task_update_stats',
+        'schedule': 30,
+    },
 }
 
 def get_cache():

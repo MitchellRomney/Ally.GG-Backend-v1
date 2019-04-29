@@ -1,5 +1,7 @@
 from dashboard.functions.general import *
 from dashboard.models import *
+from dynamic_preferences.registries import global_preferences_registry
+
 
 def global_context(request):
     # User Information
@@ -10,4 +12,5 @@ def global_context(request):
         'DEBUG': settings.DEBUG,
         'MY_PROFILE': profile,
         'MY_SUMMONERS': Summoner.objects.filter(user_profile=profile) if isProfile else None,
+        'SETTINGS': global_preferences_registry.manager()
     }
