@@ -20,7 +20,7 @@ def task_update_summoners():
     latest_matches = fetch_match_list(summoner.summonerId)
 
     for match in latest_matches:
-        if Match.objects.filter(gameId=match['gameId']).count():
+        if Match.objects.filter(gameId=match['gameId']).count() == 0:
             fetch_match(match['gameId'])
             new_match = Match.objects.filter(gameId=match['gameId'])[:1].get()
             if new_match:

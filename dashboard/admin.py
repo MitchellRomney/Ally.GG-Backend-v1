@@ -48,7 +48,7 @@ class SummonerAdmin(admin.ModelAdmin):
         'flexTT_tier',
         'flexSR_tier',
     )
-    
+
     search_fields = (
         'summonerName',
     )
