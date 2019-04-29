@@ -1,9 +1,7 @@
 from dashboard.functions.game_data import *
-from django.db.models import Count
 from sentry_sdk import capture_exception, configure_scope
 from datetime import datetime
 from colorama import Fore, Style
-from sentry_sdk import capture_message
 import requests
 import json
 import re
@@ -18,9 +16,8 @@ def get_latest_version():
 
 def check_match_integrity(match):
     players = Player.objects.filter(match=match)
-    bots = Match.objects.filter(gameId=match.gameId).annotate(bots_count=Count('bots'))
     teams = Team.objects.filter(match=match)
-    if (players.count() + bots[0].bots_count) != 10 or teams.count() != 2:
+    if players.count() != 10 or teams.count() != 2:
         match.delete()
         return False
     else:
@@ -63,7 +60,7 @@ def fetch_match(game_id):
                         add_summoner('SummonerId', player['player']['summonerId'])
                     new_match.players.add(Summoner.objects.get(summonerId=player['player']['summonerId']))
                 else:
-                    new_match.bots.add(Champion.objects.get(champId=player['player']['summonerName']))
+                    new_match.bots.add(Champion.objects.get(champId__iexact=player['player']['summonerName']))
 
             # Create the Teams
             for team in match_info['teams']:
@@ -113,7 +110,8 @@ def fetch_match(game_id):
                                 platformId=participant_info['player']['platformId'],
                                 matchHistoryUri=participant_info['player']['matchHistoryUri'],
                                 participantId=participant_info['participantId'],
-                                summoner=Summoner.objects.get(summonerId=participant_info['player']['summonerId']),
+                                summoner=Summoner.objects.get(summonerId=participant_info['player']['summonerId'])
+                                if 'summonerId' in participant_info['player'] else None,
 
                                 team=participant_team,
 
@@ -304,8 +302,9 @@ def fetch_match(game_id):
                                 check_items(patch)
                                 new_player.item6 = Item.objects.get(itemId=participant['stats']['item6'])
 
-                            new_player.save()
+                            print(new_player)
 
+                            new_player.save()
                         except Exception as e:
                             with configure_scope() as scope:
                                 scope.set_extra('Match Info JSON', match_info)

@@ -329,6 +329,9 @@ def check_items(version):  # Create/Update all items.
 
 
 def check_summoner_spells(version):  # Create/Update all summoner spells.
+    if SummonerSpell.objects.filter(key=0).count() == 0:
+        SummonerSpell.objects.create(key=0, name="No Summoner Spell")
+
     summoner_spell_info = fetch_ddragon_api(version, 'data', 'summoner.json')
     for spell, value in summoner_spell_info['data'].items():
         existing_spell = SummonerSpell.objects.filter(key=value['key'])

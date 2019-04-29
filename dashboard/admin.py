@@ -103,6 +103,19 @@ class TeamAdmin(admin.ModelAdmin):
 class PlayerAdmin(admin.ModelAdmin):
     model = Player
 
+    list_display = (
+        'summoner',
+        'champion',
+        'match',
+        'date_created',
+    )
+
+    list_select_related = (
+        'summoner',
+        'champion',
+        'match',
+    )
+
     search_fields = (
         'match__gameId',
         'summoner__summonerName'

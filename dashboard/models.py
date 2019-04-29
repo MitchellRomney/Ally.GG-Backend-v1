@@ -459,7 +459,7 @@ class Player(models.Model):
 
     # Participant Identity
     match = models.ForeignKey(Match, related_name='Players', on_delete=models.CASCADE, blank=False)
-    summoner = models.ForeignKey(Summoner, related_name='Players', on_delete=models.SET_NULL, blank=False, null=True)
+    summoner = models.ForeignKey(Summoner, related_name='Players', on_delete=models.SET_NULL, blank=True, null=True)
     currentPlatformId = models.CharField(max_length=255, blank=False)
     platformId = models.CharField(max_length=255, blank=False)
     matchHistoryUri = models.CharField(max_length=255, blank=False)
@@ -574,6 +574,8 @@ class Player(models.Model):
     totalMinionsKilled = models.BigIntegerField(blank=False)
     timeCCingOthers = models.BigIntegerField(blank=False)
     statPerk2 = models.BigIntegerField(blank=False)
+
+    date_created = models.DateTimeField(auto_now_add=True, blank=False)
 
     def __str__(self):
         return str(self.match) + ' - Player: ' + str(self.summoner)
