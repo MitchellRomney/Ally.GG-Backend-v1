@@ -155,7 +155,7 @@ def check_runes(version):  # Create/Update all runes.
                 else:  # If champion DOES exist already, update itself.
                     existing_rune = Rune.objects.get(runeId=rune['id'])
 
-                    if existing_rune.version != version:
+                    if existing_rune.version < version:
                         existing_rune.runeId = rune['id']
                         existing_rune.key = rune['key']
                         existing_rune.icon = rune['icon']

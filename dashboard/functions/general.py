@@ -27,7 +27,10 @@ def check_match_integrity(match):
 def fetch_match_list(summoner_id):
     summoner = Summoner.objects.get(summonerId=summoner_id)
     matches = fetch_riot_api('OC1', 'match', 'v4', 'matchlists/by-account/' + summoner.accountId, '?endIndex=10')
-    return matches['matches']
+    if 'matches' in matches:
+        return matches['matches']
+    else:
+        return []
 
 
 def fetch_match(game_id):
@@ -197,18 +200,6 @@ def fetch_match(game_id):
                                 deaths=participant['stats']['deaths'],
 
                                 # Perks
-                                perk0=Rune.objects.get(runeId=participant['stats']['perk0'])
-                                if 'perk0' in participant['stats'] else Rune.objects.get(runeId=0),
-                                perk1=Rune.objects.get(runeId=participant['stats']['perk1'])
-                                if 'perk1' in participant['stats'] else Rune.objects.get(runeId=0),
-                                perk2=Rune.objects.get(runeId=participant['stats']['perk2'])
-                                if 'perk2' in participant['stats'] else Rune.objects.get(runeId=0),
-                                perk3=Rune.objects.get(runeId=participant['stats']['perk3'])
-                                if 'perk3' in participant['stats'] else Rune.objects.get(runeId=0),
-                                perk4=Rune.objects.get(runeId=participant['stats']['perk4'])
-                                if 'perk4' in participant['stats'] else Rune.objects.get(runeId=0),
-                                perk5=Rune.objects.get(runeId=participant['stats']['perk5'])
-                                if 'perk5' in participant['stats'] else Rune.objects.get(runeId=0),
                                 statPerk0=participant['stats']['statPerk0'] if 'statPerk0' in participant['stats'] else 0,
                                 statPerk1=participant['stats']['statPerk1'] if 'statPerk0' in participant['stats'] else 0,
                                 statPerk2=participant['stats']['statPerk1'] if 'statPerk0' in participant['stats'] else 0,
@@ -302,9 +293,50 @@ def fetch_match(game_id):
                                 check_items(patch)
                                 new_player.item6 = Item.objects.get(itemId=participant['stats']['item6'])
 
-                            print(new_player)
+                            if 'perk0' in participant['stats']:
+                                if Rune.objects.filter(runeId=participant['stats']['perk0']).count() != 0:
+                                    new_player.perk0 = Rune.objects.get(runeId=participant['stats']['perk0'])
+                                else:
+                                    check_runes(patch)
+                                    new_player.perk0 = Rune.objects.get(runeId=participant['stats']['perk0'])
+
+                            if 'perk1' in participant['stats']:
+                                if Rune.objects.filter(runeId=participant['stats']['perk1']).count() != 0:
+                                    new_player.perk1 = Rune.objects.get(runeId=participant['stats']['perk1'])
+                                else:
+                                    check_runes(patch)
+                                    new_player.perk1 = Rune.objects.get(runeId=participant['stats']['perk1'])
+
+                            if 'perk2' in participant['stats']:
+                                if Rune.objects.filter(runeId=participant['stats']['perk2']).count() != 0:
+                                    new_player.perk2 = Rune.objects.get(runeId=participant['stats']['perk2'])
+                                else:
+                                    check_runes(patch)
+                                    new_player.perk2 = Rune.objects.get(runeId=participant['stats']['perk2'])
+
+                            if 'perk3' in participant['stats']:
+                                if Rune.objects.filter(runeId=participant['stats']['perk3']).count() != 0:
+                                    new_player.perk3 = Rune.objects.get(runeId=participant['stats']['perk3'])
+                                else:
+                                    check_runes(patch)
+                                    new_player.perk3 = Rune.objects.get(runeId=participant['stats']['perk3'])
+
+                            if 'perk4' in participant['stats']:
+                                if Rune.objects.filter(runeId=participant['stats']['perk4']).count() != 0:
+                                    new_player.perk4 = Rune.objects.get(runeId=participant['stats']['perk4'])
+                                else:
+                                    check_runes(patch)
+                                    new_player.perk4 = Rune.objects.get(runeId=participant['stats']['perk4'])
+
+                            if 'perk5' in participant['stats']:
+                                if Rune.objects.filter(runeId=participant['stats']['perk5']).count() != 0:
+                                    new_player.perk5 = Rune.objects.get(runeId=participant['stats']['perk5'])
+                                else:
+                                    check_runes(patch)
+                                    new_player.perk5 = Rune.objects.get(runeId=participant['stats']['perk5'])
 
                             new_player.save()
+
                         except Exception as e:
                             with configure_scope() as scope:
                                 scope.set_extra('Match Info JSON', match_info)

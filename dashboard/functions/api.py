@@ -31,6 +31,9 @@ def fetch_riot_api(server, endpoint, version, path, extra='?'):
         print(Fore.RED + '[ERROR]: ' + Style.RESET_ALL + parsed_response['status']['message'] + '.')
         return {'isError': True, 'errorMessage': parsed_response['status']['message'], 'ignore': False}
 
+    with configure_scope() as scope:
+        scope.set_extra('JSON', parsed_response)
+
     return parsed_response
 
 

@@ -187,8 +187,9 @@ class RuneAdmin(admin.ModelAdmin):
     model = Rune
 
     list_display = (
+        'runeId',
         'name',
-        'version'
+        'version',
     )
 
 
