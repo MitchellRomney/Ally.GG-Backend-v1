@@ -2,18 +2,25 @@ from django.contrib import admin
 from django.contrib.auth.models import Group
 from dashboard.models import *
 
-class TeamInline(admin.TabularInline):
-    model = Team
+# Inlines
 
 
 class PlayerInline(admin.TabularInline):
     model = Player
-    list_display = ('summonerName',)
+
+    list_display = (
+        'summonerName',
+    )
 
 
 class SummonerInline(admin.TabularInline):
     model = Summoner
-    fields = ['summonerName', 'summonerId']
+
+    fields = [
+        'summonerName',
+        'summonerId'
+    ]
+
     extra = 0
 
 
@@ -21,22 +28,73 @@ class MatchInline(admin.TabularInline):
     model = Match.players.through
 
 
+# Main Object Admins
+
+
 class SummonerAdmin(admin.ModelAdmin):
     model = Summoner
-    list_display = ('summonerName', 'soloQ_tier', 'flexTT_tier', 'flexSR_tier', 'date_created', 'date_updated')
-    readonly_fields = ('summonerId', 'accountId', 'puuid', 'date_created', 'date_updated')
+
+    list_display = (
+        'summonerName',
+        'soloQ_tier',
+        'flexTT_tier',
+        'flexSR_tier',
+        'date_created',
+        'date_updated'
+    )
+
+    list_select_related = (
+        'soloQ_tier',
+        'flexTT_tier',
+        'flexSR_tier',
+    )
+    
+    search_fields = (
+        'summonerName',
+    )
+
     inlines = [
         MatchInline
     ]
-    search_fields = ('summonerName',)
 
+    def get_readonly_fields(self, request, obj=None):
+        readonly_fields = list(set(
+            [field.name for field in self.opts.local_fields] +
+            [field.name for field in self.opts.local_many_to_many]
+        ))
+        return readonly_fields
 
 class ProfileAdmin(admin.ModelAdmin):
     model = Profile
-    list_display = ('user', 'first_name', 'last_name', 'email', 'date_created', 'date_modified')
-    readonly_fields = ('date_created', 'date_modified')
-    search_fields = ('user',)
 
+    list_display = (
+        'user',
+        'first_name',
+        'last_name',
+        'email',
+        'date_created',
+        'date_modified'
+    )
+
+    list_select_related = (
+        'user',
+    )
+
+    readonly_fields = (
+        'date_created',
+        'date_modified'
+    )
+
+    search_fields = (
+        'user',
+    )
+
+    def get_readonly_fields(self, request, obj=None):
+        readonly_fields = list(set(
+            [field.name for field in self.opts.local_fields] +
+            [field.name for field in self.opts.local_many_to_many]
+        ))
+        return readonly_fields
 
 class TeamAdmin(admin.ModelAdmin):
     model = Team
@@ -45,54 +103,109 @@ class TeamAdmin(admin.ModelAdmin):
 class PlayerAdmin(admin.ModelAdmin):
     model = Player
 
-    search_fields = ('match__gameId', 'summoner__summonerName')
+    search_fields = (
+        'match__gameId',
+        'summoner__summonerName'
+    )
 
+    def get_readonly_fields(self, request, obj=None):
+        readonly_fields = list(set(
+            [field.name for field in self.opts.local_fields] +
+            [field.name for field in self.opts.local_many_to_many]
+        ))
+        return readonly_fields
 
 class MatchAdmin(admin.ModelAdmin):
     model = Match
-    list_display = ('platformId', 'gameId', 'queueId', 'seasonId', 'mapId', 'date_created')
 
-    inlines = [
-        TeamInline,
-        ]
+    list_display = (
+        'platformId',
+        'gameId',
+        'queueId',
+        'seasonId',
+        'mapId',
+        'date_created'
+    )
 
-    search_fields = ('gameId',)
+    search_fields = (
+        'gameId',
+    )
 
+    def get_readonly_fields(self, request, obj=None):
+        readonly_fields = list(set(
+            [field.name for field in self.opts.local_fields] +
+            [field.name for field in self.opts.local_many_to_many]
+        ))
+        return readonly_fields
 
 class ChampionAdmin(admin.ModelAdmin):
     model = Champion
-    list_display = ('name', 'key', 'version')
-    search_fields = ('name',)
+
+    list_display = (
+        'name',
+        'key',
+        'version'
+    )
+
+    search_fields = (
+        'name',
+    )
 
 
 class SettingAdmin(admin.ModelAdmin):
     model = Setting
-    list_display = ('name',)
+
+    list_display = (
+        'name',
+    )
 
 
 class ChatRoomAdmin(admin.ModelAdmin):
     model = ChatRoom
-    list_display = ('roomId', 'date_created', 'date_updated',)
+
+    list_display = (
+        'roomId',
+        'date_created',
+        'date_updated',
+    )
 
 
 class RuneAdmin(admin.ModelAdmin):
     model = Rune
-    list_display = ('name','version')
+
+    list_display = (
+        'name',
+        'version'
+    )
 
 
 class ItemAdmin(admin.ModelAdmin):
     model = Item
-    list_display = ('name', 'version')
+
+    list_display = (
+        'name',
+        'version'
+    )
 
 
 class SummonerSpellAdmin(admin.ModelAdmin):
     model = SummonerSpell
-    list_display = ('name', 'version')
+
+    list_display = (
+        'name',
+        'version'
+    )
 
 
 class RankedTierAdmin(admin.ModelAdmin):
     model = RankedTier
-    list_display = ('key', 'name', 'order')
+
+    list_display = (
+        'key',
+        'name',
+        'order'
+    )
+
 
 admin.site.register(Profile, ProfileAdmin)
 admin.site.register(Summoner, SummonerAdmin)
