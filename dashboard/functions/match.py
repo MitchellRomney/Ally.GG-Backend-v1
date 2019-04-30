@@ -43,7 +43,10 @@ def create_match(game_id):
 
     # Double check that the match doesn't already exist.
     if Match.objects.filter(gameId=match_data['gameId']).count() == 0:
-        new_match.save()
+        try:
+            new_match.save()
+        except IntegrityError:  # Even though we triple checked, some matches still double up.
+            return {'isError': False, 'errorMessage': None, 'ignore': True}
     else:
         return {'isError': False, 'errorMessage': None, 'ignore': True}
 
@@ -65,9 +68,7 @@ def create_match(game_id):
                 capture_exception(type_error)
                 return {'isError': True, 'errorMessage': '{0}'.format(type_error), 'ignore': True}
             except IntegrityError as integrity_error:
-                new_match.delete()
-                capture_exception(integrity_error)
-                return {'isError': True, 'errorMessage': '{0}'.format(integrity_error), 'ignore': True}
+                return {'isError': False, 'errorMessage': None, 'ignore': True}
         else:
             return {'isError': False, 'errorMessage': None, 'ignore': True}
 
@@ -101,9 +102,7 @@ def create_match(game_id):
                     capture_exception(type_error)
                     return {'isError': True, 'errorMessage': '{0}'.format(type_error), 'ignore': True}
                 except IntegrityError as integrity_error:
-                    new_match.delete()
-                    capture_exception(integrity_error)
-                    return {'isError': True, 'errorMessage': '{0}'.format(integrity_error), 'ignore': True}
+                    return {'isError': False, 'errorMessage': None, 'ignore': True}
 
                 # Add Summoner to players Many to Many relation field on Match.
                 new_match.players.add(new_player)
