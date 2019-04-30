@@ -29,6 +29,8 @@ def fetch_riot_api(server, endpoint, version, path, extra='?'):
     parsed_response = json.loads(json.dumps(response.json()))
 
     if 'status' in parsed_response:
+        with configure_scope() as scope:
+            scope.set_extra('Error Response', parsed_response)
         print(Fore.RED + '[ERROR]: ' + Style.RESET_ALL + parsed_response['status']['message'] + '.')
         return {'isError': True, 'errorMessage': parsed_response['status']['message'], 'ignore': False}
 
