@@ -162,6 +162,7 @@ def check_runes(version):  # Create/Update all runes.
                         existing_rune.name = rune['name']
                         existing_rune.shortDesc = rune['shortDesc']
                         existing_rune.longDesc = rune['longDesc']
+                        existing_rune.version = version
 
                         existing_rune.save()
 

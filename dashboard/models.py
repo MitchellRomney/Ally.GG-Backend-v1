@@ -411,8 +411,8 @@ class Match(models.Model):
     mapId = models.IntegerField(choices=MAPS, null=True, blank=True)
 
     # Players
-    players = models.ManyToManyField('Summoner', related_name='Matches')
-    bots = models.ManyToManyField('Champion', related_name='Matches_bots')
+    summoners = models.ManyToManyField('Summoner', related_name='Matches')
+    players = models.ManyToManyField('Player', related_name='Player_Matches')
 
     # Match Information
     gameMode = models.CharField(max_length=255, blank=False)

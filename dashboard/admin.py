@@ -23,11 +23,6 @@ class SummonerInline(admin.TabularInline):
 
     extra = 0
 
-
-class MatchInline(admin.TabularInline):
-    model = Match.players.through
-
-
 # Main Object Admins
 
 
@@ -53,16 +48,13 @@ class SummonerAdmin(admin.ModelAdmin):
         'summonerName',
     )
 
-    inlines = [
-        MatchInline
-    ]
-
     def get_readonly_fields(self, request, obj=None):
         readonly_fields = list(set(
             [field.name for field in self.opts.local_fields] +
             [field.name for field in self.opts.local_many_to_many]
         ))
         return readonly_fields
+
 
 class ProfileAdmin(admin.ModelAdmin):
     model = Profile
@@ -95,6 +87,7 @@ class ProfileAdmin(admin.ModelAdmin):
             [field.name for field in self.opts.local_many_to_many]
         ))
         return readonly_fields
+
 
 class TeamAdmin(admin.ModelAdmin):
     model = Team

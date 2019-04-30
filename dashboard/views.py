@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from dashboard.functions.general import *
-from dashboard.functions.game_data import *
+from dashboard.functions.match import *
 from rest_framework import viewsets
 from rest_framework.views import APIView
 from django.shortcuts import get_object_or_404
@@ -101,9 +101,7 @@ class SummonerViewSet(viewsets.ModelViewSet):
                 return HttpResponseRedirect('/summoners/' + updatedSummoner.summonerName)
 
             latestMatches = fetch_match_list(summoner.summonerId)
-            if 'isError' in latestMatches:
-                if latestMatches['isError']:
-                    return JsonResponse(latestMatches)
+
             newMatches = []
             for match in latestMatches:
                 existingMatch = Match.objects.filter(gameId=match['gameId'])
@@ -147,17 +145,13 @@ class MatchViewSet(viewsets.ModelViewSet):
                 return Response('All Matches Deleted')
         existingMatch = Match.objects.filter(gameId=request.data['gameId'])
         if existingMatch.count() == 0:
-            fetch = fetch_match(request.data['gameId'])
+            fetch = create_match(request.data['gameId'])
             if fetch['ignore']:
                 return Response(fetch)
 
             queryset = Match.objects.filter(gameId=request.data['gameId'])
             match = get_object_or_404(queryset, gameId=request.data['gameId'])
             serializer = MatchSerializer(match, context={'request': request})
-
-            if match:
-                check_match_integrity(match)
-
             response = fetch
             response['newMatch'] = serializer.data
             return Response(response)

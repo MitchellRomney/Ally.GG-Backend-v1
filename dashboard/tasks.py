@@ -1,6 +1,7 @@
 from __future__ import absolute_import, unicode_literals
 from celery import task
 from dashboard.functions.general import *
+from dashboard.functions.match import *
 from dashboard.functions.game_data import *
 from dynamic_preferences.registries import global_preferences_registry
 from django.db.models import Sum
@@ -23,10 +24,7 @@ def task_update_summoners():
 
     for match in latest_matches:
         if Match.objects.filter(gameId=match['gameId']).count() == 0:
-            fetch_match(match['gameId'])
-            new_match = Match.objects.filter(gameId=match['gameId'])[:1].get()
-            if new_match:
-                check_match_integrity(new_match)
+            create_match(match['gameId'])
 
     return None
 

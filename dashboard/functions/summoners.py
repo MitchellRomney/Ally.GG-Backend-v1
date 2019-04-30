@@ -9,14 +9,6 @@ def add_summoner(method, value):
     summoner_info = fetch_riot_api('OC1', 'summoner', 'v4', 'summoners/' + value) \
         if method == 'SummonerId' else fetch_riot_api('OC1', 'summoner', 'v4', 'summoners/by-name/' + value)
 
-    if 'status' in summoner_info:
-        print(Fore.RED + '[ERROR]: ' + Style.RESET_ALL + summoner_info['status']['message'] + '.')
-        return {
-            'isError': True,
-            'errorMessage': summoner_info['status']['message'],
-            'summonerId': None
-        }
-
     existing_summoner = Summoner.objects.filter(summonerId=summoner_info['id'])
 
     if existing_summoner.count() == 0:
@@ -69,9 +61,6 @@ def update_summoner(summonerId):
     print(Fore.YELLOW + 'Updating Summoner: ' + Style.RESET_ALL + summoner.summonerName)
 
     summoner_info = fetch_riot_api('OC1', 'summoner', 'v4', 'summoners/' + summonerId)
-    if 'status' in summoner_info:
-        print(Fore.RED + '[ERROR]: ' + Style.RESET_ALL + summoner_info['status']['message'] + '.')
-        return {'isError': True, 'errorMessage': summoner_info['status']['message']}
 
     summoner.summonerName = summoner_info['name'] \
         if summoner.summonerName != summoner_info['name'] else summoner.summonerName
@@ -81,9 +70,6 @@ def update_summoner(summonerId):
         if summoner.summonerName != summoner_info['summonerLevel'] else summoner.summonerName
 
     ranked_info = fetch_riot_api('OC1', 'league', 'v4', 'positions/by-summoner/' + summoner.summonerId)
-    if 'status' in ranked_info:
-        print(Fore.RED + '[ERROR]: ' + Style.RESET_ALL + ranked_info['status']['message'] + '.')
-        return {'isError': True, 'errorMessage': ranked_info['status']['message']}
 
     for queue in ranked_info:
         if queue['queueType'] == 'RANKED_SOLO_5x5':
