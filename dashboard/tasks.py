@@ -43,7 +43,7 @@ def task_update_stats():
     total_kills = Player.objects.aggregate(Sum('kills'))
 
     global_preferences = global_preferences_registry.manager()
-    global_preferences['stats__UNRANKED_COUNT'] = "{:,}".format(int(Summoner.objects.filter(soloQ_tier=None).exclude(date_updated=None).count()), 0)
+    global_preferences['stats__UNRANKED_COUNT'] = "{:,}".format(int(Summoner.objects.filter(soloQ_tier=None).count()), 0)
     global_preferences['stats__IRON_COUNT'] = "{:,}".format(int(Summoner.objects.filter(soloQ_tier__name='Iron').count()), 0)
     global_preferences['stats__BRONZE_COUNT'] = "{:,}".format(int(Summoner.objects.filter(soloQ_tier__name='Bronze').count()), 0)
     global_preferences['stats__SILVER_COUNT'] = "{:,}".format(int(Summoner.objects.filter(soloQ_tier__name='Silver').count()), 0)
