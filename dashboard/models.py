@@ -370,6 +370,9 @@ class Match(models.Model):
         (1060, 'Odyssey Extraction: Captain'),
         (1070, 'Odyssey Extraction: Onslaught'),
         (1200, 'Nexus Blitz'),
+        (2000, 'Tutorial 1'),
+        (2010, 'Tutorial 2'),
+        (2020, 'Tutorial 3'),
     )
     queueId = models.IntegerField(choices=QUEUES, null=True, blank=True)
     SEASONS = (

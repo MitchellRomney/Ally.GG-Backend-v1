@@ -42,7 +42,10 @@ def fetch_match(game_id):
 
         timestamp = datetime.utcfromtimestamp(match_info['gameCreation'] / 1000.).replace(tzinfo=pytz.UTC)
 
-        if Match.objects.filter(gameId=game_id).count() == 0 and match_info['seasonId'] >= 10:
+        if Match.objects.filter(gameId=game_id).count() == 0 \
+                and match_info['seasonId'] >= 10 \
+                and match_info['queueId'] <= 2000:
+
             new_match = Match.objects.create(
                 gameId=match_info['gameId'],
                 platformId=match_info['platformId'],
@@ -128,24 +131,29 @@ def fetch_match(game_id):
                                     totalMinionsKilled=participant['stats']['totalMinionsKilled'],
                                     neutralMinionsKilled=participant['stats']['neutralMinionsKilled'],
                                     neutralMinionsKilledTeamJungle=participant['stats'][
-                                        'neutralMinionsKilledTeamJungle'] if 'neutralMinionsKilledTeamJungle' in participant[
-                                        'stats'] else 0,
+                                        'neutralMinionsKilledTeamJungle'] if 'neutralMinionsKilledTeamJungle' in
+                                                                             participant[
+                                                                                 'stats'] else 0,
                                     neutralMinionsKilledEnemyJungle=participant['stats'][
-                                        'neutralMinionsKilledEnemyJungle'] if 'neutralMinionsKilledEnemyJungle' in participant[
-                                        'stats'] else 0,
+                                        'neutralMinionsKilledEnemyJungle'] if 'neutralMinionsKilledEnemyJungle' in
+                                                                              participant[
+                                                                                  'stats'] else 0,
 
                                     # Vision
                                     visionScore=participant['stats']['visionScore'],
                                     sightWardsBoughtInGame=participant['stats']['sightWardsBoughtInGame'],
                                     visionWardsBoughtInGame=participant['stats']['visionWardsBoughtInGame'],
-                                    wardsKilled=participant['stats']['wardsKilled'] if 'wardsKilled' in participant['stats'] else 0,
-                                    wardsPlaced=participant['stats']['wardsPlaced'] if 'wardsKilled' in participant['stats'] else 0,
+                                    wardsKilled=participant['stats']['wardsKilled'] if 'wardsKilled' in participant[
+                                        'stats'] else 0,
+                                    wardsPlaced=participant['stats']['wardsPlaced'] if 'wardsKilled' in participant[
+                                        'stats'] else 0,
 
                                     # Damage Dealt
                                     totalDamageDealt=participant['stats']['totalDamageDealt'],
                                     totalDamageDealtToChampions=participant['stats']['totalDamageDealtToChampions'],
                                     physicalDamageDealt=participant['stats']['physicalDamageDealt'],
-                                    physicalDamageDealtToChampions=participant['stats']['physicalDamageDealtToChampions'],
+                                    physicalDamageDealtToChampions=participant['stats'][
+                                        'physicalDamageDealtToChampions'],
                                     magicDamageDealt=participant['stats']['magicDamageDealt'],
                                     magicDamageDealtToChampions=participant['stats']['magicDamageDealtToChampions'],
                                     trueDamageDealt=participant['stats']['trueDamageDealt'],
@@ -164,16 +172,20 @@ def fetch_match(game_id):
                                     inhibitorKills=participant['stats']['inhibitorKills'],
                                     damageDealtToTurrets=participant['stats']['damageDealtToTurrets'],
                                     damageDealtToObjectives=participant['stats']['damageDealtToObjectives'],
-                                    firstInhibitorKill=participant['stats']['firstInhibitorKill'] if 'firstInhibitorKill' in
-                                                                                                     participant[
-                                                                                                         'stats'] else False,
-                                    firstInhibitorAssist=participant['stats']['firstInhibitorAssist'] if 'firstInhibitorAssist' in
-                                                                                                         participant[
-                                                                                                             'stats'] else False,
-                                    firstTowerAssist=participant['stats']['firstTowerAssist'] if 'firstTowerAssist' in participant[
-                                        'stats'] else False,
-                                    firstTowerKill=participant['stats']['firstTowerKill'] if 'firstTowerKill' in participant[
-                                        'stats'] else False,
+                                    firstInhibitorKill=participant['stats'][
+                                        'firstInhibitorKill'] if 'firstInhibitorKill' in
+                                                                 participant[
+                                                                     'stats'] else False,
+                                    firstInhibitorAssist=participant['stats'][
+                                        'firstInhibitorAssist'] if 'firstInhibitorAssist' in
+                                                                   participant[
+                                                                       'stats'] else False,
+                                    firstTowerAssist=participant['stats']['firstTowerAssist'] if 'firstTowerAssist' in
+                                                                                                 participant[
+                                                                                                     'stats'] else False,
+                                    firstTowerKill=participant['stats']['firstTowerKill'] if 'firstTowerKill' in
+                                                                                             participant[
+                                                                                                 'stats'] else False,
 
                                     # Kills
                                     kills=participant['stats']['kills'],
@@ -186,10 +198,12 @@ def fetch_match(game_id):
                                     pentaKills=participant['stats']['pentaKills'],
                                     largestMultiKill=participant['stats']['largestMultiKill'],
                                     largestKillingSpree=participant['stats']['largestKillingSpree'],
-                                    firstBloodKill=participant['stats']['firstBloodKill'] if 'firstBloodKill' in participant[
-                                        'stats'] else False,
-                                    firstBloodAssist=participant['stats']['firstBloodAssist'] if 'firstBloodAssist' in participant[
-                                        'stats'] else False,
+                                    firstBloodKill=participant['stats']['firstBloodKill'] if 'firstBloodKill' in
+                                                                                             participant[
+                                                                                                 'stats'] else False,
+                                    firstBloodAssist=participant['stats']['firstBloodAssist'] if 'firstBloodAssist' in
+                                                                                                 participant[
+                                                                                                     'stats'] else False,
 
                                     # Crowd Control
                                     timeCCingOthers=participant['stats']['timeCCingOthers'],
@@ -201,29 +215,51 @@ def fetch_match(game_id):
                                     deaths=participant['stats']['deaths'],
 
                                     # Perks
-                                    statPerk0=participant['stats']['statPerk0'] if 'statPerk0' in participant['stats'] else 0,
-                                    statPerk1=participant['stats']['statPerk1'] if 'statPerk0' in participant['stats'] else 0,
-                                    statPerk2=participant['stats']['statPerk1'] if 'statPerk0' in participant['stats'] else 0,
-                                    perk0Var1=participant['stats']['perk0Var1'] if 'perk0Var1' in participant['stats'] else 0,
-                                    perk0Var2=participant['stats']['perk0Var2'] if 'perk0Var2' in participant['stats'] else 0,
-                                    perk0Var3=participant['stats']['perk0Var3'] if 'perk0Var3' in participant['stats'] else 0,
-                                    perk1Var1=participant['stats']['perk1Var1'] if 'perk1Var1' in participant['stats'] else 0,
-                                    perk1Var2=participant['stats']['perk1Var2'] if 'perk1Var2' in participant['stats'] else 0,
-                                    perk1Var3=participant['stats']['perk1Var3'] if 'perk1Var3' in participant['stats'] else 0,
-                                    perk2Var1=participant['stats']['perk2Var1'] if 'perk2Var1' in participant['stats'] else 0,
-                                    perk2Var2=participant['stats']['perk2Var2'] if 'perk2Var2' in participant['stats'] else 0,
-                                    perk2Var3=participant['stats']['perk2Var3'] if 'perk2Var3' in participant['stats'] else 0,
-                                    perk3Var1=participant['stats']['perk3Var1'] if 'perk3Var1' in participant['stats'] else 0,
-                                    perk3Var2=participant['stats']['perk3Var2'] if 'perk3Var2' in participant['stats'] else 0,
-                                    perk3Var3=participant['stats']['perk3Var3'] if 'perk3Var3' in participant['stats'] else 0,
-                                    perk4Var1=participant['stats']['perk4Var1'] if 'perk4Var1' in participant['stats'] else 0,
-                                    perk4Var2=participant['stats']['perk4Var2'] if 'perk4Var2' in participant['stats'] else 0,
-                                    perk4Var3=participant['stats']['perk4Var3'] if 'perk4Var3' in participant['stats'] else 0,
-                                    perk5Var1=participant['stats']['perk5Var1'] if 'perk5Var1' in participant['stats'] else 0,
-                                    perk5Var2=participant['stats']['perk5Var2'] if 'perk5Var2' in participant['stats'] else 0,
-                                    perk5Var3=participant['stats']['perk5Var3'] if 'perk5Var3' in participant['stats'] else 0,
-                                    perkPrimaryStyle=participant['stats']['perkPrimaryStyle'] if 'perkPrimaryStyle' in participant[
+                                    statPerk0=participant['stats']['statPerk0'] if 'statPerk0' in participant[
                                         'stats'] else 0,
+                                    statPerk1=participant['stats']['statPerk1'] if 'statPerk0' in participant[
+                                        'stats'] else 0,
+                                    statPerk2=participant['stats']['statPerk1'] if 'statPerk0' in participant[
+                                        'stats'] else 0,
+                                    perk0Var1=participant['stats']['perk0Var1'] if 'perk0Var1' in participant[
+                                        'stats'] else 0,
+                                    perk0Var2=participant['stats']['perk0Var2'] if 'perk0Var2' in participant[
+                                        'stats'] else 0,
+                                    perk0Var3=participant['stats']['perk0Var3'] if 'perk0Var3' in participant[
+                                        'stats'] else 0,
+                                    perk1Var1=participant['stats']['perk1Var1'] if 'perk1Var1' in participant[
+                                        'stats'] else 0,
+                                    perk1Var2=participant['stats']['perk1Var2'] if 'perk1Var2' in participant[
+                                        'stats'] else 0,
+                                    perk1Var3=participant['stats']['perk1Var3'] if 'perk1Var3' in participant[
+                                        'stats'] else 0,
+                                    perk2Var1=participant['stats']['perk2Var1'] if 'perk2Var1' in participant[
+                                        'stats'] else 0,
+                                    perk2Var2=participant['stats']['perk2Var2'] if 'perk2Var2' in participant[
+                                        'stats'] else 0,
+                                    perk2Var3=participant['stats']['perk2Var3'] if 'perk2Var3' in participant[
+                                        'stats'] else 0,
+                                    perk3Var1=participant['stats']['perk3Var1'] if 'perk3Var1' in participant[
+                                        'stats'] else 0,
+                                    perk3Var2=participant['stats']['perk3Var2'] if 'perk3Var2' in participant[
+                                        'stats'] else 0,
+                                    perk3Var3=participant['stats']['perk3Var3'] if 'perk3Var3' in participant[
+                                        'stats'] else 0,
+                                    perk4Var1=participant['stats']['perk4Var1'] if 'perk4Var1' in participant[
+                                        'stats'] else 0,
+                                    perk4Var2=participant['stats']['perk4Var2'] if 'perk4Var2' in participant[
+                                        'stats'] else 0,
+                                    perk4Var3=participant['stats']['perk4Var3'] if 'perk4Var3' in participant[
+                                        'stats'] else 0,
+                                    perk5Var1=participant['stats']['perk5Var1'] if 'perk5Var1' in participant[
+                                        'stats'] else 0,
+                                    perk5Var2=participant['stats']['perk5Var2'] if 'perk5Var2' in participant[
+                                        'stats'] else 0,
+                                    perk5Var3=participant['stats']['perk5Var3'] if 'perk5Var3' in participant[
+                                        'stats'] else 0,
+                                    perkPrimaryStyle=participant['stats']['perkPrimaryStyle'] if 'perkPrimaryStyle' in
+                                                                                                 participant[
+                                                                                                     'stats'] else 0,
                                     perkSubStyle=participant['stats']['perkSubStyle'] if 'perkSubStyle' in participant[
                                         'stats'] else 0,
 
