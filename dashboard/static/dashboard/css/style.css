@@ -1,11 +1,21 @@
 /* Breakpoints */
 #summoners .panels {
   display: grid;
-  grid-template: auto / 2fr 1fr;
+  grid-template: auto / 1fr;
   grid-gap: 20px;
-  margin-top: 50px; }
+  margin-top: 20px; }
+  @media (min-width: 768px) {
+    #summoners .panels {
+      grid-template: auto / 2fr 1fr;
+      margin-top: 50px; } }
   #summoners .panels .panel {
     text-align: center; }
+    #summoners .panels .panel.topPlayers, #summoners .panels .panel.latestPlayers {
+      font-size: 0.8rem;
+      padding: 10px; }
+      @media (min-width: 768px) {
+        #summoners .panels .panel.topPlayers, #summoners .panels .panel.latestPlayers {
+          font-size: 1rem; } }
     #summoners .panels .panel table {
       width: 100%; }
 
@@ -650,10 +660,12 @@
         #sidebar .sidebar-wrapper .sidebar-menu ul li {
           height: 100%;
           width: 100%;
-          display: flex; }
+          display: flex;
+          border-top: #e2e2e2 solid 5px; }
           @media (min-width: 768px) {
             #sidebar .sidebar-wrapper .sidebar-menu ul li {
-              height: 60px; } }
+              height: 60px;
+              border-top: unset; } }
           #sidebar .sidebar-wrapper .sidebar-menu ul li a {
             display: flex;
             align-items: center;

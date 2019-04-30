@@ -1,11 +1,22 @@
 #summoners {
   .panels {
     display: grid;
-    grid-template: auto / 2fr 1fr;
+    grid-template: auto / 1fr;
     grid-gap: 20px;
-    margin-top: 50px;
+    margin-top: 20px;
+    @media #{$bp-md}{
+      grid-template: auto / 2fr 1fr;
+      margin-top: 50px;
+    }
     .panel {
       text-align: center;
+      &.topPlayers, &.latestPlayers{
+        font-size: 0.8rem;
+        padding: 10px;
+        @media #{$bp-md}{
+          font-size: 1rem;
+        }
+      }
       table {
         width: 100%;
       }
