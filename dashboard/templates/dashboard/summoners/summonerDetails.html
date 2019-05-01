@@ -20,7 +20,7 @@
             <div class="avatar-wrapper">
                 <div class="avatar">
                     <img class="resp-img" onerror="this.src='{% static 'dashboard/images/placeholder.png' %}'"
-                         :src="'http://ddragon.leagueoflegends.com/cdn/{{ CURRENT_PATCH }}/img/profileicon/{{ summoner.profileIconId }}.png'">
+                         :src="'http://ddragon.leagueoflegends.com/cdn/{{ SETTINGS.LATEST_PATCH }}/img/profileicon/{{ summoner.profileIconId }}.png'">
                     <span class="level" v-if="summoner" v-cloak>[[ summoner.summonerLevel ]]</span>
                 </div>
                 <span class="updated">Last Updated: <span v-if="last_updated" v-cloak>[[ last_updated ]]</span></span>
