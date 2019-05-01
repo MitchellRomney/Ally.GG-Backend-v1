@@ -121,9 +121,6 @@ def check_champions(version):  # Create/Update all champions.
 
                 print(Fore.YELLOW + 'Champion updated: ' + Style.RESET_ALL + existing_champion.name)
 
-            else:
-                print(Fore.CYAN + 'Champion already up to date: ' + Style.RESET_ALL + existing_champion.name)
-
 
 def check_runes(version):  # Create/Update all runes.
 
@@ -167,9 +164,6 @@ def check_runes(version):  # Create/Update all runes.
                         existing_rune.save()
 
                         print(Fore.YELLOW + 'Rune updated: ' + Style.RESET_ALL + existing_rune.name)
-
-                    else:
-                        print(Fore.CYAN + 'Rune already up to date: ' + Style.RESET_ALL + existing_rune.name)
 
 
 def check_items(version):  # Create/Update all items.
@@ -325,9 +319,6 @@ def check_items(version):  # Create/Update all items.
 
             print(Fore.YELLOW + 'Item updated: ' + Style.RESET_ALL + existing_item.name)
 
-        else:
-            print(Fore.CYAN + 'Item already up to date: ' + Style.RESET_ALL + existing_item.name)
-
 
 def check_summoner_spells(version):  # Create/Update all summoner spells.
     if SummonerSpell.objects.filter(key=0).count() == 0:
@@ -379,9 +370,6 @@ def check_summoner_spells(version):  # Create/Update all summoner spells.
             existing_spell.save()
 
             print(Fore.YELLOW + 'Spell updated: ' + Style.RESET_ALL + existing_spell.name)
-
-        else:
-            print(Fore.CYAN + 'Spell already up to date: ' + Style.RESET_ALL + existing_spell.name)
 
 
 def check_ranked_tiers():  # Create Ranked tiers if they don't exist.

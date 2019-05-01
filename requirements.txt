@@ -21,3 +21,4 @@ django-s3direct==1.1.2
 sentry-sdk==0.7.10
 pylibmc==1.6.0
 django-dynamic-preferences==1.7
+django-environ==0.4.5

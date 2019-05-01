@@ -1,7 +1,15 @@
 import os
 import sentry_sdk
+import environ
 from celery.schedules import crontab
 from sentry_sdk.integrations.django import DjangoIntegration
+
+
+env = environ.Env()
+environ.Env.read_env()
+
+SECRET_KEY = env('SECRET_KEY')
+RIOT_API_KEY = env('RIOT_API_KEY')
 
 sentry_sdk.init(
     dsn="https://ee789799be9c4c3ab7411232f46b164c@sentry.io/1444367",
@@ -10,8 +18,6 @@ sentry_sdk.init(
 )
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
-SECRET_KEY = 'po4c8ty&7gr_z@6v65x#h_a(d*-2vbwg4t96s^_pzt&wi7m9^z'
 
 DEBUG = True
 
@@ -111,8 +117,6 @@ STATICFILES_DIRS = (
 LOGIN_REDIRECT_URL = "home"
 LOGOUT_REDIRECT_URL = "home"
 
-RIOT_API_KEY = 'RGAPI-aaa5d257-9acd-4c6c-95df-552dff893091'
-
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'dashboard.serializers.StandardResultsSetPagination',
     'PAGE_SIZE': 10
@@ -126,7 +130,7 @@ CELERY_TIMEZONE = 'Australia/Melbourne'
 CELERY_BEAT_SCHEDULE = {
     'task_update_summoners': {
         'task': 'dashboard.tasks.task_update_summoners',
-        'schedule': 300,
+        'schedule': 20,
     },
     'task_updateVersion': {
         'task': 'dashboard.tasks.task_update_version',

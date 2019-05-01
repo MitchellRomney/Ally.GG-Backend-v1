@@ -18,9 +18,9 @@ def home(request):
 
 def profile(request, username):
     user = User.objects.get(username=username) if User.objects.filter(username=username).count() == 1 else None
-    profile = Profile.objects.get(user=user) if user else None
+    user_profile = Profile.objects.get(user=user) if user else None
     return render(request, 'dashboard/profile.html', {
-        'profile': profile,
+        'profile': user_profile,
     })
 
 
@@ -80,7 +80,7 @@ class SummonerViewSet(viewsets.ModelViewSet):
                 print('10000 Summoners Deleted')
                 return Response('10000 Summoners Deleted')
         add = add_summoner(request.data['method'], request.data['value'])
-        if add['isError'] != True:
+        if not add['isError']:
             summoner = Summoner.objects.get(summonerId=add['summonerId'])
             update_summoner(summoner.summonerId)
             return JsonResponse(add, status=201)

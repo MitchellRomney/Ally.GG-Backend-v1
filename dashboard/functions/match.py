@@ -6,9 +6,15 @@ import pytz
 
 
 def fetch_match_list(summoner_id):
+    # Get the Summoner that you're fetching for.
     summoner = Summoner.objects.get(summonerId=summoner_id)
+
+    # Get the match list from the Riot API.
     matches = fetch_riot_api('OC1', 'match', 'v4', 'matchlists/by-account/' + summoner.accountId, '?endIndex=10')
+
+    # Make sure that the matches actually exist in the response.
     if 'matches' in matches:
+        # Return the list of matches.
         return matches['matches']
 
 
@@ -67,7 +73,7 @@ def create_match(game_id):
                 new_match.delete()
                 capture_exception(type_error)
                 return {'isError': True, 'errorMessage': '{0}'.format(type_error), 'ignore': True}
-            except IntegrityError as integrity_error:
+            except IntegrityError:
                 return {'isError': False, 'errorMessage': None, 'ignore': True}
         else:
             return {'isError': False, 'errorMessage': None, 'ignore': True}
@@ -90,6 +96,10 @@ def create_match(game_id):
                     if Summoner.objects.filter(summonerId=player_account_info['player']['summonerId']).count() == 0:
                         add_summoner('SummonerId', player_account_info['player']['summonerId'])
 
+                    # Add Summoner to Match.summoners relation field.
+                    new_match.summoners.add(
+                        Summoner.objects.get(summonerId=player_account_info['player']['summonerId']))
+
                 # Create the Player.
                 try:
                     new_player = create_player(new_match, player_team, player_account_info, player_data)
@@ -101,7 +111,7 @@ def create_match(game_id):
                     new_match.delete()
                     capture_exception(type_error)
                     return {'isError': True, 'errorMessage': '{0}'.format(type_error), 'ignore': True}
-                except IntegrityError as integrity_error:
+                except IntegrityError:
                     return {'isError': False, 'errorMessage': None, 'ignore': True}
 
                 # Add Summoner to players Many to Many relation field on Match.
@@ -113,7 +123,12 @@ def create_match(game_id):
             scope.set_extra("Expected Team Count", team_count)
             scope.set_extra("Real Team Count", Team.objects.filter(match=new_match).count())
             scope.set_extra("Match Data", match_data)
-            capture_message('Match Deleted.')
+        print(
+            Fore.RED + '[ERROR]: '
+            + Style.RESET_ALL + 'Team count is off (Got '
+            + str(Team.objects.filter(match=new_match).count())
+            + ', expected ' + str(team_count) + ') - deleting Match.'
+        )
         new_match.delete()
         return {'isError': True, 'errorMessage': 'Error creating Match Teams.', 'ignore': False}
 
@@ -122,7 +137,12 @@ def create_match(game_id):
             scope.set_extra("Expected Player Count", player_count)
             scope.set_extra("Real Player Count", Player.objects.filter(match=new_match).count())
             scope.set_extra("Match Data", match_data)
-            capture_message('Match Deleted.')
+        print(
+            Fore.RED + '[ERROR]: '
+            + Style.RESET_ALL + 'Player count is off (Got '
+            + str(Player.objects.filter(match=new_match).count())
+            + ', expected ' + str(player_count) + ') - deleting Match.'
+        )
         new_match.delete()
         return {'isError': True, 'errorMessage': 'Error creating Match Players.', 'ignore': False}
 
@@ -241,7 +261,8 @@ def create_player(match, player_team, player_account_info, player_data):
         largestMultiKill=player_data['stats']['largestMultiKill'],
         largestKillingSpree=player_data['stats']['largestKillingSpree'],
         firstBloodKill=player_data['stats']['firstBloodKill'] if 'firstBloodKill' in player_data['stats'] else False,
-        firstBloodAssist=player_data['stats']['firstBloodAssist'] if 'firstBloodAssist' in player_data['stats'] else False,
+        firstBloodAssist=player_data['stats']['firstBloodAssist'] if 'firstBloodAssist' in player_data[
+            'stats'] else False,
 
         # Crowd Control
         timeCCingOthers=player_data['stats']['timeCCingOthers'],
