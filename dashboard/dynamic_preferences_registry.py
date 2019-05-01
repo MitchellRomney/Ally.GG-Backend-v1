@@ -19,6 +19,13 @@ class SummonerCount(StringPreference):
 
 
 @global_preferences_registry.register
+class UpdatedSummonerCount(StringPreference):
+    name = 'UPDATED_SUMMONER_COUNT'
+    default = '0'
+    section = stats
+
+
+@global_preferences_registry.register
 class MatchCount(StringPreference):
     name = 'MATCH_COUNT'
     default = '0'

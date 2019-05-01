@@ -88,6 +88,7 @@ def task_update_stats():
     global_preferences['stats__MASTER_COUNT'] = "{:,}".format(int(Summoner.objects.filter(soloQ_tier__name='Master').count()), 0)
     global_preferences['stats__GRANDMASTER_COUNT'] = "{:,}".format(int(Summoner.objects.filter(soloQ_tier__name='Grandmaster').count()), 0)
     global_preferences['stats__CHALLENGER_COUNT'] = "{:,}".format(int(Summoner.objects.filter(soloQ_tier__name='Challenger').count()), 0)
+    global_preferences['stats__UPDATED_SUMMONER_COUNT'] = "{:,}".format(int(Summoner.objects.all().exclude(date_updated=None).count()), 0)
     global_preferences['stats__SUMMONER_COUNT'] = "{:,}".format(int(Summoner.objects.all().count()), 0)
     global_preferences['stats__MATCH_COUNT'] = "{:,}".format(int(Match.objects.all().count()), 0)
     global_preferences['stats__TOTAL_KILLS'] = "{:,}".format(int(total_kills['kills__sum']), 0) if total_kills['kills__sum'] else 0
