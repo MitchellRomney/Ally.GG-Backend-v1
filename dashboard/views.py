@@ -80,7 +80,7 @@ class SummonerViewSet(viewsets.ModelViewSet):
                 print('10000 Summoners Deleted')
                 return Response('10000 Summoners Deleted')
         add = add_summoner(request.data['method'], request.data['value'])
-        if not add['isError']:
+        if add['isError'] is False:
             summoner = Summoner.objects.get(summonerId=add['summonerId'])
             update_summoner(summoner.summonerId)
             return JsonResponse(add, status=201)

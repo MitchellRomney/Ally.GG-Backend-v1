@@ -287,7 +287,7 @@ class Summoner(models.Model):
     # General
     server = models.CharField(max_length=255, blank=False)
     profileIconId = models.BigIntegerField(blank=True, default=0)
-    summonerLevel = models.CharField(max_length=255, blank=True)
+    summonerLevel = models.IntegerField(default=1, blank=True)
 
     # SoloQ
     soloQ_leagueId = models.CharField(max_length=255, blank=True)

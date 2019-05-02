@@ -19,7 +19,7 @@ def startup_tasks(sender=None, conf=None, **kwargs):
 @task
 def task_update_summoners():
 
-    # Get the oldest Summoner in the database who has never been updated.
+    # Get the oldest Summoner in the database who has never been updated (Above level 30).
     summoner = Summoner.objects.filter(date_updated=None, summonerLevel__gte=30).order_by('date_created')[:1].get()
 
     # Update the Summoner
