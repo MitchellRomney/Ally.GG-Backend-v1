@@ -3,12 +3,28 @@ from django.contrib.auth.models import User
 from s3direct.fields import S3DirectField
 import json
 
+
+class AccessCode(models.Model):
+    key = models.CharField(max_length=32, blank=False, null=False)
+
+    user = models.ForeignKey(User, related_name="Access_Codes", on_delete=models.SET_NULL, blank=True, null=True)
+    used = models.BooleanField(default=False)
+    date_used = models.DateTimeField(blank=True, null=True)
+
+    archived = models.BooleanField(default=False)
+    date_created = models.DateTimeField(auto_now_add=True, blank=False)
+
+    def __str__(self):
+        return self.key
+
+
 class Setting(models.Model):
     name = models.CharField(max_length=255, blank=False)
     latestVersion = models.CharField(max_length=255, blank=False)
 
     def __str__(self):
         return self.name
+
 
 class Profile(models.Model):
     user = models.ForeignKey(User, related_name="Profiles", on_delete=models.CASCADE, blank=False)
@@ -24,6 +40,7 @@ class Profile(models.Model):
     def __str__(self):
         return self.user.username
 
+
 class RankedTier(models.Model):
     key = models.CharField(primary_key=True, max_length=255, blank=False)
     name = models.CharField(max_length=255, blank=False)
@@ -32,12 +49,14 @@ class RankedTier(models.Model):
     def __str__(self):
         return self.name
 
+
 class ChatRoom(models.Model):
     members = models.ManyToManyField('Profile', related_name='Members')
     roomId = models.CharField(max_length=255, blank=False)
 
     date_created = models.DateTimeField(auto_now_add=True, blank=False)
     date_updated = models.DateTimeField(blank=False)
+
 
 class SummonerSpell(models.Model):
     version = models.CharField(max_length=255, null=True)
@@ -69,6 +88,7 @@ class SummonerSpell(models.Model):
 
     def __str__(self):
         return str(self.name)
+
 
 class Rune(models.Model):
     version = models.CharField(max_length=255, blank=False)
@@ -254,9 +274,11 @@ class Champion(models.Model):
     def __str__(self):
         return self.champId
 
+
 class Summoner(models.Model):
     # IDs
-    user_profile = models.ForeignKey(Profile, related_name="Summoners", on_delete=models.SET_NULL, null=True, blank=True)
+    user_profile = models.ForeignKey(Profile, related_name="Summoners", on_delete=models.SET_NULL, null=True,
+                                     blank=True)
     summonerName = models.CharField(max_length=255, blank=False)
     summonerId = models.CharField(max_length=255, primary_key=True, unique=True, blank=False)  # 'ID' sometimes.
     puuid = models.CharField(max_length=255, unique=True, blank=True, null=True)
@@ -285,7 +307,7 @@ class Summoner(models.Model):
     flexSR_leagueId = models.CharField(max_length=255, blank=True)
     flexSR_leagueName = models.CharField(max_length=255, blank=True)
     flexSR_tier = models.ForeignKey(RankedTier, related_name="Summoners_FlexSR", on_delete=models.SET_NULL,
-                                   null=True, blank=True, default=None)
+                                    null=True, blank=True, default=None)
     flexSR_hotStreak = models.BooleanField(default=False)
     flexSR_wins = models.BigIntegerField(null=True, blank=True, default=0)
     flexSR_losses = models.BigIntegerField(null=True, blank=True, default=0)
@@ -299,7 +321,7 @@ class Summoner(models.Model):
     flexTT_leagueId = models.CharField(max_length=255, blank=True)
     flexTT_leagueName = models.CharField(max_length=255, blank=True)
     flexTT_tier = models.ForeignKey(RankedTier, related_name="Summoners_FlexTT", on_delete=models.SET_NULL,
-                                   null=True, blank=True, default=None)
+                                    null=True, blank=True, default=None)
     flexTT_hotStreak = models.BooleanField(default=False)
     flexTT_wins = models.BigIntegerField(null=True, blank=True, default=0)
     flexTT_losses = models.BigIntegerField(null=True, blank=True, default=0)
@@ -319,9 +341,10 @@ class Summoner(models.Model):
     def __unicode__(self):
         return self.summonerName
 
+
 class Match(models.Model):
     # IDs
-    platformId = models.CharField(max_length=255, blank=False) # Server
+    platformId = models.CharField(max_length=255, blank=False)  # Server
     gameId = models.BigIntegerField(blank=False, unique=True)
     QUEUES = (
         (0, 'Custom'),
@@ -429,13 +452,14 @@ class Match(models.Model):
     class Meta:
         verbose_name_plural = "Matches"
 
+
 class Team(models.Model):
     # IDs
     match = models.ForeignKey(Match, related_name='Teams', on_delete=models.CASCADE, null=True, blank=True)
 
     # General
-    win = models.BooleanField(default=False) # 'Fail' = False, 'Win' = True
-    teamId = models.BigIntegerField(blank=False) # 100 = Team1, 200 = Team2
+    win = models.BooleanField(default=False)  # 'Fail' = False, 'Win' = True
+    teamId = models.BigIntegerField(blank=False)  # 100 = Team1, 200 = Team2
 
     # Summoners Rift
     firstDragon = models.BooleanField(default=False)
@@ -458,8 +482,8 @@ class Team(models.Model):
         team = 'Blue' if self.teamId == 100 else 'Red'
         return str(self.match) + ' - Team: ' + team
 
-class Player(models.Model):
 
+class Player(models.Model):
     # Participant Identity
     match = models.ForeignKey(Match, related_name='Players', on_delete=models.CASCADE, blank=False)
     summoner = models.ForeignKey(Summoner, related_name='Players', on_delete=models.SET_NULL, blank=True, null=True)
@@ -472,8 +496,10 @@ class Player(models.Model):
 
     # Participant Stats
     champion = models.ForeignKey(Champion, related_name='Players', on_delete=models.SET_NULL, blank=False, null=True)
-    spell1Id = models.ForeignKey(SummonerSpell, related_name='Player_SSpells_1', on_delete=models.SET_NULL, blank=False, null=True)
-    spell2Id = models.ForeignKey(SummonerSpell, related_name='Player_SSPells_2', on_delete=models.SET_NULL, blank=False, null=True)
+    spell1Id = models.ForeignKey(SummonerSpell, related_name='Player_SSpells_1', on_delete=models.SET_NULL, blank=False,
+                                 null=True)
+    spell2Id = models.ForeignKey(SummonerSpell, related_name='Player_SSPells_2', on_delete=models.SET_NULL, blank=False,
+                                 null=True)
     neutralMinionsKilledTeamJungle = models.BigIntegerField(blank=False)
     visionScore = models.BigIntegerField(blank=False)
     magicDamageDealtToChampions = models.BigIntegerField(blank=False)

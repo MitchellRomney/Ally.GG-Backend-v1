@@ -1,5 +1,5 @@
 from dashboard.functions.game_data import *
-from sentry_sdk import capture_message, configure_scope, capture_exception
+from sentry_sdk import configure_scope, capture_exception
 from datetime import datetime
 import re
 import pytz
