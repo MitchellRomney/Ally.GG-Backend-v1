@@ -6,13 +6,16 @@ from colorama import Fore, Style
 
 
 def add_summoner(method, value):
+
+    # Fetch Summoner information from the Riot API.
     summoner_info = fetch_riot_api('OC1', 'summoner', 'v4', 'summoners/' + value) \
         if method == 'SummonerId' else fetch_riot_api('OC1', 'summoner', 'v4', 'summoners/by-name/' + value)
 
+    # Search if Summoner already exists in database.
     existing_summoner = Summoner.objects.filter(summonerId=summoner_info['id'])
 
+    # If Summoner doesn't exist, create it.
     if existing_summoner.count() == 0:
-
         try:
             new_summoner = Summoner.objects.create(
                 # Ids
@@ -29,7 +32,10 @@ def add_summoner(method, value):
                 # System
                 date_created=timezone.now(),
             )
-        except IntegrityError:
+
+        except IntegrityError:  # This shouldn't happen, but just in case.
+
+            # Get the existing Summoner that caused the IntegrityError.
             existing_summoner = Summoner.objects.get(summonerId=summoner_info['id'])
             return {
                 'isError': True,
@@ -37,6 +43,7 @@ def add_summoner(method, value):
                 'summonerId': existing_summoner.summonerId
             }
 
+        # Everything is a success, print that a new Summoner was created the return success response.
         print(Fore.GREEN + 'New Summoner Created: ' + Style.RESET_ALL + new_summoner.summonerName)
         return {
             'isError': False,
@@ -44,6 +51,7 @@ def add_summoner(method, value):
             'summonerId': new_summoner.summonerId
         }
 
+    # If someone is trying to add a Summoner that already exists, return error response.
     existing_summoner = Summoner.objects.get(summonerId=summoner_info['id'])
     return {
         'isError': True,
@@ -52,98 +60,80 @@ def add_summoner(method, value):
     }
 
 
-def update_summoner(summonerId):
-    summoner = Summoner.objects.get(summonerId=summonerId)
+def update_summoner(summoner_id):
 
+    # Get the Summoner you're trying to update.
+    summoner = Summoner.objects.get(summonerId=summoner_id)
+
+    # Set the date_updated field to now.
     summoner.date_updated = timezone.now()
+
+    # Save the Summoner. This all happens immediately so the update summoner script doesn't pick it up twice.
     summoner.save()
 
+    # Print to console that we're updating the Summoner.
     print(Fore.YELLOW + 'Updating Summoner: ' + Style.RESET_ALL + summoner.summonerName)
 
-    summoner_info = fetch_riot_api('OC1', 'summoner', 'v4', 'summoners/' + summonerId)
+    # Fetch the Summoner information from the Riot API.
+    summoner_info = fetch_riot_api('OC1', 'summoner', 'v4', 'summoners/' + summoner_id)
 
-    summoner.summonerName = summoner_info['name'] \
-        if summoner.summonerName != summoner_info['name'] else summoner.summonerName
-    summoner.profileIconId = summoner_info['profileIconId'] \
-        if summoner.profileIconId != summoner_info['profileIconId'] else summoner.profileIconId
-    summoner.summonerLevel = summoner_info['summonerLevel'] \
-        if summoner.summonerName != summoner_info['summonerLevel'] else summoner.summonerName
+    # Update basic Summoner information.
+    summoner.summonerName = summoner_info['name']
+    summoner.profileIconId = summoner_info['profileIconId']
+    summoner.summonerLevel = summoner_info['summonerLevel']
 
+    # Fetch the Summoner Ranked information from the Riot API.
     ranked_info = fetch_riot_api('OC1', 'league', 'v4', 'positions/by-summoner/' + summoner.summonerId)
 
+    # Iterate through the different Ranked Queues.
     for queue in ranked_info:
-        if queue['queueType'] == 'RANKED_SOLO_5x5':
-            summoner.soloQ_leagueId = queue['leagueId'] \
-                if summoner.soloQ_leagueId != queue['leagueId'] else summoner.soloQ_leagueId
-            summoner.soloQ_leagueName = queue['leagueName'] \
-                if summoner.soloQ_leagueName != queue['leagueName'] else summoner.soloQ_leagueName
-            summoner.soloQ_tier = RankedTier.objects.get(key=queue['tier']) \
-                if summoner.soloQ_tier != queue['tier'] else summoner.soloQ_tier
-            summoner.soloQ_hotStreak = queue['hotStreak'] \
-                if summoner.soloQ_hotStreak != queue['hotStreak'] else summoner.soloQ_hotStreak
-            summoner.soloQ_wins = queue['wins'] \
-                if summoner.soloQ_wins != queue['wins'] else summoner.soloQ_wins
-            summoner.soloQ_losses = queue['losses'] \
-                if summoner.soloQ_losses != queue['losses'] else summoner.soloQ_losses
-            summoner.soloQ_veteran = queue['veteran'] \
-                if summoner.soloQ_veteran != queue['veteran'] else summoner.soloQ_veteran
-            summoner.soloQ_rank = queue['rank'] \
-                if summoner.soloQ_rank != queue['rank'] else summoner.soloQ_rank
-            summoner.soloQ_inactive = queue['inactive'] \
-                if summoner.soloQ_inactive != queue['inactive'] else summoner.soloQ_inactive
-            summoner.soloQ_freshBlood = queue['freshBlood'] \
-                if summoner.soloQ_freshBlood != queue['freshBlood'] else summoner.soloQ_freshBlood
-            summoner.soloQ_leaguePoints = queue['leaguePoints'] \
-                if summoner.soloQ_leaguePoints != queue['leaguePoints'] else summoner.soloQ_leaguePoints
-        if queue['queueType'] == 'RANKED_FLEX_SR':
-            summoner.flexSR_leagueId = queue['leagueId'] \
-                if summoner.flexSR_leagueId != queue['leagueId'] else summoner.flexSR_leagueId
-            summoner.flexSR_leagueName = queue['leagueName'] \
-                if summoner.flexSR_leagueName != queue['leagueName'] else summoner.flexSR_leagueName
-            summoner.flexSR_tier = RankedTier.objects.get(key=queue['tier']) \
-                if summoner.flexSR_tier != queue['tier'] else summoner.flexSR_tier
-            summoner.flexSR_hotStreak = queue['hotStreak'] \
-                if summoner.flexSR_hotStreak != queue['hotStreak'] else summoner.flexSR_hotStreak
-            summoner.flexSR_wins = queue['wins'] \
-                if summoner.flexSR_wins != queue['wins'] else summoner.flexSR_wins
-            summoner.flexSR_losses = queue['losses'] \
-                if summoner.flexSR_losses != queue['losses'] else summoner.flexSR_losses
-            summoner.flexSR_veteran = queue['veteran'] \
-                if summoner.flexSR_veteran != queue['veteran'] else summoner.flexSR_veteran
-            summoner.flexSR_rank = queue['rank'] \
-                if summoner.flexSR_rank != queue['rank'] else summoner.flexSR_rank
-            summoner.flexSR_inactive = queue['inactive'] \
-                if summoner.flexSR_inactive != queue['inactive'] else summoner.flexSR_inactive
-            summoner.flexSR_freshBlood = queue['freshBlood'] \
-                if summoner.flexSR_freshBlood != queue['freshBlood'] else summoner.flexSR_freshBlood
-            summoner.flexSR_leaguePoints = queue['leaguePoints'] \
-                if summoner.flexSR_leaguePoints != queue['leaguePoints'] else summoner.flexSR_leaguePoints
-        if queue['queueType'] == 'RANKED_FLEX_TT':
-            summoner.flexTT_leagueId = queue['leagueId'] \
-                if summoner.flexTT_leagueId != queue['leagueId'] else summoner.flexTT_leagueId
-            summoner.flexTT_leagueName = queue['leagueName'] \
-                if summoner.flexTT_leagueName != queue['leagueName'] else summoner.flexTT_leagueName
-            summoner.flexTT_tier = RankedTier.objects.get(key=queue['tier']) \
-                if summoner.flexTT_tier != queue['tier'] else summoner.flexTT_tier
-            summoner.flexTT_hotStreak = queue['hotStreak'] \
-                if summoner.flexTT_hotStreak != queue['hotStreak'] else summoner.flexTT_hotStreak
-            summoner.flexTT_wins = queue['wins'] \
-                if summoner.flexTT_wins != queue['wins'] else summoner.flexTT_wins
-            summoner.flexTT_losses = queue['losses'] \
-                if summoner.flexTT_losses != queue['losses'] else summoner.flexTT_losses
-            summoner.flexTT_veteran = queue['veteran'] \
-                if summoner.flexTT_veteran != queue['veteran'] else summoner.flexTT_veteran
-            summoner.flexTT_rank = queue['rank'] \
-                if summoner.flexTT_rank != queue['rank'] else summoner.flexTT_rank
-            summoner.flexTT_inactive = queue['inactive'] \
-                if summoner.flexTT_inactive != queue['inactive'] else summoner.flexTT_inactive
-            summoner.flexTT_freshBlood = queue['freshBlood'] \
-                if summoner.flexTT_freshBlood != queue['freshBlood'] else summoner.flexTT_freshBlood
-            summoner.flexTT_leaguePoints = queue['leaguePoints'] \
-                if summoner.flexTT_leaguePoints != queue['leaguePoints'] else summoner.flexTT_leaguePoints
 
+        # If the Summoner is ranked in SoloQ, update the SoloQ information.
+        if queue['queueType'] == 'RANKED_SOLO_5x5':
+            summoner.soloQ_leagueId = queue['leagueId']
+            summoner.soloQ_leagueName = queue['leagueName']
+            summoner.soloQ_tier = RankedTier.objects.get(key=queue['tier'])
+            summoner.soloQ_hotStreak = queue['hotStreak']
+            summoner.soloQ_wins = queue['wins']
+            summoner.soloQ_losses = queue['losses']
+            summoner.soloQ_veteran = queue['veteran']
+            summoner.soloQ_rank = queue['rank']
+            summoner.soloQ_inactive = queue['inactive']
+            summoner.soloQ_freshBlood = queue['freshBlood']
+            summoner.soloQ_leaguePoints = queue['leaguePoints']
+
+        # If the Summoner is ranked in FlexQ, update the FlexQ information.
+        elif queue['queueType'] == 'RANKED_FLEX_SR':
+            summoner.flexSR_leagueId = queue['leagueId']
+            summoner.flexSR_leagueName = queue['leagueName']
+            summoner.flexSR_tier = RankedTier.objects.get(key=queue['tier'])
+            summoner.flexSR_hotStreak = queue['hotStreak']
+            summoner.flexSR_wins = queue['wins']
+            summoner.flexSR_losses = queue['losses']
+            summoner.flexSR_veteran = queue['veteran']
+            summoner.flexSR_rank = queue['rank']
+            summoner.flexSR_inactive = queue['inactive']
+            summoner.flexSR_freshBlood = queue['freshBlood']
+            summoner.flexSR_leaguePoints = queue['leaguePoints']
+
+        # If the Summoner is ranked in 3v3, update the 3v3 information.
+        elif queue['queueType'] == 'RANKED_FLEX_TT':
+            summoner.flexTT_leagueId = queue['leagueId']
+            summoner.flexTT_leagueName = queue['leagueName']
+            summoner.flexTT_tier = RankedTier.objects.get(key=queue['tier'])
+            summoner.flexTT_hotStreak = queue['hotStreak']
+            summoner.flexTT_wins = queue['wins']
+            summoner.flexTT_losses = queue['losses']
+            summoner.flexTT_veteran = queue['veteran']
+            summoner.flexTT_rank = queue['rank']
+            summoner.flexTT_inactive = queue['inactive']
+            summoner.flexTT_freshBlood = queue['freshBlood']
+            summoner.flexTT_leaguePoints = queue['leaguePoints']
+
+    # Save the newly updated Summoner.
     summoner.save()
 
+    # Return a successful response.
     return {
         'message': 'Summoner Updated!',
         'summonerId': summoner.summonerId,
