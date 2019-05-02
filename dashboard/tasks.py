@@ -20,7 +20,7 @@ def startup_tasks(sender=None, conf=None, **kwargs):
 def task_update_summoners():
 
     # Get the oldest Summoner in the database who has never been updated.
-    summoner = Summoner.objects.filter(date_updated=None).order_by('date_created')[:1].get()
+    summoner = Summoner.objects.filter(date_updated=None, summonerLevel__gte=30).order_by('date_created')[:1].get()
 
     # Update the Summoner
     try:
@@ -31,6 +31,13 @@ def task_update_summoners():
         try:
             update_summoner(summoner.summonerId)
         except TypeError:  # If the Riot API is still being difficult, skip this update.
+            return None
+    except KeyError as key_error:  # KeyError is the Riot API encountered an error. Wait 1 second and try again.
+        print(Fore.RED + '[ERROR]: ' + Style.RESET_ALL + str(key_error))
+        time.sleep(1)
+        try:
+            update_summoner(summoner.summonerId)
+        except KeyError:  # If the Riot API is still being difficult, skip this update.
             return None
 
     # Grab the latest 10 matches from the Summoner.

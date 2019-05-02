@@ -152,7 +152,10 @@ def create_match(game_id):
 
 def create_team(match, team_data):
     # Convert the 'win' field to a valid boolean based on result.
-    result = False if team_data['win'] == 'Fail' else True
+    if 'win' in team_data:
+        result = False if team_data['win'] == 'Fail' else True
+    else:  # Win field doesn't exist on the bot team in Odyssey game mode.
+        result = False
 
     # Build the team object.
     new_team = Team(

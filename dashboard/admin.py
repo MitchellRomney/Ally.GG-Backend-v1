@@ -31,6 +31,7 @@ class SummonerAdmin(admin.ModelAdmin):
 
     list_display = (
         'summonerName',
+        'summonerLevel',
         'soloQ_tier',
         'flexTT_tier',
         'flexSR_tier',
