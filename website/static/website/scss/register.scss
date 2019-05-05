@@ -1,0 +1,156 @@
+#register {
+  max-height: 100vh;
+  display: grid;
+  grid-template: 100px auto 50px / 40vw 15vw 45vw;
+  grid-template-areas: 'nav nav hero' 'content angle hero' 'footer angle hero';
+  overflow: hidden;
+
+  #navigation {
+    grid-area: nav;
+    background-color: white;
+    z-index: 50;
+    display: flex;
+
+    .logo {
+      img {
+        margin-left: 0;
+        padding: 20px 0 20px 40px;
+      }
+    }
+
+    ul {
+      display: flex;
+      justify-content: flex-end;
+      width: 100%;
+
+      li {
+        margin: auto 20px;
+      }
+    }
+  }
+
+  .angle {
+    grid-area: angle;
+    z-index: 30;
+    width: 0;
+    height: 0;
+    border-right: 20vw solid transparent;
+    border-top: 100vh solid white;
+    margin-top: -100px;
+    filter: drop-shadow(30px 0px 5px rgba(0, 0, 0, 0.2));
+  }
+
+  .content {
+    grid-area: content;
+    background-color: white;
+    z-index: 40;
+
+    .reg-form {
+      padding: 0 40px;
+
+      .blurb {
+        margin: 30px 0;
+
+        .welcome {
+          font-size: 2rem;
+          margin-bottom: 1rem;
+
+          span {
+            color: white;
+            background-color: $palette-accent;
+          }
+        }
+
+        .byline {
+          font-weight: normal;
+          color: $palette-primary;
+        }
+      }
+
+      form {
+        margin-top: 6vh;
+
+        .fields {
+          display: grid;
+          grid-template: auto / 1fr 1fr;
+          grid-gap: 20px;
+
+          .field {
+            display: flex;
+            flex-direction: column;
+
+            label {
+              padding: 5px 0;
+            }
+
+            .input-group {
+              display: flex;
+
+              input {
+                width: 100%;
+                padding: 20px 10px;
+                background-color: #f7f7f7;
+                border: none;
+                border-bottom: 1px solid $palette-primary;
+              }
+            }
+
+            &.username {
+              grid-column: span 2;
+            }
+
+            &.email {
+              grid-column: span 2;
+            }
+
+            &.key {
+              grid-column: span 2;
+            }
+          }
+        }
+      }
+
+      .submit {
+        width: 100%;
+        height: 50px;
+        background-color: $palette-accent;
+        color: white;
+        border: none;
+        text-transform: uppercase;
+        font-size: 1rem;
+        margin-top: 50px;
+      }
+    }
+  }
+
+  footer {
+    grid-area: footer;
+    width: 100%;
+    background-color: white;
+    z-index: 20;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    ul {
+      display: flex;
+      width: 100%;
+      justify-content: space-evenly;
+
+      li {
+        a {
+          color: $palette-primary;
+        }
+      }
+    }
+  }
+
+  .hero {
+    grid-area: hero;
+
+    .image {
+      height: 100vh;
+      margin-left: -80%;
+    }
+  }
+}

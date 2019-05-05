@@ -32,6 +32,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'dashboard',
+    'website',
     'rest_framework',
     's3direct',
     'dynamic_preferences',
@@ -53,7 +54,10 @@ ROOT_URLCONF = 'AllyGG.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')],
+        'DIRS': [
+            os.path.join(BASE_DIR, 'dashboard/templates'),
+            os.path.join(BASE_DIR, 'website/templates'),
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -112,6 +116,7 @@ STATIC_URL = '/static/'
 STATIC_ROOT = 'staticfiles'
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'dashboard/static'),
+    os.path.join(BASE_DIR, 'website/static'),
 )
 
 LOGIN_REDIRECT_URL = "home"

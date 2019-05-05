@@ -792,6 +792,9 @@ html, body {
   color: #333343;
   font-family: 'Roboto', sans-serif; }
 
+button {
+  cursor: pointer; }
+
 *, *::before, *::after {
   box-sizing: border-box; }
 

@@ -30,5 +30,27 @@ gulp.task('Dashboard CSS', function () {
     .pipe(gulp.dest('dashboard/static/dashboard/css'))
 });
 
+gulp.task('Website SCSS', function() {
+  return gulp.src('website/static/website/scss/base.scss')
+    .pipe(sass())
+    .pipe(rename('style.css'))
+    .pipe(gulp.dest('website/static/website/css'));
+});
+
+gulp.task('Website Scripts', function() {
+  return gulp.src('website/static/website/js/custom/*.js')
+    .pipe(concat('all.js'))
+    .pipe(gulp.dest('website/static/website/js'));
+});
+
+gulp.task('Website CSS', function () {
+  var processors = [
+    autoprefixer({browsers: ['last 1 version']}),
+  ];
+  return gulp.src('website/static/website/css/*.css')
+    .pipe(postcss(processors))
+    .pipe(gulp.dest('website/static/website/css'))
+});
+
 // Default Task
-gulp.task('default', gulp.series('Dashboard SCSS', 'Dashboard Scripts', 'Dashboard CSS'));
+gulp.task('default', gulp.series('Dashboard SCSS', 'Dashboard Scripts', 'Dashboard CSS', 'Website SCSS', 'Website Scripts', 'Website CSS'));

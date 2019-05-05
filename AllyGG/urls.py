@@ -2,6 +2,7 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf.urls import url
 from dashboard import views as dashboard
+from website import views as website
 from django.conf.urls.static import static
 from django.conf import settings
 from rest_framework import routers
@@ -17,7 +18,9 @@ router.register(r'chat/room', dashboard.ChatRoomViewSet)
 
 
 urlpatterns = [
-                  path('', dashboard.home, name='home'),
+                  path('', website.home, name='home'),
+
+                  path('register', website.register, name='register'),
 
                   path('profiles/<username>/', dashboard.profile, name='profile'),
 

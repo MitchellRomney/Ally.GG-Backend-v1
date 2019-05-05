@@ -11,11 +11,6 @@ from django.http import HttpResponseRedirect, JsonResponse
 from datetime import datetime
 
 
-def home(request):
-    return render(request, 'dashboard/home.html', {
-    })
-
-
 def profile(request, username):
     user = User.objects.get(username=username) if User.objects.filter(username=username).count() == 1 else None
     user_profile = Profile.objects.get(user=user) if user else None

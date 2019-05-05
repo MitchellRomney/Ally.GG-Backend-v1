@@ -62,9 +62,6 @@ class ProfileAdmin(admin.ModelAdmin):
 
     list_display = (
         'user',
-        'first_name',
-        'last_name',
-        'email',
         'date_created',
         'date_modified'
     )
@@ -215,6 +212,19 @@ class RankedTierAdmin(admin.ModelAdmin):
     )
 
 
+class AccessCodeAdmin(admin.ModelAdmin):
+    model = AccessCode
+
+    list_display = (
+        'key',
+        'used',
+        'user',
+        'date_used',
+        'date_created',
+        'archived'
+    )
+
+
 admin.site.register(Profile, ProfileAdmin)
 admin.site.register(Summoner, SummonerAdmin)
 admin.site.register(Match, MatchAdmin)
@@ -227,4 +237,5 @@ admin.site.register(Rune, RuneAdmin)
 admin.site.register(Item, ItemAdmin)
 admin.site.register(SummonerSpell, SummonerSpellAdmin)
 admin.site.register(RankedTier, RankedTierAdmin)
+admin.site.register(AccessCode, AccessCodeAdmin)
 admin.site.unregister(Group)
