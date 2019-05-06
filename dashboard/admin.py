@@ -79,13 +79,6 @@ class ProfileAdmin(admin.ModelAdmin):
         'user',
     )
 
-    def get_readonly_fields(self, request, obj=None):
-        readonly_fields = list(set(
-            [field.name for field in self.opts.local_fields] +
-            [field.name for field in self.opts.local_many_to_many]
-        ))
-        return readonly_fields
-
 
 class TeamAdmin(admin.ModelAdmin):
     model = Team

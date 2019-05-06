@@ -58,7 +58,7 @@ class Ranked(graphene.ObjectType):
             number = 3
         elif self.rank == 'II':
             number = 2
-        elif self.rank == 'II':
+        elif self.rank == 'I':
             number = 1
         else:
             number = None
@@ -176,7 +176,7 @@ class PlayerType(DjangoObjectType):
     def resolve_kill_participation(self, info, **kwargs):
         total_kills = Player.objects.filter(match=self.match, team=self.team).aggregate(Sum('kills')).get('kills__sum', 0)
 
-        return str(int((self.kills / total_kills) * 100)) + '%'
+        return str(int(((self.kills + self.assists) / total_kills) * 100)) + '%'
 
 
 class Query(object):
