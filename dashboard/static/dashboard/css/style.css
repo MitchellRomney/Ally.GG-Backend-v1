@@ -19,18 +19,18 @@
     #summoners .panels .panel table {
       width: 100%; }
 
-#profile {
+#summonerProfile {
   width: 100%; }
-  #profile .top-wrapper {
+  #summonerProfile .top-wrapper {
     display: grid;
     width: 100%;
     grid-gap: 10px 15px;
     grid-template: 120px 95px 95px/repeat(12, 1fr);
     grid-template-areas: "avatar avatar avatar avatar title title title title title title title title" "ranked ranked ranked ranked ranked ranked ranked ranked ranked ranked ranked ranked" "menu menu menu menu menu menu menu menu menu menu menu menu"; }
     @media (min-width: 768px) {
-      #profile .top-wrapper {
+      #summonerProfile .top-wrapper {
         grid-template-areas: "avatar avatar avatar title title title title title title title title title" "avatar avatar avatar ranked ranked ranked ranked ranked ranked ranked ranked ranked" "avatar avatar avatar menu menu menu menu menu menu menu menu menu"; } }
-    #profile .top-wrapper .avatar-wrapper {
+    #summonerProfile .top-wrapper .avatar-wrapper {
       grid-area: avatar;
       padding: 5px 10px;
       background-color: white;
@@ -40,19 +40,19 @@
       display: flex;
       flex-direction: column; }
       @media (min-width: 768px) {
-        #profile .top-wrapper .avatar-wrapper {
+        #summonerProfile .top-wrapper .avatar-wrapper {
           padding: 20px 40px; } }
-      #profile .top-wrapper .avatar-wrapper .avatar {
+      #summonerProfile .top-wrapper .avatar-wrapper .avatar {
         position: relative;
         margin: auto;
         width: 100%; }
         @media (min-width: 768px) {
-          #profile .top-wrapper .avatar-wrapper .avatar {
+          #summonerProfile .top-wrapper .avatar-wrapper .avatar {
             height: 100%; } }
-        #profile .top-wrapper .avatar-wrapper .avatar img {
+        #summonerProfile .top-wrapper .avatar-wrapper .avatar img {
           border-radius: 10px;
           width: 100%; }
-        #profile .top-wrapper .avatar-wrapper .avatar .level {
+        #summonerProfile .top-wrapper .avatar-wrapper .avatar .level {
           position: absolute;
           bottom: -10px;
           right: 0;
@@ -62,9 +62,9 @@
           font-size: 1rem;
           font-weight: bold; }
           @media (min-width: 768px) {
-            #profile .top-wrapper .avatar-wrapper .avatar .level {
+            #summonerProfile .top-wrapper .avatar-wrapper .avatar .level {
               font-size: 2rem; } }
-      #profile .top-wrapper .avatar-wrapper button {
+      #summonerProfile .top-wrapper .avatar-wrapper button {
         width: 100%;
         background-color: #f93d7c;
         padding: 8px;
@@ -76,38 +76,38 @@
         cursor: pointer;
         display: none; }
         @media (min-width: 768px) {
-          #profile .top-wrapper .avatar-wrapper button {
+          #summonerProfile .top-wrapper .avatar-wrapper button {
             display: block; } }
-      #profile .top-wrapper .avatar-wrapper .updated {
+      #summonerProfile .top-wrapper .avatar-wrapper .updated {
         font-size: 0.8rem;
         opacity: 0.8;
         margin-top: auto;
         display: none; }
         @media (min-width: 768px) {
-          #profile .top-wrapper .avatar-wrapper .updated {
+          #summonerProfile .top-wrapper .avatar-wrapper .updated {
             display: block; } }
-    #profile .top-wrapper .title {
+    #summonerProfile .top-wrapper .title {
       grid-area: title;
       display: flex;
       align-items: center;
       flex-wrap: wrap; }
       @media (min-width: 768px) {
-        #profile .top-wrapper .title {
+        #summonerProfile .top-wrapper .title {
           justify-content: flex-start; } }
-      #profile .top-wrapper .title .summonerName {
+      #summonerProfile .top-wrapper .title .summonerName {
         font-family: Roboto-Black, sans-serif; }
-      #profile .top-wrapper .title .user {
+      #summonerProfile .top-wrapper .title .user {
         display: flex;
         margin: 50px 20px 30px; }
-        #profile .top-wrapper .title .user .avatar {
+        #summonerProfile .top-wrapper .title .user .avatar {
           margin-right: 10px;
           width: 50px; }
-          #profile .top-wrapper .title .user .avatar img {
+          #summonerProfile .top-wrapper .title .user .avatar img {
             border-radius: 50%; }
-        #profile .top-wrapper .title .user a {
+        #summonerProfile .top-wrapper .title .user a {
           margin: auto 0;
           color: grey; }
-      #profile .top-wrapper .title button {
+      #summonerProfile .top-wrapper .title button {
         width: 100%;
         background-color: #f93d7c;
         padding: 8px;
@@ -118,19 +118,19 @@
         margin-top: 5px;
         cursor: pointer; }
         @media (min-width: 768px) {
-          #profile .top-wrapper .title button {
+          #summonerProfile .top-wrapper .title button {
             display: none; } }
-      #profile .top-wrapper .title .updated {
+      #summonerProfile .top-wrapper .title .updated {
         font-size: 0.8rem;
         opacity: 0.8;
         margin-top: auto; }
         @media (min-width: 768px) {
-          #profile .top-wrapper .title .updated {
+          #summonerProfile .top-wrapper .title .updated {
             display: none; } }
-    #profile .top-wrapper .ranked-stats {
+    #summonerProfile .top-wrapper .ranked-stats {
       grid-area: ranked;
       display: flex; }
-      #profile .top-wrapper .ranked-stats .ranked-solo, #profile .top-wrapper .ranked-stats .ranked-flexSR, #profile .top-wrapper .ranked-stats .ranked-flexTT {
+      #summonerProfile .top-wrapper .ranked-stats .ranked-solo, #summonerProfile .top-wrapper .ranked-stats .ranked-flexSR, #summonerProfile .top-wrapper .ranked-stats .ranked-flexTT {
         padding: 5px;
         background-color: white;
         border: 3px solid #f4f4f4;
@@ -140,25 +140,26 @@
         margin-right: 10px;
         display: flex;
         min-width: 250px; }
-        #profile .top-wrapper .ranked-stats .ranked-solo .medal, #profile .top-wrapper .ranked-stats .ranked-flexSR .medal, #profile .top-wrapper .ranked-stats .ranked-flexTT .medal {
+        #summonerProfile .top-wrapper .ranked-stats .ranked-solo .medal, #summonerProfile .top-wrapper .ranked-stats .ranked-flexSR .medal, #summonerProfile .top-wrapper .ranked-stats .ranked-flexTT .medal {
           width: 25%;
           height: 100%;
           display: flex;
-          margin: 0 5px; }
-        #profile .top-wrapper .ranked-stats .ranked-solo .text, #profile .top-wrapper .ranked-stats .ranked-flexSR .text, #profile .top-wrapper .ranked-stats .ranked-flexTT .text {
+          margin: 0 5px;
+          align-items: center; }
+        #summonerProfile .top-wrapper .ranked-stats .ranked-solo .text, #summonerProfile .top-wrapper .ranked-stats .ranked-flexSR .text, #summonerProfile .top-wrapper .ranked-stats .ranked-flexTT .text {
           padding: 5px 0;
           display: flex;
           justify-content: center;
           flex-direction: column; }
-          #profile .top-wrapper .ranked-stats .ranked-solo .text .faded, #profile .top-wrapper .ranked-stats .ranked-flexSR .text .faded, #profile .top-wrapper .ranked-stats .ranked-flexTT .text .faded {
+          #summonerProfile .top-wrapper .ranked-stats .ranked-solo .text .faded, #summonerProfile .top-wrapper .ranked-stats .ranked-flexSR .text .faded, #summonerProfile .top-wrapper .ranked-stats .ranked-flexTT .text .faded {
             color: grey;
             font-weight: normal; }
-          #profile .top-wrapper .ranked-stats .ranked-solo .text .rank, #profile .top-wrapper .ranked-stats .ranked-flexSR .text .rank, #profile .top-wrapper .ranked-stats .ranked-flexTT .text .rank {
+          #summonerProfile .top-wrapper .ranked-stats .ranked-solo .text .rank, #summonerProfile .top-wrapper .ranked-stats .ranked-flexSR .text .rank, #summonerProfile .top-wrapper .ranked-stats .ranked-flexTT .text .rank {
             color: #f93d7c;
             font-weight: bold; }
-          #profile .top-wrapper .ranked-stats .ranked-solo .text .winrate span, #profile .top-wrapper .ranked-stats .ranked-flexSR .text .winrate span, #profile .top-wrapper .ranked-stats .ranked-flexTT .text .winrate span {
+          #summonerProfile .top-wrapper .ranked-stats .ranked-solo .text .winrate span, #summonerProfile .top-wrapper .ranked-stats .ranked-flexSR .text .winrate span, #summonerProfile .top-wrapper .ranked-stats .ranked-flexTT .text .winrate span {
             font-weight: normal; }
-    #profile .top-wrapper #summoner-menu {
+    #summonerProfile .top-wrapper #summoner-menu {
       grid-area: menu;
       background-color: white;
       border: 3px solid #f4f4f4;
@@ -168,7 +169,7 @@
       display: grid;
       grid-template: auto / 1fr 1fr 1fr 1fr;
       position: relative; }
-      #profile .top-wrapper #summoner-menu li {
+      #summonerProfile .top-wrapper #summoner-menu li {
         border-right: 3px solid #f4f4f4;
         height: 100%;
         display: flex;
@@ -178,10 +179,10 @@
         opacity: 0.6;
         cursor: pointer;
         transition: all 0.25s ease; }
-        #profile .top-wrapper #summoner-menu li.general {
+        #summonerProfile .top-wrapper #summoner-menu li.general {
           font-weight: bold;
           opacity: 1; }
-      #profile .top-wrapper #summoner-menu .selector {
+      #summonerProfile .top-wrapper #summoner-menu .selector {
         width: 25%;
         position: absolute;
         bottom: 0;
@@ -191,63 +192,63 @@
         border-bottom-left-radius: 20px;
         transition: all 0.25s ease;
         left: 0; }
-        #profile .top-wrapper #summoner-menu .selector.s_matches {
+        #summonerProfile .top-wrapper #summoner-menu .selector.s_matches {
           left: 25%;
           border-radius: 0; }
-        #profile .top-wrapper #summoner-menu .selector.s_champions {
+        #summonerProfile .top-wrapper #summoner-menu .selector.s_champions {
           left: 50%;
           border-radius: 0; }
-        #profile .top-wrapper #summoner-menu .selector.s_achievements {
+        #summonerProfile .top-wrapper #summoner-menu .selector.s_achievements {
           left: 75%;
           border-radius: 0;
           border-bottom-right-radius: 20px; }
-      #profile .top-wrapper #summoner-menu.s_matches .matches {
+      #summonerProfile .top-wrapper #summoner-menu.s_matches .matches {
         opacity: 1;
         font-weight: bold; }
-      #profile .top-wrapper #summoner-menu.s_matches .general, #profile .top-wrapper #summoner-menu.s_matches .champions, #profile .top-wrapper #summoner-menu.s_matches .achievements {
+      #summonerProfile .top-wrapper #summoner-menu.s_matches .general, #summonerProfile .top-wrapper #summoner-menu.s_matches .champions, #summonerProfile .top-wrapper #summoner-menu.s_matches .achievements {
         opacity: 0.6;
         font-weight: normal; }
-      #profile .top-wrapper #summoner-menu.s_champions .champions {
+      #summonerProfile .top-wrapper #summoner-menu.s_champions .champions {
         opacity: 1;
         font-weight: bold; }
-      #profile .top-wrapper #summoner-menu.s_champions .general, #profile .top-wrapper #summoner-menu.s_champions .matches, #profile .top-wrapper #summoner-menu.s_champions .achievements {
+      #summonerProfile .top-wrapper #summoner-menu.s_champions .general, #summonerProfile .top-wrapper #summoner-menu.s_champions .matches, #summonerProfile .top-wrapper #summoner-menu.s_champions .achievements {
         opacity: 0.6;
         font-weight: normal; }
-      #profile .top-wrapper #summoner-menu.s_achievements .achievements {
+      #summonerProfile .top-wrapper #summoner-menu.s_achievements .achievements {
         opacity: 1;
         font-weight: bold; }
-      #profile .top-wrapper #summoner-menu.s_achievements .general, #profile .top-wrapper #summoner-menu.s_achievements .champions, #profile .top-wrapper #summoner-menu.s_achievements .matches {
+      #summonerProfile .top-wrapper #summoner-menu.s_achievements .general, #summonerProfile .top-wrapper #summoner-menu.s_achievements .champions, #summonerProfile .top-wrapper #summoner-menu.s_achievements .matches {
         opacity: 0.6;
         font-weight: normal; }
-  #profile #summoner-content-wrapper {
+  #summonerProfile #summoner-content-wrapper {
     width: 100%;
     margin-top: 20px; }
-    #profile #summoner-content-wrapper .content-general, #profile #summoner-content-wrapper .content-matches {
+    #summonerProfile #summoner-content-wrapper .content-general, #summonerProfile #summoner-content-wrapper .content-matches {
       display: grid;
       grid-gap: 20px;
       grid-template: 1fr 1fr/repeat(3, 1fr);
       min-height: 100vh;
       grid-template-areas: "ranked matches matches" ". . ."; }
-      #profile #summoner-content-wrapper .content-general .ranked-panel, #profile #summoner-content-wrapper .content-matches .ranked-panel {
+      #summonerProfile #summoner-content-wrapper .content-general .ranked-panel, #summonerProfile #summoner-content-wrapper .content-matches .ranked-panel {
         grid-area: ranked;
         background-color: white;
         border: 3px solid #f4f4f4;
         border-radius: 20px;
         padding: 20px; }
-        #profile #summoner-content-wrapper .content-general .ranked-panel .rank, #profile #summoner-content-wrapper .content-matches .ranked-panel .rank {
+        #summonerProfile #summoner-content-wrapper .content-general .ranked-panel .rank, #summonerProfile #summoner-content-wrapper .content-matches .ranked-panel .rank {
           color: #f93d7c;
           margin-top: 5px; }
-        #profile #summoner-content-wrapper .content-general .ranked-panel .league, #profile #summoner-content-wrapper .content-matches .ranked-panel .league {
+        #summonerProfile #summoner-content-wrapper .content-general .ranked-panel .league, #summonerProfile #summoner-content-wrapper .content-matches .ranked-panel .league {
           text-align: right;
           color: grey; }
-        #profile #summoner-content-wrapper .content-general .ranked-panel .svg-item, #profile #summoner-content-wrapper .content-matches .ranked-panel .svg-item {
+        #summonerProfile #summoner-content-wrapper .content-general .ranked-panel .svg-item, #summonerProfile #summoner-content-wrapper .content-matches .ranked-panel .svg-item {
           width: 100%;
           height: 36vh;
           position: relative;
           display: flex;
           align-items: center;
           justify-content: center; }
-          #profile #summoner-content-wrapper .content-general .ranked-panel .svg-item .donut-segment, #profile #summoner-content-wrapper .content-matches .ranked-panel .svg-item .donut-segment {
+          #summonerProfile #summoner-content-wrapper .content-general .ranked-panel .svg-item .donut-segment, #summonerProfile #summoner-content-wrapper .content-matches .ranked-panel .svg-item .donut-segment {
             animation: donut-chart-fill 1s reverse ease-in;
             -webkit-transform-origin: center;
                     transform-origin: center;
@@ -255,34 +256,34 @@
             -webkit-transform: scaleX(-1);
                     transform: scaleX(-1);
             stroke-linecap: round; }
-          #profile #summoner-content-wrapper .content-general .ranked-panel .svg-item .donut-ring, #profile #summoner-content-wrapper .content-matches .ranked-panel .svg-item .donut-ring {
+          #summonerProfile #summoner-content-wrapper .content-general .ranked-panel .svg-item .donut-ring, #summonerProfile #summoner-content-wrapper .content-matches .ranked-panel .svg-item .donut-ring {
             stroke: lightgrey; }
-          #profile #summoner-content-wrapper .content-general .ranked-panel .svg-item .inside-svg, #profile #summoner-content-wrapper .content-matches .ranked-panel .svg-item .inside-svg {
+          #summonerProfile #summoner-content-wrapper .content-general .ranked-panel .svg-item .inside-svg, #summonerProfile #summoner-content-wrapper .content-matches .ranked-panel .svg-item .inside-svg {
             position: absolute;
             top: 25%;
             text-align: center; }
-            #profile #summoner-content-wrapper .content-general .ranked-panel .svg-item .inside-svg .total-LP, #profile #summoner-content-wrapper .content-matches .ranked-panel .svg-item .inside-svg .total-LP {
+            #summonerProfile #summoner-content-wrapper .content-general .ranked-panel .svg-item .inside-svg .total-LP, #summonerProfile #summoner-content-wrapper .content-matches .ranked-panel .svg-item .inside-svg .total-LP {
               font-size: 2.5rem;
               color: #333343; }
-            #profile #summoner-content-wrapper .content-general .ranked-panel .svg-item .inside-svg .win-loss, #profile #summoner-content-wrapper .content-matches .ranked-panel .svg-item .inside-svg .win-loss {
+            #summonerProfile #summoner-content-wrapper .content-general .ranked-panel .svg-item .inside-svg .win-loss, #summonerProfile #summoner-content-wrapper .content-matches .ranked-panel .svg-item .inside-svg .win-loss {
               color: grey;
               font-size: 1rem;
               font-weight: normal; }
-            #profile #summoner-content-wrapper .content-general .ranked-panel .svg-item .inside-svg .medal, #profile #summoner-content-wrapper .content-matches .ranked-panel .svg-item .inside-svg .medal {
+            #summonerProfile #summoner-content-wrapper .content-general .ranked-panel .svg-item .inside-svg .medal, #summonerProfile #summoner-content-wrapper .content-matches .ranked-panel .svg-item .inside-svg .medal {
               width: 7vw; }
-      #profile #summoner-content-wrapper .content-general .latest-matches-panel, #profile #summoner-content-wrapper .content-matches .latest-matches-panel {
+      #summonerProfile #summoner-content-wrapper .content-general .latest-matches-panel, #summonerProfile #summoner-content-wrapper .content-matches .latest-matches-panel {
         grid-area: matches;
         background-color: white;
         border: 3px solid #f4f4f4;
         border-radius: 20px;
         padding: 20px; }
-      #profile #summoner-content-wrapper .content-general .latest-matches, #profile #summoner-content-wrapper .content-matches .latest-matches {
+      #summonerProfile #summoner-content-wrapper .content-general .latest-matches, #summonerProfile #summoner-content-wrapper .content-matches .latest-matches {
         height: 100%;
         display: grid;
         grid-template: 1fr 1fr 1fr / 1fr;
         grid-gap: 10px;
         padding: 20px 0; }
-        #profile #summoner-content-wrapper .content-general .latest-matches .match, #profile #summoner-content-wrapper .content-matches .latest-matches .match {
+        #summonerProfile #summoner-content-wrapper .content-general .latest-matches .match, #summonerProfile #summoner-content-wrapper .content-matches .latest-matches .match {
           border: 3px solid #f4f4f4;
           display: grid;
           grid-template: auto / 2.2fr 1fr 0.8fr 1fr 1.5fr;
@@ -290,12 +291,12 @@
           overflow: hidden;
           border-radius: 10px;
           background-color: white; }
-          #profile #summoner-content-wrapper .content-general .latest-matches .match .champion-splash, #profile #summoner-content-wrapper .content-matches .latest-matches .match .champion-splash {
+          #summonerProfile #summoner-content-wrapper .content-general .latest-matches .match .champion-splash, #summonerProfile #summoner-content-wrapper .content-matches .latest-matches .match .champion-splash {
             overflow: hidden;
             position: relative;
             background-position: center;
             background-size: cover; }
-            #profile #summoner-content-wrapper .content-general .latest-matches .match .champion-splash .triangle, #profile #summoner-content-wrapper .content-matches .latest-matches .match .champion-splash .triangle {
+            #summonerProfile #summoner-content-wrapper .content-general .latest-matches .match .champion-splash .triangle, #summonerProfile #summoner-content-wrapper .content-matches .latest-matches .match .champion-splash .triangle {
               width: 0;
               height: 0;
               border-left: 3vw solid transparent;
@@ -304,7 +305,7 @@
               position: absolute;
               right: 0;
               top: 0; }
-            #profile #summoner-content-wrapper .content-general .latest-matches .match .champion-splash .result-wrapper, #profile #summoner-content-wrapper .content-matches .latest-matches .match .champion-splash .result-wrapper {
+            #summonerProfile #summoner-content-wrapper .content-general .latest-matches .match .champion-splash .result-wrapper, #summonerProfile #summoner-content-wrapper .content-matches .latest-matches .match .champion-splash .result-wrapper {
               position: absolute;
               right: 0;
               display: flex;
@@ -313,7 +314,7 @@
               align-items: center;
               font-weight: bold;
               width: 30%; }
-              #profile #summoner-content-wrapper .content-general .latest-matches .match .champion-splash .result-wrapper .result, #profile #summoner-content-wrapper .content-matches .latest-matches .match .champion-splash .result-wrapper .result {
+              #summonerProfile #summoner-content-wrapper .content-general .latest-matches .match .champion-splash .result-wrapper .result, #summonerProfile #summoner-content-wrapper .content-matches .latest-matches .match .champion-splash .result-wrapper .result {
                 width: 100%;
                 background-color: white;
                 padding: 2px 40px 2px 10px;
@@ -321,111 +322,111 @@
                 border-radius: 10px;
                 font-size: 1.8rem;
                 color: #333343; }
-                #profile #summoner-content-wrapper .content-general .latest-matches .match .champion-splash .result-wrapper .result.win, #profile #summoner-content-wrapper .content-matches .latest-matches .match .champion-splash .result-wrapper .result.win {
+                #summonerProfile #summoner-content-wrapper .content-general .latest-matches .match .champion-splash .result-wrapper .result.win, #summonerProfile #summoner-content-wrapper .content-matches .latest-matches .match .champion-splash .result-wrapper .result.win {
                   color: #f93d7c; }
-          #profile #summoner-content-wrapper .content-general .latest-matches .match .main-info, #profile #summoner-content-wrapper .content-matches .latest-matches .match .main-info {
+          #summonerProfile #summoner-content-wrapper .content-general .latest-matches .match .main-info, #summonerProfile #summoner-content-wrapper .content-matches .latest-matches .match .main-info {
             display: flex;
             text-align: center;
             flex-direction: column;
             align-self: center; }
-            #profile #summoner-content-wrapper .content-general .latest-matches .match .main-info .champion, #profile #summoner-content-wrapper .content-matches .latest-matches .match .main-info .champion {
+            #summonerProfile #summoner-content-wrapper .content-general .latest-matches .match .main-info .champion, #summonerProfile #summoner-content-wrapper .content-matches .latest-matches .match .main-info .champion {
               color: #333343;
               font-weight: bold;
               font-size: 1.2rem; }
-            #profile #summoner-content-wrapper .content-general .latest-matches .match .main-info .timeAgo, #profile #summoner-content-wrapper .content-matches .latest-matches .match .main-info .timeAgo {
+            #summonerProfile #summoner-content-wrapper .content-general .latest-matches .match .main-info .timeAgo, #summonerProfile #summoner-content-wrapper .content-matches .latest-matches .match .main-info .timeAgo {
               font-size: 0.9rem;
               color: grey; }
-            #profile #summoner-content-wrapper .content-general .latest-matches .match .main-info .queue, #profile #summoner-content-wrapper .content-matches .latest-matches .match .main-info .queue {
+            #summonerProfile #summoner-content-wrapper .content-general .latest-matches .match .main-info .queue, #summonerProfile #summoner-content-wrapper .content-matches .latest-matches .match .main-info .queue {
               font-size: 0.8rem; }
-          #profile #summoner-content-wrapper .content-general .latest-matches .match .player-info, #profile #summoner-content-wrapper .content-matches .latest-matches .match .player-info {
+          #summonerProfile #summoner-content-wrapper .content-general .latest-matches .match .player-info, #summonerProfile #summoner-content-wrapper .content-matches .latest-matches .match .player-info {
             display: flex;
             text-align: center;
             flex-direction: column;
             align-self: center; }
-            #profile #summoner-content-wrapper .content-general .latest-matches .match .player-info .kda, #profile #summoner-content-wrapper .content-matches .latest-matches .match .player-info .kda {
+            #summonerProfile #summoner-content-wrapper .content-general .latest-matches .match .player-info .kda, #summonerProfile #summoner-content-wrapper .content-matches .latest-matches .match .player-info .kda {
               color: #333343;
               font-weight: bold;
               font-size: 1.7rem; }
-            #profile #summoner-content-wrapper .content-general .latest-matches .match .player-info .average, #profile #summoner-content-wrapper .content-matches .latest-matches .match .player-info .average {
+            #summonerProfile #summoner-content-wrapper .content-general .latest-matches .match .player-info .average, #summonerProfile #summoner-content-wrapper .content-matches .latest-matches .match .player-info .average {
               color: grey; }
-          #profile #summoner-content-wrapper .content-general .latest-matches .match .sub-info, #profile #summoner-content-wrapper .content-matches .latest-matches .match .sub-info {
+          #summonerProfile #summoner-content-wrapper .content-general .latest-matches .match .sub-info, #summonerProfile #summoner-content-wrapper .content-matches .latest-matches .match .sub-info {
             display: flex;
             text-align: center;
             flex-direction: column;
             align-self: center; }
-            #profile #summoner-content-wrapper .content-general .latest-matches .match .sub-info .farm, #profile #summoner-content-wrapper .content-matches .latest-matches .match .sub-info .farm {
+            #summonerProfile #summoner-content-wrapper .content-general .latest-matches .match .sub-info .farm, #summonerProfile #summoner-content-wrapper .content-matches .latest-matches .match .sub-info .farm {
               font-size: 1.1rem; }
-            #profile #summoner-content-wrapper .content-general .latest-matches .match .sub-info .kill_p, #profile #summoner-content-wrapper .content-matches .latest-matches .match .sub-info .kill_p {
+            #summonerProfile #summoner-content-wrapper .content-general .latest-matches .match .sub-info .kill_p, #summonerProfile #summoner-content-wrapper .content-matches .latest-matches .match .sub-info .kill_p {
               font-size: 0.9rem; }
-              #profile #summoner-content-wrapper .content-general .latest-matches .match .sub-info .kill_p span, #profile #summoner-content-wrapper .content-matches .latest-matches .match .sub-info .kill_p span {
+              #summonerProfile #summoner-content-wrapper .content-general .latest-matches .match .sub-info .kill_p span, #summonerProfile #summoner-content-wrapper .content-matches .latest-matches .match .sub-info .kill_p span {
                 font-size: 1.2rem;
                 font-weight: bold; }
-          #profile #summoner-content-wrapper .content-general .latest-matches .match .items, #profile #summoner-content-wrapper .content-matches .latest-matches .match .items {
+          #summonerProfile #summoner-content-wrapper .content-general .latest-matches .match .items, #summonerProfile #summoner-content-wrapper .content-matches .latest-matches .match .items {
             display: grid;
             grid-template: 1fr 1fr/repeat(6, 1fr);
             grid-template-areas: "trinket item1 item2 item3 summoner1 rune-primary" "trinket item4 item5 item6 summoner2 rune-secondary";
             align-items: center;
             grid-gap: 2px; }
-            #profile #summoner-content-wrapper .content-general .latest-matches .match .items img, #profile #summoner-content-wrapper .content-matches .latest-matches .match .items img {
+            #summonerProfile #summoner-content-wrapper .content-general .latest-matches .match .items img, #summonerProfile #summoner-content-wrapper .content-matches .latest-matches .match .items img {
               width: 30px;
               border-radius: 5px; }
-            #profile #summoner-content-wrapper .content-general .latest-matches .match .items .trinket, #profile #summoner-content-wrapper .content-general .latest-matches .match .items .item-1, #profile #summoner-content-wrapper .content-general .latest-matches .match .items .item-2, #profile #summoner-content-wrapper .content-general .latest-matches .match .items .item-3, #profile #summoner-content-wrapper .content-general .latest-matches .match .items .item-4, #profile #summoner-content-wrapper .content-general .latest-matches .match .items .item-5, #profile #summoner-content-wrapper .content-general .latest-matches .match .items .item-6, #profile #summoner-content-wrapper .content-general .latest-matches .match .items .summoner-1, #profile #summoner-content-wrapper .content-general .latest-matches .match .items .summoner-2, #profile #summoner-content-wrapper .content-matches .latest-matches .match .items .trinket, #profile #summoner-content-wrapper .content-matches .latest-matches .match .items .item-1, #profile #summoner-content-wrapper .content-matches .latest-matches .match .items .item-2, #profile #summoner-content-wrapper .content-matches .latest-matches .match .items .item-3, #profile #summoner-content-wrapper .content-matches .latest-matches .match .items .item-4, #profile #summoner-content-wrapper .content-matches .latest-matches .match .items .item-5, #profile #summoner-content-wrapper .content-matches .latest-matches .match .items .item-6, #profile #summoner-content-wrapper .content-matches .latest-matches .match .items .summoner-1, #profile #summoner-content-wrapper .content-matches .latest-matches .match .items .summoner-2 {
+            #summonerProfile #summoner-content-wrapper .content-general .latest-matches .match .items .trinket, #summonerProfile #summoner-content-wrapper .content-general .latest-matches .match .items .item-1, #summonerProfile #summoner-content-wrapper .content-general .latest-matches .match .items .item-2, #summonerProfile #summoner-content-wrapper .content-general .latest-matches .match .items .item-3, #summonerProfile #summoner-content-wrapper .content-general .latest-matches .match .items .item-4, #summonerProfile #summoner-content-wrapper .content-general .latest-matches .match .items .item-5, #summonerProfile #summoner-content-wrapper .content-general .latest-matches .match .items .item-6, #summonerProfile #summoner-content-wrapper .content-general .latest-matches .match .items .summoner-1, #summonerProfile #summoner-content-wrapper .content-general .latest-matches .match .items .summoner-2, #summonerProfile #summoner-content-wrapper .content-matches .latest-matches .match .items .trinket, #summonerProfile #summoner-content-wrapper .content-matches .latest-matches .match .items .item-1, #summonerProfile #summoner-content-wrapper .content-matches .latest-matches .match .items .item-2, #summonerProfile #summoner-content-wrapper .content-matches .latest-matches .match .items .item-3, #summonerProfile #summoner-content-wrapper .content-matches .latest-matches .match .items .item-4, #summonerProfile #summoner-content-wrapper .content-matches .latest-matches .match .items .item-5, #summonerProfile #summoner-content-wrapper .content-matches .latest-matches .match .items .item-6, #summonerProfile #summoner-content-wrapper .content-matches .latest-matches .match .items .summoner-1, #summonerProfile #summoner-content-wrapper .content-matches .latest-matches .match .items .summoner-2 {
               height: 30px;
               width: 30px;
               background-color: lightgrey;
               border-radius: 4px; }
-            #profile #summoner-content-wrapper .content-general .latest-matches .match .items .trinket, #profile #summoner-content-wrapper .content-matches .latest-matches .match .items .trinket {
+            #summonerProfile #summoner-content-wrapper .content-general .latest-matches .match .items .trinket, #summonerProfile #summoner-content-wrapper .content-matches .latest-matches .match .items .trinket {
               grid-area: trinket;
               margin-right: 4px; }
-            #profile #summoner-content-wrapper .content-general .latest-matches .match .items .item-1, #profile #summoner-content-wrapper .content-matches .latest-matches .match .items .item-1 {
+            #summonerProfile #summoner-content-wrapper .content-general .latest-matches .match .items .item-1, #summonerProfile #summoner-content-wrapper .content-matches .latest-matches .match .items .item-1 {
               grid-area: item1;
               align-self: end; }
-            #profile #summoner-content-wrapper .content-general .latest-matches .match .items .item-2, #profile #summoner-content-wrapper .content-matches .latest-matches .match .items .item-2 {
+            #summonerProfile #summoner-content-wrapper .content-general .latest-matches .match .items .item-2, #summonerProfile #summoner-content-wrapper .content-matches .latest-matches .match .items .item-2 {
               grid-area: item2;
               align-self: end; }
-            #profile #summoner-content-wrapper .content-general .latest-matches .match .items .item-3, #profile #summoner-content-wrapper .content-matches .latest-matches .match .items .item-3 {
+            #summonerProfile #summoner-content-wrapper .content-general .latest-matches .match .items .item-3, #summonerProfile #summoner-content-wrapper .content-matches .latest-matches .match .items .item-3 {
               grid-area: item3;
               align-self: end; }
-            #profile #summoner-content-wrapper .content-general .latest-matches .match .items .item-4, #profile #summoner-content-wrapper .content-matches .latest-matches .match .items .item-4 {
+            #summonerProfile #summoner-content-wrapper .content-general .latest-matches .match .items .item-4, #summonerProfile #summoner-content-wrapper .content-matches .latest-matches .match .items .item-4 {
               grid-area: item4;
               align-self: start; }
-            #profile #summoner-content-wrapper .content-general .latest-matches .match .items .item-5, #profile #summoner-content-wrapper .content-matches .latest-matches .match .items .item-5 {
+            #summonerProfile #summoner-content-wrapper .content-general .latest-matches .match .items .item-5, #summonerProfile #summoner-content-wrapper .content-matches .latest-matches .match .items .item-5 {
               grid-area: item5;
               align-self: start; }
-            #profile #summoner-content-wrapper .content-general .latest-matches .match .items .item-6, #profile #summoner-content-wrapper .content-matches .latest-matches .match .items .item-6 {
+            #summonerProfile #summoner-content-wrapper .content-general .latest-matches .match .items .item-6, #summonerProfile #summoner-content-wrapper .content-matches .latest-matches .match .items .item-6 {
               grid-area: item6;
               align-self: start; }
-            #profile #summoner-content-wrapper .content-general .latest-matches .match .items .summoner-1, #profile #summoner-content-wrapper .content-matches .latest-matches .match .items .summoner-1 {
+            #summonerProfile #summoner-content-wrapper .content-general .latest-matches .match .items .summoner-1, #summonerProfile #summoner-content-wrapper .content-matches .latest-matches .match .items .summoner-1 {
               grid-area: summoner1;
               align-self: end;
               margin-left: 4px; }
-            #profile #summoner-content-wrapper .content-general .latest-matches .match .items .summoner-2, #profile #summoner-content-wrapper .content-matches .latest-matches .match .items .summoner-2 {
+            #summonerProfile #summoner-content-wrapper .content-general .latest-matches .match .items .summoner-2, #summonerProfile #summoner-content-wrapper .content-matches .latest-matches .match .items .summoner-2 {
               grid-area: summoner2;
               align-self: start;
               margin-left: 4px; }
-            #profile #summoner-content-wrapper .content-general .latest-matches .match .items .rune-primary, #profile #summoner-content-wrapper .content-matches .latest-matches .match .items .rune-primary {
+            #summonerProfile #summoner-content-wrapper .content-general .latest-matches .match .items .rune-primary, #summonerProfile #summoner-content-wrapper .content-matches .latest-matches .match .items .rune-primary {
               grid-area: rune-primary;
               align-self: end;
               margin: 0 4px; }
-            #profile #summoner-content-wrapper .content-general .latest-matches .match .items .rune-secondary, #profile #summoner-content-wrapper .content-matches .latest-matches .match .items .rune-secondary {
+            #summonerProfile #summoner-content-wrapper .content-general .latest-matches .match .items .rune-secondary, #summonerProfile #summoner-content-wrapper .content-matches .latest-matches .match .items .rune-secondary {
               grid-area: rune-secondary;
               align-self: start;
               margin: 0 4px; }
-    #profile #summoner-content-wrapper.general .content-general {
+    #summonerProfile #summoner-content-wrapper.general .content-general {
       display: grid; }
-    #profile #summoner-content-wrapper.general .content-matches, #profile #summoner-content-wrapper.general .content-champions, #profile #summoner-content-wrapper.general .content-achievements {
+    #summonerProfile #summoner-content-wrapper.general .content-matches, #summonerProfile #summoner-content-wrapper.general .content-champions, #summonerProfile #summoner-content-wrapper.general .content-achievements {
       display: none; }
-    #profile #summoner-content-wrapper.matches .content-matches {
+    #summonerProfile #summoner-content-wrapper.matches .content-matches {
       display: block; }
-    #profile #summoner-content-wrapper.matches .content-general, #profile #summoner-content-wrapper.matches .content-champions, #profile #summoner-content-wrapper.matches .content-achievements {
+    #summonerProfile #summoner-content-wrapper.matches .content-general, #summonerProfile #summoner-content-wrapper.matches .content-champions, #summonerProfile #summoner-content-wrapper.matches .content-achievements {
       display: none; }
-    #profile #summoner-content-wrapper.champions .content-champions {
+    #summonerProfile #summoner-content-wrapper.champions .content-champions {
       display: block; }
-    #profile #summoner-content-wrapper.champions .content-matches, #profile #summoner-content-wrapper.champions .content-general, #profile #summoner-content-wrapper.champions .content-achievements {
+    #summonerProfile #summoner-content-wrapper.champions .content-matches, #summonerProfile #summoner-content-wrapper.champions .content-general, #summonerProfile #summoner-content-wrapper.champions .content-achievements {
       display: none; }
-    #profile #summoner-content-wrapper.achievements .content-achievements {
+    #summonerProfile #summoner-content-wrapper.achievements .content-achievements {
       display: block; }
-    #profile #summoner-content-wrapper.achievements .content-matches, #profile #summoner-content-wrapper.achievements .content-champions, #profile #summoner-content-wrapper.achievements .content-general {
+    #summonerProfile #summoner-content-wrapper.achievements .content-matches, #summonerProfile #summoner-content-wrapper.achievements .content-champions, #summonerProfile #summoner-content-wrapper.achievements .content-general {
       display: none; }
 
 .fade-enter-active, .fade-leave-active {

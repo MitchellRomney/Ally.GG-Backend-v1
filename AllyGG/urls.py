@@ -6,6 +6,9 @@ from website import views as website
 from django.conf.urls.static import static
 from django.conf import settings
 from rest_framework import routers
+from graphene_django.views import GraphQLView
+from AllyGG.schema import schema
+
 
 router = routers.DefaultRouter()
 router.register(r'users', dashboard.UserViewSet)
@@ -15,7 +18,6 @@ router.register(r'players', dashboard.PlayerViewSet)
 router.register(r'champions', dashboard.ChampionViewSet)
 router.register(r'items', dashboard.ItemViewSet)
 router.register(r'chat/room', dashboard.ChatRoomViewSet)
-
 
 urlpatterns = [
                   path('', website.home, name='home'),
@@ -41,5 +43,7 @@ urlpatterns = [
                   url(r'^s3direct/', include('s3direct.urls')),
 
                   url(r'^accounts/', include('registration.backends.simple.urls')),
+
+                  url(r'^graphql', GraphQLView.as_view(graphiql=True, schema=schema)),
 
               ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
