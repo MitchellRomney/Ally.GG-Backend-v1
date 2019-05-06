@@ -48,7 +48,7 @@
                     <div class="medal">
                         <img class="resp-img"
                              :src="'{% static 'dashboard/images/ranked_medals/' %}' +
-                             summoner.rankedSolo.tier + '_' + summoner.rankedSolo.rankNumber + '.png'">
+                             summoner.rankedSolo.tier.toLowerCase() + '_' + summoner.rankedSolo.rankNumber + '.png'">
                     </div>
                     <div class="text">
                         <h5 class="faded">Ranked Solo</h5>
@@ -65,7 +65,7 @@
                     <div class="medal">
                         <img class="resp-img"
                              :src="'{% static 'dashboard/images/ranked_medals/' %}' +
-                             summoner.rankedFlex3.tier + '_' + summoner.rankedFlex3.rankNumber + '.png'">
+                             summoner.rankedFlex3.tier.toLowerCase() + '_' + summoner.rankedFlex3.rankNumber + '.png'">
                     </div>
                     <div class="text">
                         <h5 class="faded">Flex 3v3</h5>
@@ -82,7 +82,7 @@
                     <div class="medal">
                         <img class="resp-img"
                              :src="'{% static 'dashboard/images/ranked_medals/' %}' +
-                             summoner.rankedFlex5.tier + '_' + summoner.rankedFlex5.rankNumber + '.png'">
+                             summoner.rankedFlex5.tier.toLowerCase() + '_' + summoner.rankedFlex5.rankNumber + '.png'">
                     </div>
                     <div class="text">
                         <h5 class="faded">Flex 5v5</h5>
@@ -113,12 +113,18 @@
                     </h5>
                     <div class="svg-item" v-if="summoner.rankedSolo" v-cloak>
                         <svg width="100%" height="100%" viewBox="0 0 40 40" class="donut">
+                            <defs>
+                                <linearGradient id="PlatinumGradient">
+                                    <stop offset="0%" stop-color="rgba(15,213,172,1)"/>
+                                    <stop offset="100%" stop-color="rgba(34,182,198,1)"/>
+                                </linearGradient>
+                            </defs>
                             <circle class="donut-hole" cx="20" cy="20" r="15.91549430918954" fill="#fff"></circle>
                             <circle class="donut-ring" cx="20" cy="20" r="15.91549430918954" fill="transparent"
                                     stroke-width="3.5"></circle>
                             <circle class="donut-segment" cx="20" cy="20" r="15.91549430918954" fill="transparent"
                                     stroke-width="3.5" :stroke-dasharray="summoner.rankedSolo.ringValues"
-                                    stroke-dashoffset="25"></circle>
+                                    stroke-dashoffset="25" stroke="url(#Gradient1)"></circle>
                         </svg>
                         <div class="inside-svg">
                             <h2 class="total-LP">[[ summoner.rankedSolo.lp ]]LP</h2>
@@ -127,7 +133,7 @@
                             <div class="medal">
                                 <img class="resp-img"
                                      :src="'{% static 'dashboard/images/ranked_medals/' %}' +
-                                 summoner.rankedSolo.tier + '_' + summoner.rankedSolo.rankNumber + '.png'">
+                                 summoner.rankedSolo.tier.toLowerCase() + '_' + summoner.rankedSolo.rankNumber + '.png'">
                             </div>
                         </div>
                     </div>
@@ -159,7 +165,7 @@
                             </div>
                             <div class="sub-info">
                                 <span class="farm">[[ player.totalMinionsKilled ]] ([[ player.csPmin ]]) CS</span>
-                                <span class="kill_p">Kill Participation<br><span>50%</span></span>
+                                <span class="kill_p">Kill Participation<br><span>[[ player.killParticipation ]]</span></span>
                             </div>
                             <div class="items">
                                 <div class="trinket">

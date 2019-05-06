@@ -10,6 +10,8 @@
         {% if request.user.is_superuser %}
             <div class="buttons">
                 <button name="action" v-on:click="update_game_data" type="submit">Update Game Data</button>
+                <button name="action" v-on:click="generate_access_key" type="submit">Generate Access Key</button>
+                <p v-if="newAccessCode != ''">[[ newAccessCode ]]</p>
                 <div>
                     <input type="text" value="" v-model="addPatchItems"/>
                     <button v-on:click="patchItems">Patch Items</button>
@@ -85,8 +87,19 @@
             el: '#home',
             data: {
                 addPatchItems: '',
+                newAccessCode: '',
             },
             methods: {
+                generate_access_key: function (event) {
+                    axios.defaults.xsrfCookieName = 'csrftoken';
+                    axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+                    console.log('wtf');
+                    axios.post('/api/accesscodes/', {
+                        new: true,
+                    }).then(response => {
+                        vm.newAccessCode = response.data;
+                    });
+                },
                 update_game_data: function (event) {
                     axios.defaults.xsrfCookieName = 'csrftoken';
                     axios.defaults.xsrfHeaderName = 'X-CSRFToken';

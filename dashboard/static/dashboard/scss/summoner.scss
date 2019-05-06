@@ -283,7 +283,7 @@
       grid-template: 1fr 1fr / repeat(3, 1fr);
       min-height: 100vh;
       grid-template-areas:
-        "ranked matches matches"
+        "matches matches ranked"
         ". . .";
       .ranked-panel {
         grid-area: ranked;
@@ -309,7 +309,6 @@
           .donut-segment {
             animation: donut-chart-fill 1s reverse ease-in;
             transform-origin: center;
-            stroke: #3c56f2;
             transform: scaleX(-1);
             stroke-linecap: round;
           }

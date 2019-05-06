@@ -7,10 +7,24 @@ class MatchSummonerSerializer(serializers.ModelSerializer):
         model = Summoner
         fields = ('summonerName',)
 
+
+class AccessCodeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AccessCode
+        fields = (
+            'key',
+            'user',
+            'used',
+            'archived',
+            'date_created'
+        )
+
+
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('url', 'username', 'email', 'is_staff')
+
 
 class ProfileSerializer(serializers.ModelSerializer):
     user = UserSerializer()
@@ -19,12 +33,14 @@ class ProfileSerializer(serializers.ModelSerializer):
         model = Profile
         fields = ('user', 'first_name', 'last_name', 'email', 'avatar', 'friends', 'date_created', 'date_modified',)
 
+
 class ChatRoomSerializer(serializers.ModelSerializer):
     members = ProfileSerializer(many=True, read_only=True)
 
     class Meta:
         model = ChatRoom
         fields = ('roomId', 'members', 'date_created', 'date_updated',)
+
 
 class ChampionSerializer(serializers.ModelSerializer):
     class Meta:
@@ -74,6 +90,7 @@ class ChampionSerializer(serializers.ModelSerializer):
             'stats_attackspeedperlevel',
             'stats_attackspeed',
         )
+
 
 class MinimalChampionSerializer(serializers.ModelSerializer):
     class Meta:

@@ -228,7 +228,7 @@
       grid-gap: 20px;
       grid-template: 1fr 1fr/repeat(3, 1fr);
       min-height: 100vh;
-      grid-template-areas: "ranked matches matches" ". . ."; }
+      grid-template-areas: "matches matches ranked" ". . ."; }
       #summonerProfile #summoner-content-wrapper .content-general .ranked-panel, #summonerProfile #summoner-content-wrapper .content-matches .ranked-panel {
         grid-area: ranked;
         background-color: white;
@@ -252,7 +252,6 @@
             animation: donut-chart-fill 1s reverse ease-in;
             -webkit-transform-origin: center;
                     transform-origin: center;
-            stroke: #3c56f2;
             -webkit-transform: scaleX(-1);
                     transform: scaleX(-1);
             stroke-linecap: round; }

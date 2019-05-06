@@ -2,7 +2,8 @@ import graphene
 import timeago
 from django.utils import timezone
 from graphene_django.types import DjangoObjectType
-from dashboard.models import Player, Match, Summoner, RankedTier, Champion, Item, Rune, SummonerSpell
+from dashboard.models import Player, Match, Summoner, RankedTier, Champion, Item, Rune, SummonerSpell, Team
+from django.db.models import Sum
 
 
 class MatchType(DjangoObjectType):
@@ -129,6 +130,10 @@ class ItemType(DjangoObjectType):
     class Meta:
         model = Item
 
+class TeamType(DjangoObjectType):
+    class Meta:
+        model = Team
+
 class SummonerSpellType(DjangoObjectType):
     class Meta:
         model = SummonerSpell
@@ -139,6 +144,7 @@ class PlayerType(DjangoObjectType):
     cs_pmin = graphene.Float()
     perk_sub_style = graphene.String()
     win = graphene.String()
+    kill_participation = graphene.String()
 
     class Meta:
         model = Player
@@ -166,6 +172,11 @@ class PlayerType(DjangoObjectType):
 
     def resolve_win(self, info, **kwargs):
         return 'W' if self.win else 'L'
+
+    def resolve_kill_participation(self, info, **kwargs):
+        total_kills = Player.objects.filter(match=self.match, team=self.team).aggregate(Sum('kills')).get('kills__sum', 0)
+
+        return str(int((self.kills / total_kills) * 100)) + '%'
 
 
 class Query(object):

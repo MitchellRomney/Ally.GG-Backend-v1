@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from dashboard.functions.general import *
 from dashboard.functions.match import *
+from dashboard.functions.users import *
 from rest_framework import viewsets
 from rest_framework.views import APIView
 from django.shortcuts import get_object_or_404
@@ -52,6 +53,18 @@ class UserViewSet(viewsets.ModelViewSet):
         user = get_object_or_404(queryset, pk=1)
         serializer = UserSerializer(user, context={'request': request})
         return Response(serializer.data)
+
+
+class AccessCodeViewSet(viewsets.ModelViewSet):
+    queryset = AccessCode.objects.all().order_by('date_created')
+    serializer_class = AccessCodeSerializer
+
+    def create(self, request, pk=None, **kwargs):
+        if 'new' in request.data:
+            if request.data['new']:
+                return JsonResponse({
+                    'key': generate_access_code()
+                })
 
 
 class SummonerViewSet(viewsets.ModelViewSet):

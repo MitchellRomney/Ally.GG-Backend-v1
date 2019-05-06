@@ -80,6 +80,7 @@ function onSummonerProfileLoad() {
                 deaths
                 assists
                 kdaAverage
+                killParticipation
                 totalMinionsKilled
                 csPmin
                 item0 {

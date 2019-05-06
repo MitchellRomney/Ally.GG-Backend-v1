@@ -18,6 +18,7 @@ router.register(r'players', dashboard.PlayerViewSet)
 router.register(r'champions', dashboard.ChampionViewSet)
 router.register(r'items', dashboard.ItemViewSet)
 router.register(r'chat/room', dashboard.ChatRoomViewSet)
+router.register(r'accesscodes', dashboard.AccessCodeViewSet)
 
 urlpatterns = [
                   path('', website.home, name='home'),
