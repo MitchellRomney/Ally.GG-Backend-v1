@@ -4,6 +4,7 @@ from django.utils import timezone
 from graphene_django.types import DjangoObjectType
 from dashboard.models import Player, Match, Summoner, RankedTier, Champion, Item, Rune, SummonerSpell, Team
 from django.db.models import Sum
+from dashboard.functions.summoners import add_summoner, update_summoner
 
 
 class MatchType(DjangoObjectType):
@@ -121,6 +122,35 @@ class SummonerType(DjangoObjectType):
         return timeago.format(self.date_updated, timezone.now())
 
 
+class SummonerInput(graphene.InputObjectType):
+    summonerName = graphene.String()
+
+
+class CreateSummoner(graphene.Mutation):
+    class Arguments:
+        input = SummonerInput(required=True)
+
+    created = graphene.Boolean()
+    message = graphene.String()
+    summoner = graphene.Field(SummonerType)
+
+    @staticmethod
+    def mutate(root, info, input=None):
+        created = False
+        summoner = None
+
+        add_response = add_summoner('summonerName', input.summonerName)
+        message = add_response['message']
+
+        if not add_response['isError']:
+            update_response = update_summoner(add_response['summonerId'])
+
+            created = True
+            summoner = update_response['summoner']
+
+        return CreateSummoner(created=created, summoner=summoner, message=message)
+
+
 class RuneType(DjangoObjectType):
     class Meta:
         model = Rune
@@ -130,9 +160,11 @@ class ItemType(DjangoObjectType):
     class Meta:
         model = Item
 
+
 class TeamType(DjangoObjectType):
     class Meta:
         model = Team
+
 
 class SummonerSpellType(DjangoObjectType):
     class Meta:
@@ -174,39 +206,66 @@ class PlayerType(DjangoObjectType):
         return 'W' if self.win else 'L'
 
     def resolve_kill_participation(self, info, **kwargs):
-        total_kills = Player.objects.filter(match=self.match, team=self.team).aggregate(Sum('kills')).get('kills__sum', 0)
+        total_kills = Player.objects.filter(match=self.match, team=self.team).aggregate(Sum('kills')).get('kills__sum',
+                                                                                                          0)
 
         return str(int(((self.kills + self.assists) / total_kills) * 100)) + '%'
 
 
 class Query(object):
+
+    # Match Objects
     match = graphene.Field(MatchType, gameId=graphene.Int())
     all_matches = graphene.List(MatchType)
 
+    # Player Objects
     player = graphene.Field(PlayerType, summonerId=graphene.Int())
     summoner_players = graphene.List(PlayerType,
                                      summonerName=graphene.String(),
                                      games=graphene.Int())
     all_players = graphene.List(PlayerType)
 
+    # Summoner Objects
     summoner = graphene.Field(SummonerType, summonerName=graphene.String())
+    summoner_search = graphene.List(SummonerType, entry=graphene.String())
+    latest_updated_summoners = graphene.List(SummonerType)
+    top_summoners = graphene.List(SummonerType)
     all_summoners = graphene.List(SummonerType)
 
+    @staticmethod
     def resolve_summoner(self, info, **kwargs):
         summonerName = kwargs.get('summonerName')
 
         if summonerName:
             return Summoner.objects.get(summonerName__iexact=summonerName)
 
+    @staticmethod
+    def resolve_summoner_search(self, info, **kwargs):
+        entry = kwargs.get('entry')
+
+        if entry:
+            return Summoner.objects.filter(summonerName__icontains=entry)
+
+    @staticmethod
+    def resolve_latest_updated_summoners(self, info, **kwargs):
+        return Summoner.objects.order_by('-date_updated').exclude(date_updated=None)[:100]
+
+    @staticmethod
+    def resolve_top_summoners(self, info, **kwargs):
+        return Summoner.objects.order_by('soloQ_tier__order', 'soloQ_rank', '-soloQ_leaguePoints').exclude(soloQ_tier=None)[:100]
+
+    @staticmethod
     def resolve_all_summoners(self, info, **kwargs):
         return Summoner.objects.all()
 
+    @staticmethod
     def resolve_match(self, info, **kwargs):
         game_id = kwargs.get('gameId')
 
         if game_id:
             return Match.objects.get(gameId=game_id)
 
+    @staticmethod
     def resolve_summoner_players(self, info, **kwargs):
         summoner_name = kwargs.get('summonerName')
         games = kwargs.get('games')
@@ -214,9 +273,15 @@ class Query(object):
         summoner = Summoner.objects.get(summonerName=summoner_name)
         return Player.objects.filter(summoner=summoner).order_by('-match__timestamp').select_related('champion')[:games]
 
+    @staticmethod
     def resolve_all_matches(self, info, **kwargs):
         return Match.objects.all()
 
+    @staticmethod
     def resolve_all_players(self, info, **kwargs):
         # We can easily optimize query count in the resolve method
         return Player.objects.select_related('match', 'summoner').all()[:10]
+
+
+class Mutation(graphene.ObjectType):
+    create_summoner = CreateSummoner.Field()

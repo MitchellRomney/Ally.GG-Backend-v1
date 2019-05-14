@@ -16,7 +16,9 @@ gulp.task('Dashboard SCSS', function() {
 });
 
 gulp.task('Dashboard Scripts', function() {
-  return gulp.src('dashboard/static/dashboard/js/custom/*.js')
+  return gulp.src([
+      'dashboard/static/dashboard/js/custom/*.js',
+      'dashboard/static/dashboard/js/custom/vue_components/*.js'])
     .pipe(concat('all.js'))
     .pipe(gulp.dest('dashboard/static/dashboard/js'));
 });

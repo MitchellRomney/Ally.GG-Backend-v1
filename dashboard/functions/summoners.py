@@ -11,6 +11,15 @@ def add_summoner(method, value):
     summoner_info = fetch_riot_api('OC1', 'summoner', 'v4', 'summoners/' + value) \
         if method == 'SummonerId' else fetch_riot_api('OC1', 'summoner', 'v4', 'summoners/by-name/' + value)
 
+    if 'isError' in summoner_info:
+        if summoner_info['isError'] and not summoner_info['ignore']:
+            return {
+                'isError': True,
+                'message': summoner_info['message'],
+                'summonerId': None,
+                'summoner': None
+            }
+
     # Search if Summoner already exists in database.
     existing_summoner = Summoner.objects.filter(summonerId=summoner_info['id'])
 
@@ -39,24 +48,27 @@ def add_summoner(method, value):
             existing_summoner = Summoner.objects.get(summonerId=summoner_info['id'])
             return {
                 'isError': True,
-                'errorMessage': 'Summoner already exists.',
-                'summonerId': existing_summoner.summonerId
+                'message': 'Summoner already exists.',
+                'summonerId': existing_summoner.summonerId,
+                'summoner': existing_summoner
             }
 
         # Everything is a success, print that a new Summoner was created the return success response.
         print(Fore.GREEN + 'New Summoner Created: ' + Style.RESET_ALL + new_summoner.summonerName)
         return {
             'isError': False,
-            'errorMessage': '',
-            'summonerId': new_summoner.summonerId
+            'message': 'New Summoner created!',
+            'summonerId': new_summoner.summonerId,
+            'summoner': new_summoner
         }
 
     # If someone is trying to add a Summoner that already exists, return error response.
     existing_summoner = Summoner.objects.get(summonerId=summoner_info['id'])
     return {
         'isError': True,
-        'errorMessage': 'Summoner already exists.',
-        'summonerId': existing_summoner.summonerId
+        'message': 'Summoner already exists.',
+        'summonerId': existing_summoner.summonerId,
+        'summoner': existing_summoner
     }
 
 
@@ -137,5 +149,6 @@ def update_summoner(summoner_id):
     return {
         'message': 'Summoner Updated!',
         'summonerId': summoner.summonerId,
+        'summoner': summoner,
         'isError': False
     }

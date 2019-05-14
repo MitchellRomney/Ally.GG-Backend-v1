@@ -43,10 +43,10 @@ Summoner Stats, Find Allies, Message Friends - {{ block.super }}
             </tr>
             <tr v-for="summoner in topPlayers">
               <th scope="row"><a :href="summoner.summonerName">[[ summoner.summonerName ]]</a></th>
-              <td>[[ summoner.soloQ_tier ]] [[ summoner.soloQ_rank ]]</td>
-              <td>[[ summoner.soloQ_wins ]]</td>
-              <td>[[ summoner.soloQ_losses ]]</td>
-              <td>[[ summoner.soloQ_leaguePoints ]]</td>
+              <td>[[ summoner.rankedSolo.tier ]] [[ summoner.rankedSolo.rank ]]</td>
+              <td>[[ summoner.rankedSolo.wins ]]</td>
+              <td>[[ summoner.rankedSolo.losses ]]</td>
+              <td>[[ summoner.rankedSolo.lp ]]</td>
             </tr>
           </table>
         </transition>
@@ -67,7 +67,7 @@ Summoner Stats, Find Allies, Message Friends - {{ block.super }}
             </tr>
             <tr v-for="summoner in latestPlayers">
               <th scope="row"><a :href="summoner.summonerName">[[ summoner.summonerName ]]</a></th>
-              <td>[[ summoner.date_updated ]]</td>
+              <td>[[ summoner.lastUpdated ]]</td>
             </tr>
           </table>
         </transition>
@@ -76,97 +76,9 @@ Summoner Stats, Find Allies, Message Friends - {{ block.super }}
   </div>
 
 <script>
-var errorVm = new Vue({
-  delimiters: ['[[', ']]'],
-  el: '#errors',
-  data: {
-    isError: false,
-    errorMessage: '',
-  }
-});
-
-var vm = new Vue({
-  delimiters: ['[[', ']]'],
-  el: '#summoners',
-  data: {
-    results: [],
-    postResults: [],
-    addSummonerName: '',
-    ajaxRequest: false,
-    isError: false,
-    topPlayersLoading: true,
-    topPlayers: [],
-    latestPlayers: [],
-    latestPlayersLoading: true,
-  },
-  methods: {
-    async getHighElo(){
-      // Setup variables and grab first page.
-      const results = [];
-      page = 1
-      let op = await axios.get('/api/summoners?tier=CHALLENGER&tier=GRANDMASTER&tier=MASTER&tier=DIAMOND&tier=PLATINUM&page_size=100');
-      next = op.data.next
-      results.push(op.data.results)
-
-      // If there is more than 1 page, loop through them and append the results to the array.
-      // while (next != null){
-      //   const extra = [];
-      //   page += 1;
-      //   op = await axios.get('/api/summoners?tier=CHALLENGER&tier=GRANDMASTER&tier=MASTER&page_size=200&page=' + page);
-      //   next = op.data.next;
-      //   [].push.apply(results[0], op.data.results);
-      // }
-      this.topPlayers = results[0];
-      this.topPlayersLoading = false;
-    },
-    async getLatestPlayers(){
-      let op = await axios.get('/api/summoners?order_by=date_updated&page_size=100');
-      for(key in op.data.results){
-        op.data.results[key].date_updated = moment(op.data.results[key].date_updated).fromNow()
-        this.latestPlayers.push(op.data.results[key])
-      }
-      this.latestPlayersLoading = false;
-    },
-    addSummoner: function(event) {
-      axios.defaults.xsrfCookieName = 'csrftoken'
-      axios.defaults.xsrfHeaderName = 'X-CSRFToken'
-      this.ajaxRequest = true;
-      axios.post('/api/summoners/', {
-        value: this.addSummonerName,
-        method: 'SummonerName',
-      })
-      .then(function (response) {
-        vm.ajaxRequest = false;
-        if (response.data['isError']){
-          vm.isError = true;
-          errorVm.isError = true;
-          errorVm.errorMessage = response.data['errorMessage'];
-          setTimeout(function(){
-            errorVm.isError = false;
-          }, 3000);
-          setTimeout(function(){
-            vm.isError = false;
-          }, 3200);
-        } else {
-          vm.getHighElo()
-          vm.isError = false;
-          errorVm.isError = false;
-        }
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
-    }
-  },
-  mounted() {
-    this.getHighElo()
-    this.getLatestPlayers()
-  }
-})
-
-window.onerror = function(message, source, lineno, colno, error) {
-  console.log('Exception: ', error)
-}
-
+    $(document).ready(
+        errorHandling(),
+        onSummonerListLoad()
+    )
 </script>
 {% endblock content %}

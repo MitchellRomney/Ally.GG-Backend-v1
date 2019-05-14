@@ -39,7 +39,7 @@ def fetch_riot_api(server, endpoint, version, path, extra=''):
         with configure_scope() as scope:
             scope.set_extra('Error Response', parsed_response)
         print(Fore.RED + '[ERROR]: ' + Style.RESET_ALL + parsed_response['status']['message'] + '.')
-        return {'isError': True, 'errorMessage': parsed_response['status']['message'], 'ignore': False}
+        return {'isError': True, 'message': parsed_response['status']['message'], 'ignore': False}
 
     # Add the JSON to the Sentry reporting scope, will help if an error pops up later.
     with configure_scope() as scope:
