@@ -252,7 +252,9 @@ class Query(object):
 
     @staticmethod
     def resolve_top_summoners(self, info, **kwargs):
-        return Summoner.objects.order_by('soloQ_tier__order', 'soloQ_rank', '-soloQ_leaguePoints').exclude(soloQ_tier=None)[:100]
+        summoners = Summoner.objects.all()
+        top_summoners = summoners.select_related('soloQ_tier').exclude(soloQ_tier=None)
+        return top_summoners.order_by('soloQ_tier__order', 'soloQ_rank', '-soloQ_leaguePoints')[:100]
 
     @staticmethod
     def resolve_all_summoners(self, info, **kwargs):

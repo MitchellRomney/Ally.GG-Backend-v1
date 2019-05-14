@@ -20,6 +20,8 @@ ALLOWED_HOSTS = [
     'api.ally.gg'
 ]
 
+CORS_ORIGIN_ALLOW_ALL = False
+
 CORS_ORIGIN_WHITELIST = (
     'https://www.ally.gg',
     'http://www.ally.gg',
