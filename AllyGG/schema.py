@@ -10,7 +10,17 @@ class Query(dashboard.schema.Query, graphene.ObjectType):
 
 
 class Mutation(dashboard.schema.Mutation, graphene.ObjectType):
-    token_auth = graphql_jwt.ObtainJSONWebToken.Field()
+
+    class ObtainJSONWebToken(graphql_jwt.JSONWebTokenMutation):
+        user = graphene.Field(dashboard.schema.UserType)
+        expires = graphene.DateTime()
+
+        @classmethod
+        def resolve(cls, root, info, **kwargs):
+
+            return cls(user=info.context.user)
+
+    token_auth = ObtainJSONWebToken.Field()
     verify_token = graphql_jwt.Verify.Field()
     refresh_token = graphql_jwt.Refresh.Field()
     pass

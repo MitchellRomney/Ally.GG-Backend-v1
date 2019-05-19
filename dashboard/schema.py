@@ -2,9 +2,18 @@ import graphene
 import timeago
 from django.utils import timezone
 from graphene_django.types import DjangoObjectType
-from dashboard.models import Player, Match, Summoner, RankedTier, Champion, Item, Rune, SummonerSpell, Team
+from django.contrib.auth.models import User
+from dashboard.models import Player, Match, Summoner, RankedTier, Champion, Item, Rune, SummonerSpell, Team, Profile
 from django.db.models import Sum
 from dashboard.functions.summoners import add_summoner, update_summoner
+from graphene_django.converter import convert_django_field
+from graphql_jwt.decorators import login_required
+from s3direct.fields import S3DirectField
+
+
+@convert_django_field.register(S3DirectField)
+def convert_s3_direct_field_to_string(field, registry=None):
+    return graphene.String()
 
 
 class MatchType(DjangoObjectType):
@@ -171,12 +180,23 @@ class SummonerSpellType(DjangoObjectType):
         model = SummonerSpell
 
 
+class UserType(DjangoObjectType):
+    class Meta:
+        model = User
+
+
+class ProfileType(DjangoObjectType):
+    class Meta:
+        model = Profile
+
+
 class PlayerType(DjangoObjectType):
     kda_average = graphene.String()
     cs_pmin = graphene.Float()
     perk_sub_style = graphene.String()
     win = graphene.String()
     kill_participation = graphene.String()
+
 
     class Meta:
         model = Player
@@ -225,6 +245,10 @@ class Query(object):
                                      games=graphene.Int())
     all_players = graphene.List(PlayerType)
 
+    # User / Profile Objects
+    user = graphene.Field(UserType, id=graphene.Int());
+    profile = graphene.Field(ProfileType, userId=graphene.Int())
+
     # Summoner Objects
     summoner = graphene.Field(SummonerType, summonerName=graphene.String())
     summoner_search = graphene.List(SummonerType, entry=graphene.String())
@@ -233,11 +257,12 @@ class Query(object):
     all_summoners = graphene.List(SummonerType)
 
     @staticmethod
+    @login_required
     def resolve_summoner(self, info, **kwargs):
-        summonerName = kwargs.get('summonerName')
+        summoner_name = kwargs.get('summonerName')
 
-        if summonerName:
-            return Summoner.objects.get(summonerName__iexact=summonerName)
+        if summoner_name:
+            return Summoner.objects.get(summonerName__iexact=summoner_name)
 
     @staticmethod
     def resolve_summoner_search(self, info, **kwargs):
@@ -283,6 +308,11 @@ class Query(object):
     def resolve_all_players(self, info, **kwargs):
         # We can easily optimize query count in the resolve method
         return Player.objects.select_related('match', 'summoner').all()[:10]
+
+    @staticmethod
+    def resolve_user(self, info, **kwargs):
+        id = kwargs.get('id')
+        return User.objects.get(id=id)
 
 
 class Mutation(graphene.ObjectType):

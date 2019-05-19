@@ -1,6 +1,7 @@
 import os
 import sentry_sdk
 import environ
+from datetime import timedelta
 from celery.schedules import crontab
 from sentry_sdk.integrations.django import DjangoIntegration
 
@@ -174,9 +175,30 @@ DYNAMIC_PREFERENCES = {
 
 CORS_ORIGIN_ALLOW_ALL = True
 
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'httpOnly',
+    'origin',
+    'secure',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+]
+
+
 GRAPHENE = {
     'SCHEMA': 'AllyGG.schema.schema',
     'MIDDLEWARE': [
         'graphql_jwt.middleware.JSONWebTokenMiddleware',
     ],
+}
+
+GRAPHQL_JWT = {
+    'JWT_VERIFY_EXPIRATION': True,
+    'JWT_EXPIRATION_DELTA': timedelta(days=1),
+    'JWT_REFRESH_EXPIRATION_DELTA': timedelta(days=7),
 }
