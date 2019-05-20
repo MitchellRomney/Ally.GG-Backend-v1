@@ -5,7 +5,6 @@ from dashboard.functions.general import *
 from dashboard.functions.match import *
 from dashboard.functions.game_data import *
 from dynamic_preferences.registries import global_preferences_registry
-from django.db.models import Sum
 import time
 
 

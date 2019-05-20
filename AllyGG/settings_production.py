@@ -9,7 +9,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 sentry_sdk.init(
     dsn="https://ee789799be9c4c3ab7411232f46b164c@sentry.io/1444367",
     integrations=[DjangoIntegration()],
-    environment='Production',
+    environment='API (Production)',
 )
 
 DATABASES['default'] = dj_database_url.config()

@@ -149,14 +149,6 @@ class ChampionAdmin(admin.ModelAdmin):
     )
 
 
-class SettingAdmin(admin.ModelAdmin):
-    model = Setting
-
-    list_display = (
-        'name',
-    )
-
-
 class ChatRoomAdmin(admin.ModelAdmin):
     model = ChatRoom
 
@@ -224,7 +216,6 @@ admin.site.register(Match, MatchAdmin)
 admin.site.register(Team, TeamAdmin)
 admin.site.register(Player, PlayerAdmin)
 admin.site.register(Champion, ChampionAdmin)
-admin.site.register(Setting, SettingAdmin)
 admin.site.register(ChatRoom, ChatRoomAdmin)
 admin.site.register(Rune, RuneAdmin)
 admin.site.register(Item, ItemAdmin)

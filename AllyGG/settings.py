@@ -15,14 +15,14 @@ RIOT_API_KEY = env('RIOT_API_KEY')
 sentry_sdk.init(
     dsn="https://ee789799be9c4c3ab7411232f46b164c@sentry.io/1444367",
     integrations=[DjangoIntegration()],
-    environment='Local',
+    environment='API (Local)',
 )
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 INSTALLED_APPS = [
     'registration',
@@ -34,10 +34,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'corsheaders',
     'dashboard',
-    'website',
     'rest_framework',
     's3direct',
-    'dynamic_preferences',
     'graphene_django',
 ]
 
@@ -65,7 +63,6 @@ TEMPLATES = [
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
             os.path.join(BASE_DIR, 'dashboard/templates'),
-            os.path.join(BASE_DIR, 'website/templates'),
         ],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -74,7 +71,6 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'dashboard.context.global_context',
                 'dynamic_preferences.processors.global_preferences',
             ],
         },
@@ -109,8 +105,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-CSRF_FAILURE_VIEW = 'website.views.home'
-
 LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'UTC'
@@ -125,16 +119,10 @@ STATIC_URL = '/static/'
 STATIC_ROOT = 'staticfiles'
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'dashboard/static'),
-    os.path.join(BASE_DIR, 'website/static'),
 )
 
 LOGIN_REDIRECT_URL = "home"
 LOGOUT_REDIRECT_URL = "home"
-
-REST_FRAMEWORK = {
-    'DEFAULT_PAGINATION_CLASS': 'dashboard.serializers.StandardResultsSetPagination',
-    'PAGE_SIZE': 10
-}
 
 CELERY_BROKER_URL = os.environ.get('REDIS_URL', 'redis://localhost:6379')
 CELERY_ACCEPT_CONTENT = ['application/json']

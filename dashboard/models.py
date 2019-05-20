@@ -19,15 +19,6 @@ class AccessCode(models.Model):
     def __str__(self):
         return self.key
 
-
-class Setting(models.Model):
-    name = models.CharField(max_length=255, blank=False)
-    latestVersion = models.CharField(max_length=255, blank=False)
-
-    def __str__(self):
-        return self.name
-
-
 class Profile(models.Model):
     user = models.ForeignKey(User, related_name="Profiles", on_delete=models.CASCADE, blank=False)
     avatar = S3DirectField(dest='profiles', null=True, blank=True)
