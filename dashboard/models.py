@@ -6,6 +6,34 @@ from s3direct.fields import S3DirectField
 import json
 
 
+class Achievement(models.Model):
+    name = models.CharField(max_length=255, blank=False, null=False)
+    description = models.TextField(blank=False, null=False)
+
+    goal = models.IntegerField(blank=False, null=False, default=0)
+
+    archived = models.BooleanField(default=False)
+    date_created = models.DateTimeField(auto_now_add=True, blank=False)
+
+    def __str__(self):
+        return self.name
+
+
+class UserAchievement(models.Model):
+    user = models.ForeignKey(User, related_name="UserAchievements_Users", on_delete=models.CASCADE, blank=False,
+                             null=False)
+
+    achievement = models.ForeignKey(Achievement, related_name="UserAchievements_Achievements",
+                                    on_delete=models.CASCADE,
+                                    blank=False, null=False)
+
+    progress = models.IntegerField(default=0, blank=True, null=True)
+    date_achieved = models.DateTimeField(default=None, blank=True, null=True)
+
+    archived = models.BooleanField(default=False)
+    date_created = models.DateTimeField(auto_now_add=True, blank=False)
+
+
 class AccessCode(models.Model):
     key = models.CharField(max_length=32, blank=False, null=False)
 
@@ -18,6 +46,7 @@ class AccessCode(models.Model):
 
     def __str__(self):
         return self.key
+
 
 class Profile(models.Model):
     user = models.ForeignKey(User, related_name="Profiles", on_delete=models.CASCADE, blank=False)

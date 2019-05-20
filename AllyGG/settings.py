@@ -5,7 +5,6 @@ from datetime import timedelta
 from celery.schedules import crontab
 from sentry_sdk.integrations.django import DjangoIntegration
 
-
 env = environ.Env()
 environ.Env.read_env()
 
@@ -35,6 +34,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'dashboard',
     's3direct',
+    'dynamic_preferences',
     'graphene_django',
 ]
 
@@ -68,7 +68,6 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'dynamic_preferences.processors.global_preferences',
             ],
         },
     },
@@ -124,10 +123,6 @@ CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_TIMEZONE = 'Australia/Melbourne'
 CELERY_BEAT_SCHEDULE = {
-    'task_update_summoners': {
-        'task': 'dashboard.tasks.task_update_summoners',
-        'schedule': 20,
-    },
     'task_updateVersion': {
         'task': 'dashboard.tasks.task_update_version',
         'schedule': crontab(minute='*/5'),
@@ -170,7 +165,6 @@ CORS_ALLOW_HEADERS = [
     'x-csrftoken',
     'x-requested-with',
 ]
-
 
 GRAPHENE = {
     'SCHEMA': 'AllyGG.schema.schema',

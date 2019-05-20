@@ -6,6 +6,7 @@ from django.contrib.auth.models import User
 from dashboard.models import Player, Match, Summoner, RankedTier, Champion, Item, Rune, SummonerSpell, Team, Profile
 from django.db.models import Sum
 from dashboard.functions.summoners import add_summoner, update_summoner
+from dashboard.functions.match import fetch_match_list, create_match
 from graphene_django.converter import convert_django_field
 from graphql_jwt.decorators import login_required
 from s3direct.fields import S3DirectField
@@ -131,35 +132,6 @@ class SummonerType(DjangoObjectType):
         return timeago.format(self.date_updated, timezone.now())
 
 
-class SummonerInput(graphene.InputObjectType):
-    summonerName = graphene.String()
-
-
-class CreateSummoner(graphene.Mutation):
-    class Arguments:
-        input = SummonerInput(required=True)
-
-    created = graphene.Boolean()
-    message = graphene.String()
-    summoner = graphene.Field(SummonerType)
-
-    @staticmethod
-    def mutate(root, info, input=None):
-        created = False
-        summoner = None
-
-        add_response = add_summoner('summonerName', input.summonerName)
-        message = add_response['message']
-
-        if not add_response['isError']:
-            update_response = update_summoner(add_response['summonerId'])
-
-            created = True
-            summoner = update_response['summoner']
-
-        return CreateSummoner(created=created, summoner=summoner, message=message)
-
-
 class RuneType(DjangoObjectType):
     class Meta:
         model = Rune
@@ -197,7 +169,6 @@ class PlayerType(DjangoObjectType):
     win = graphene.String()
     kill_participation = graphene.String()
 
-
     class Meta:
         model = Player
 
@@ -233,7 +204,6 @@ class PlayerType(DjangoObjectType):
 
 
 class Query(object):
-
     # Match Objects
     match = graphene.Field(MatchType, gameId=graphene.Int())
     all_matches = graphene.List(MatchType)
@@ -315,5 +285,82 @@ class Query(object):
         return User.objects.get(id=id)
 
 
+class CreateSummoner(graphene.Mutation):
+    class Arguments:
+        summonerName = graphene.String()
+
+    created = graphene.Boolean()
+    message = graphene.String()
+    summoner = graphene.Field(SummonerType)
+
+    @staticmethod
+    def mutate(root, info, summonerName):
+        created = False
+        summoner = None
+
+        add_response = add_summoner('summonerName', summonerName)
+        message = add_response['message']
+
+        if not add_response['isError']:
+            update_response = update_summoner(add_response['summonerId'])
+
+            created = True
+            summoner = update_response['summoner']
+
+        return CreateSummoner(created=created, summoner=summoner, message=message)
+
+
+class UpdateSummoner(graphene.Mutation):
+    class Arguments:
+        id = graphene.String()
+
+    updated = graphene.Boolean()
+    message = graphene.String()
+    summoner = graphene.Field(SummonerType)
+    new_matches = graphene.List(graphene.String)
+
+    @staticmethod
+    def mutate(root, info, id):
+        new_matches = []
+        updated = False
+        summoner = None
+        message = None
+
+        update_response = update_summoner(id)
+
+        if not update_response['isError']:
+            updated = True
+            summoner = update_response['summoner']
+            message = update_response['message']
+
+            fetched_matches = fetch_match_list(summoner.summonerId)
+
+            for match in fetched_matches:
+                if Match.objects.filter(gameId=match['gameId']).count() == 0:
+                    new_matches.append(match['gameId'])
+
+        return UpdateSummoner(updated=updated, summoner=summoner, message=message, new_matches=new_matches)
+
+
+class FetchMatchInput(graphene.InputObjectType):
+    gameId = graphene.String()
+    summonerId = graphene.String()
+
+
+class FetchMatch(graphene.Mutation):
+    class Arguments:
+        input = FetchMatchInput()
+
+    player = graphene.Field(PlayerType)
+
+    @staticmethod
+    def mutate(root, info, input):
+        create_match(input.gameId)
+
+        return FetchMatch(player=Player.objects.get(match__gameId=input.gameId, summoner__summonerId=input.summonerId))
+
+
 class Mutation(graphene.ObjectType):
     create_summoner = CreateSummoner.Field()
+    update_summoner = UpdateSummoner.Field()
+    fetch_match = FetchMatch.Field()
