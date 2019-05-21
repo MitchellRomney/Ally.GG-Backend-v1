@@ -54,6 +54,7 @@ class SummonerAdmin(admin.ModelAdmin):
             [field.name for field in self.opts.local_fields] +
             [field.name for field in self.opts.local_many_to_many]
         ))
+        readonly_fields.remove('user_profile')
         return readonly_fields
 
 
