@@ -61,7 +61,7 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 CELERY_BEAT_SCHEDULE = {
     'task_update_summoners': {
         'task': 'dashboard.tasks.task_update_summoners',
-        'schedule': 3,
+        'schedule': 20,
     },
     'task_update_version': {
         'task': 'dashboard.tasks.task_update_version',
