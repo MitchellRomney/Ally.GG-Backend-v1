@@ -146,7 +146,6 @@ def create_match(game_id):
         new_match.delete()
         return {'isError': True, 'errorMessage': 'Error creating Match Players.', 'ignore': False}
 
-    print(Fore.YELLOW + 'Match Created: ' + Style.RESET_ALL + str(new_match.gameId))
     return {'isError': False, 'errorMessage': None, 'ignore': False, 'match': new_match}
 
 

@@ -53,8 +53,7 @@ def add_summoner(method, value):
                 'summoner': existing_summoner
             }
 
-        # Everything is a success, print that a new Summoner was created the return success response.
-        print(Fore.GREEN + 'New Summoner Created: ' + Style.RESET_ALL + new_summoner.summonerName)
+        # Return success response.
         return {
             'isError': False,
             'message': 'New Summoner created!',
