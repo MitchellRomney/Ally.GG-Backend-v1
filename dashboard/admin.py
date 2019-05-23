@@ -1,6 +1,8 @@
 from django.contrib import admin
 from django.contrib.auth.models import Group
 from dashboard.models import *
+from dashboard.paginator import TimeLimitedPaginator
+
 
 # Inlines
 
@@ -86,6 +88,7 @@ class TeamAdmin(admin.ModelAdmin):
 
 
 class PlayerAdmin(admin.ModelAdmin):
+    paginator = TimeLimitedPaginator
     model = Player
 
     list_display = (
@@ -112,6 +115,7 @@ class PlayerAdmin(admin.ModelAdmin):
             [field.name for field in self.opts.local_many_to_many]
         ))
         return readonly_fields
+    
 
 class MatchAdmin(admin.ModelAdmin):
     model = Match
