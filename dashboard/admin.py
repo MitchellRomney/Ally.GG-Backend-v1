@@ -88,13 +88,11 @@ class TeamAdmin(admin.ModelAdmin):
 
 
 class PlayerAdmin(admin.ModelAdmin):
-    paginator = TimeLimitedPaginator
     model = Player
 
     list_display = (
         'summoner',
         'champion',
-        'match',
         'date_created',
     )
 
@@ -109,13 +107,15 @@ class PlayerAdmin(admin.ModelAdmin):
         'summoner__summonerName'
     )
 
+    list_per_page = 50
+
     def get_readonly_fields(self, request, obj=None):
         readonly_fields = list(set(
             [field.name for field in self.opts.local_fields] +
             [field.name for field in self.opts.local_many_to_many]
         ))
         return readonly_fields
-    
+
 
 class MatchAdmin(admin.ModelAdmin):
     model = Match
