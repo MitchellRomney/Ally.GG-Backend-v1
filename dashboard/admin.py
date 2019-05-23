@@ -1,7 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.models import Group
 from dashboard.models import *
-from dashboard.paginator import TimeLimitedPaginator
 
 
 # Inlines
