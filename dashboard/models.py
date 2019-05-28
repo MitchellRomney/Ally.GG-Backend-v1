@@ -518,6 +518,14 @@ class Player(models.Model):
     participantId = models.BigIntegerField(blank=False)
 
     team = models.ForeignKey(Team, on_delete=models.SET_NULL, null=True, blank=True)
+    LANE = (
+        ('TOP', 'Top'),
+        ('JUNGLE', 'Jungle'),
+        ('MIDDLE', 'Mid'),
+        ('BOTTOM', 'Bot'),
+        ('NONE', 'None')
+    )
+    lane = models.CharField(max_length=255, choices=LANE, null=False, blank=False, default='NONE')
 
     # Participant Stats
     champion = models.ForeignKey(Champion, related_name='Players', on_delete=models.SET_NULL, blank=False, null=True)

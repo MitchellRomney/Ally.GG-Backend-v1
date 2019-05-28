@@ -324,6 +324,9 @@ def create_player(match, player_team, player_account_info, player_data):
         champLevel=player_data['stats']['champLevel'],
     )
 
+    # Set the lane that the player spent the start of the game in.
+    new_player.lane = player_data['timeline']['lane']
+
     # Add relation to Summoner object if the Player isn't a bot.
     if 'summonerId' in player_account_info['player']:
         new_player.summoner = Summoner.objects.get(summonerId=player_account_info['player']['summonerId'])

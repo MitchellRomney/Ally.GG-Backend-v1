@@ -162,24 +162,59 @@ class ProfileType(DjangoObjectType):
         model = Profile
 
 
+class Opponent(DjangoObjectType):
+    class Meta:
+        model = Player
+
+
 class PlayerType(DjangoObjectType):
     kda_average = graphene.String()
     cs_pmin = graphene.Float()
     perk_sub_style = graphene.String()
-    win = graphene.String()
     kill_participation = graphene.String()
+    lane_opponent = graphene.List(Opponent)
+    lane = graphene.String()
 
     class Meta:
         model = Player
 
+    def resolve_lane(self, info, **kwargs):
+        if self.lane == 'UNKNOWN':
+            self.lane = 'NONE'
+            player = Player.objects.get(id=self.id)
+            player.save()
+            return 'NONE'
+
+        else:
+            return self.lane
+
+    def resolve_lane_opponent(self, info, **kwargs):
+        opponents = []
+
+        if self.lane != 'UNKNOWN' and self.lane != 'NONE':
+            if Player.objects.filter(match=self.match, lane=self.lane).exclude(team=self.team).count() != 0:
+                opponent_list = Player.objects.filter(match=self.match, lane=self.lane).exclude(team=self.team)
+                for opponent in opponent_list:
+                    opponents.append(opponent)
+
+            return opponents
+        else:
+            return None
+
     def resolve_kda_average(self, info, **kwargs):
-        average = (self.kills + self.assists) / self.deaths
-        return round(average, 2)
+        if self.deaths != 0:
+            average = (self.kills + self.assists) / self.deaths
+            return round(average, 2)
+        else:
+            return round(self.kills + self.assists, 2)
 
     def resolve_cs_pmin(self, info, **kwargs):
-        duration_seconds = self.match.gameDuration % 60
-        duration_minutes = (self.match.gameDuration - duration_seconds) / 60
-        return round(self.totalMinionsKilled / (duration_minutes + (duration_seconds / 60)), 1)
+        if self.totalMinionsKilled != 0:
+            duration_seconds = self.match.gameDuration % 60
+            duration_minutes = (self.match.gameDuration - duration_seconds) / 60
+            return round(self.totalMinionsKilled / (duration_minutes + (duration_seconds / 60)), 1)
+        else:
+            return 0.0
 
     def resolve_perk_sub_style(self, info, **kwargs):
         if self.perkSubStyle == 8000:
@@ -193,14 +228,13 @@ class PlayerType(DjangoObjectType):
         elif self.perkSubStyle == 8400:
             return '7204_Resolve'
 
-    def resolve_win(self, info, **kwargs):
-        return 'W' if self.win else 'L'
-
     def resolve_kill_participation(self, info, **kwargs):
         total_kills = Player.objects.filter(match=self.match, team=self.team).aggregate(Sum('kills')).get('kills__sum',
                                                                                                           0)
-
-        return str(int(((self.kills + self.assists) / total_kills) * 100)) + '%'
+        if total_kills != 0:
+            return str(int(((self.kills + self.assists) / total_kills) * 100)) + '%'
+        else:
+            return '0%'
 
 
 class Query(object):
