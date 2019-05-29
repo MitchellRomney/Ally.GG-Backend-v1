@@ -301,7 +301,7 @@ class Query(object):
         summoner_name = kwargs.get('summonerName')
         games = kwargs.get('games')
 
-        summoner = Summoner.objects.get(summonerName=summoner_name)
+        summoner = Summoner.objects.get(summonerName__iexact=summoner_name)
         return Player.objects.filter(summoner=summoner).order_by('-match__timestamp').select_related('champion')[:games]
 
     @staticmethod
