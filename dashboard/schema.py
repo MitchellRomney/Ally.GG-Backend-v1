@@ -250,8 +250,7 @@ class Query(object):
     all_players = graphene.List(PlayerType)
 
     # User / Profile Objects
-    user = graphene.Field(UserType, id=graphene.Int());
-    profile = graphene.Field(ProfileType, userId=graphene.Int())
+    user = graphene.Field(UserType, username=graphene.String(), id=graphene.Int())
 
     # Summoner Objects
     summoner = graphene.Field(SummonerType, summonerName=graphene.String())
@@ -315,8 +314,12 @@ class Query(object):
 
     @staticmethod
     def resolve_user(self, info, **kwargs):
-        id = kwargs.get('id')
-        return User.objects.get(id=id)
+        username = kwargs.get('username')
+        user_id = kwargs.get('id')
+        if user_id is not None:
+            return User.objects.get(id=user_id)
+        else:
+            return User.objects.get(username=username)
 
 
 class CreateSummoner(graphene.Mutation):

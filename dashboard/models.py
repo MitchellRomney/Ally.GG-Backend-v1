@@ -50,7 +50,6 @@ class AccessCode(models.Model):
 
 class Profile(models.Model):
     user = models.ForeignKey(User, related_name="Profiles", on_delete=models.CASCADE, blank=False)
-    avatar = S3DirectField(dest='profiles', null=True, blank=True)
     friends = models.ManyToManyField('Profile', related_name='Friends')
 
     date_created = models.DateTimeField(auto_now_add=True, blank=False)
