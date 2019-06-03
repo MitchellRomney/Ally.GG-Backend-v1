@@ -5,7 +5,7 @@ from graphene_django.types import DjangoObjectType
 from django.contrib.auth.models import User
 from dashboard.models import Player, Match, Summoner, RankedTier, Champion, Item, Rune, SummonerSpell, Team, Profile
 from django.db.models import Sum
-from dashboard.functions.summoners import add_summoner, update_summoner
+from dashboard.functions.summoners import add_summoner, update_summoner, get_all_ranked_summoners
 from dashboard.functions.match import fetch_match_list, create_match
 from graphene_django.converter import convert_django_field
 from graphql_jwt.decorators import login_required
@@ -15,6 +15,10 @@ from s3direct.fields import S3DirectField
 @convert_django_field.register(S3DirectField)
 def convert_s3_direct_field_to_string(field, registry=None):
     return graphene.String()
+
+
+class FunctionType(graphene.ObjectType):
+    success = graphene.Boolean()
 
 
 class MatchType(DjangoObjectType):
@@ -397,7 +401,22 @@ class FetchMatch(graphene.Mutation):
         return FetchMatch(player=Player.objects.get(match__gameId=input.gameId, summoner__summonerId=input.summonerId))
 
 
+class FetchAllRankedSummoners(graphene.Mutation):
+    class Arguments:
+        server = graphene.String()
+        queue = graphene.String()
+
+    Output = FunctionType
+
+    @staticmethod
+    def mutate(root, info, server, queue):
+        get_all_ranked_summoners(server, queue)
+
+        return FunctionType(success=True)
+
+
 class Mutation(graphene.ObjectType):
     create_summoner = CreateSummoner.Field()
     update_summoner = UpdateSummoner.Field()
     fetch_match = FetchMatch.Field()
+    fetch_all_ranked_summoners = FetchAllRankedSummoners.Field()

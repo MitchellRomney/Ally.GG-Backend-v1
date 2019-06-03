@@ -34,23 +34,30 @@ def fetch_riot_api(server, endpoint, version, path, extra=''):
     # Parse the response so it's usable.
     parsed_response = json.loads(json.dumps(response.json()))
 
-    # If status is in the response, that means there is an error. Print and report it.
-    if 'status' in parsed_response:
+    # Add the JSON to the Sentry reporting scope, will help if an error pops up later.
+    with configure_scope() as scope:
+        scope.set_extra('JSON', parsed_response)
+
+    if 'status' in parsed_response: # Check if there is an error code of 500, and then try again if so.
+        if parsed_response['status']['status_code'] == 500:
+
+            # Make the request.
+            response = requests.get(url, headers=headers)
+
+            # Parse the response so it's usable.
+            parsed_response = json.loads(json.dumps(response.json()))
+
+    if 'status' in parsed_response:  # If the response is STILL an error, report it.
         with configure_scope() as scope:
             scope.set_extra('Error Response', parsed_response)
         print(Fore.RED + '[ERROR]: ' + Style.RESET_ALL + parsed_response['status']['message'] + '.')
         return {'isError': True, 'message': parsed_response['status']['message'], 'ignore': False}
-
-    # Add the JSON to the Sentry reporting scope, will help if an error pops up later.
-    with configure_scope() as scope:
-        scope.set_extra('JSON', parsed_response)
 
     # Return the API response.
     return parsed_response
 
 
 def fetch_ddragon_api(version, method, option1, option2=None, language='en_US', ):
-
     # Depending on the values given, adjust the target variable to accommodate.
     target = ''
     if option2:
