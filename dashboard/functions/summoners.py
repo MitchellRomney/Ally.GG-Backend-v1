@@ -320,4 +320,9 @@ def get_all_ranked_summoners(server, queue):
     get_top_ranked(server, queue, 'grandmaster')
     get_top_ranked(server, queue, 'master')
     get_ranked(server, queue, 'DIAMOND')
+    get_ranked(server, queue, 'PLATINUM')
+    get_ranked(server, queue, 'GOLD')
+    get_ranked(server, queue, 'SILVER')
+    get_ranked(server, queue, 'BRONZE')
+    get_ranked(server, queue, 'IRON')
 
