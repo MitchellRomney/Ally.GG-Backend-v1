@@ -309,7 +309,21 @@ class Summoner(models.Model):
     accountId = models.CharField(max_length=255, unique=True, blank=True, null=True)
 
     # General
-    server = models.CharField(max_length=255, blank=False)
+    SERVERS = (
+        ('BR1', 'Brazil'),
+        ('EUN1', 'EU Nordic & East'),
+        ('EUW1', 'EW West'),
+        ('JP1', 'Japan'),
+        ('KR', 'Korea'),
+        ('LA1', 'Latin America North'),
+        ('LA2', 'Latin America South'),
+        ('NA1', 'North America'),
+        ('OC1', 'Oceania'),
+        ('TR1', 'Turkey'),
+        ('RU', 'Russia'),
+        ('PBE1', 'Public Beta Environment'),
+    )
+    server = models.CharField(max_length=255, choices=SERVERS, blank=False)
     profileIconId = models.BigIntegerField(blank=True, default=0)
     summonerLevel = models.IntegerField(default=1, blank=True)
 
