@@ -2,14 +2,17 @@ from __future__ import absolute_import, unicode_literals
 from celery import task
 from celery.signals import celeryd_init
 from dashboard.functions.general import *
-from dashboard.functions.match import *
 from dashboard.functions.game_data import *
 from dynamic_preferences.registries import global_preferences_registry
-import time
+from AllyGG.celery import app
 
 
 @celeryd_init.connect
 def startup_tasks(sender=None, conf=None, **kwargs):
+    
+    # Clean out old queue
+    app.control.purge()
+
     # Update the game data on startup.
     update_game_data(get_latest_version())
     print('Ally.GG is ready to go!')
