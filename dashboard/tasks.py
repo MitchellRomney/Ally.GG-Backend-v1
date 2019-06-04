@@ -14,7 +14,7 @@ def startup_tasks(sender=None, conf=None, **kwargs):
     update_game_data(get_latest_version())
     print('Ally.GG is ready to go!')
 
-
+'''
 @task
 def task_update_summoners():
 
@@ -62,6 +62,7 @@ def task_update_summoners():
                     return None
 
     return None
+    '''
 
 @task
 def task_update_version():

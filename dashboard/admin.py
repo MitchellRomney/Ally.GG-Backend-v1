@@ -48,6 +48,7 @@ class SummonerAdmin(admin.ModelAdmin):
 
     search_fields = (
         'summonerName',
+        'soloQ_tier__name'
     )
 
     def get_readonly_fields(self, request, obj=None):
