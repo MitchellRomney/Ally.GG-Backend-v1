@@ -52,6 +52,7 @@ class Profile(models.Model):
     user = models.ForeignKey(User, related_name="Profiles", on_delete=models.CASCADE, blank=False)
     friends = models.ManyToManyField('Profile', related_name='Friends')
 
+    archived = models.BooleanField(default=False)
     date_created = models.DateTimeField(auto_now_add=True, blank=False)
     date_modified = models.DateTimeField(auto_now=True, blank=False)
 
@@ -654,3 +655,21 @@ class Player(models.Model):
 
     def __str__(self):
         return str(self.match) + ' - Player: ' + str(self.summoner)
+
+
+class ImprovementLog(models.Model):
+    # Relations
+    summoner = models.ForeignKey(Summoner, related_name="summoner_logs", on_delete=models.CASCADE, blank=False,
+                                 null=False)
+    match = models.ForeignKey(Match, related_name="match_logs", on_delete=models.CASCADE, blank=False, null=False)
+
+    # User Input
+    good = models.TextField(blank=True, null=True)
+    bad = models.TextField(blank=True, null=True)
+    opponent = models.ManyToManyField('Champion', related_name="opponent_logs")
+    lp = models.IntegerField(blank=True, null=True)
+
+    # System
+    archived = models.BooleanField(default=False)
+    date_created = models.DateTimeField(auto_now_add=True, blank=False)
+    date_modified = models.DateTimeField(auto_now=True, blank=False)

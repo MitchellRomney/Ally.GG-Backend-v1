@@ -215,6 +215,31 @@ class AccessCodeAdmin(admin.ModelAdmin):
     )
 
 
+class ImprovementLogAdmin(admin.ModelAdmin):
+    model = ImprovementLog
+
+    list_display = (
+        'summoner',
+        'match',
+
+        'archived',
+        'date_modified',
+        'date_created',
+    )
+
+    list_select_related = (
+        'summoner',
+        'match',
+    )
+
+    readonly_fields = (
+        'summoner',
+        'match',
+        'date_modified',
+        'date_created',
+    )
+
+
 admin.site.register(Profile, ProfileAdmin)
 admin.site.register(Summoner, SummonerAdmin)
 admin.site.register(Match, MatchAdmin)
@@ -227,4 +252,6 @@ admin.site.register(Item, ItemAdmin)
 admin.site.register(SummonerSpell, SummonerSpellAdmin)
 admin.site.register(RankedTier, RankedTierAdmin)
 admin.site.register(AccessCode, AccessCodeAdmin)
+admin.site.register(ImprovementLog, ImprovementLogAdmin)
+
 admin.site.unregister(Group)

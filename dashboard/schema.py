@@ -3,7 +3,8 @@ import timeago
 from django.utils import timezone
 from graphene_django.types import DjangoObjectType
 from django.contrib.auth.models import User
-from dashboard.models import Player, Match, Summoner, RankedTier, Champion, Item, Rune, SummonerSpell, Team, Profile
+from dashboard.models import Player, Match, Summoner, RankedTier, Champion, Item, Rune, SummonerSpell, Team, Profile, \
+    ImprovementLog
 from django.db.models import Sum
 from dashboard.functions.summoners import add_summoner, update_summoner, get_all_ranked_summoners
 from dashboard.functions.match import fetch_match_list, create_match
@@ -19,6 +20,11 @@ def convert_s3_direct_field_to_string(field, registry=None):
 
 class FunctionType(graphene.ObjectType):
     success = graphene.Boolean()
+
+
+class ImprovementLogType(DjangoObjectType):
+    class Meta:
+        model = ImprovementLog
 
 
 class MatchType(DjangoObjectType):
@@ -247,7 +253,7 @@ class Query(object):
     all_matches = graphene.List(MatchType)
 
     # Player Objects
-    player = graphene.Field(PlayerType, summonerId=graphene.Int())
+    player = graphene.Field(PlayerType, summonerId=graphene.String(), gameId=graphene.Int())
     summoner_players = graphene.List(PlayerType,
                                      summonerName=graphene.String(),
                                      games=graphene.Int())
@@ -256,8 +262,12 @@ class Query(object):
     # User / Profile Objects
     user = graphene.Field(UserType, username=graphene.String(), id=graphene.Int())
 
+    # Improvement Log Objects
+    log = graphene.Field(ImprovementLogType, summonerId=graphene.String(), gameId=graphene.Int())
+
     # Summoner Objects
     summoner = graphene.Field(SummonerType, summonerName=graphene.String())
+    get_summoners = graphene.List(SummonerType, summonerIds=graphene.List(graphene.String))
     summoner_search = graphene.List(SummonerType, entry=graphene.String())
     latest_updated_summoners = graphene.List(SummonerType)
     top_summoners = graphene.List(SummonerType)
@@ -272,11 +282,31 @@ class Query(object):
             return Summoner.objects.get(summonerName__iexact=summoner_name)
 
     @staticmethod
+    def resolve_player(self, info, **kwargs):
+        summoner_id = kwargs.get('summonerId')
+        game_id = kwargs.get('gameId')
+
+        return Player.objects.get(summoner__summonerId=summoner_id, match__gameId=game_id)
+
+    @staticmethod
+    def resolve_get_summoners(self, info, **kwargs):
+        summoner_ids = kwargs.get('summonerIds')
+
+        return Summoner.objects.filter(summonerId__in=summoner_ids)
+
+    @staticmethod
     def resolve_summoner_search(self, info, **kwargs):
         entry = kwargs.get('entry')
 
         if entry:
             return Summoner.objects.filter(summonerName__icontains=entry)
+
+    @staticmethod
+    def resolve_log(self, info, **kwargs):
+        summoner_id = kwargs.get('summonerId')
+        game_id = kwargs.get('gameId')
+
+        return ImprovementLog.objects.get(summoner__summonerId=summoner_id, match__gameId=game_id)
 
     @staticmethod
     def resolve_latest_updated_summoners(self, info, **kwargs):
@@ -415,8 +445,53 @@ class FetchAllRankedSummoners(graphene.Mutation):
         return FunctionType(success=True)
 
 
+class ImprovementLogInput(graphene.InputObjectType):
+    summonerId = graphene.String()
+    gameId = graphene.Int()
+
+    good = graphene.String()
+    bad = graphene.String()
+    opponent = graphene.List(graphene.String)
+    lp = graphene.Int()
+
+
+class UpdateImprovementLog(graphene.Mutation):
+    class Arguments:
+        input = ImprovementLogInput()
+
+    result = graphene.String()
+
+    @staticmethod
+    def mutate(root, info, input):
+
+        # Get the log object or create a new one.
+        try:
+            log = ImprovementLog.objects.get(summoner__summonerId=input.summonerId, match__gameId=input.gameId)
+
+        except ImprovementLog.DoesNotExist:
+            log = ImprovementLog.objects.create(
+                summoner=Summoner.objects.get(summonerId=input.summonerId),
+                match=Match.objects.get(gameId=input.gameId),
+            )
+
+        # Input the fields and save the log.
+        log.good = input.good
+        log.bad = input.bad
+        log.lp = input.lp
+
+        # Clear the opponents and re-add.
+        log.opponent.clear()
+        for champion in input.opponent:
+            log.opponent.add(Champion.objects.get(champId=champion))
+
+        log.save()
+
+        return UpdateImprovementLog(result='Success!')
+
+
 class Mutation(graphene.ObjectType):
     create_summoner = CreateSummoner.Field()
     update_summoner = UpdateSummoner.Field()
     fetch_match = FetchMatch.Field()
     fetch_all_ranked_summoners = FetchAllRankedSummoners.Field()
+    update_improvement_log = UpdateImprovementLog.Field()
