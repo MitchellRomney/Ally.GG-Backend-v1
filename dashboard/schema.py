@@ -265,6 +265,9 @@ class Query(object):
     # Improvement Log Objects
     log = graphene.Field(ImprovementLogType, summonerId=graphene.String(), gameId=graphene.Int())
 
+    # Champion Objects
+    champion_search = graphene.List(ChampionType, entry=graphene.String())
+
     # Summoner Objects
     summoner = graphene.Field(SummonerType, summonerName=graphene.String())
     get_summoners = graphene.List(SummonerType, summonerIds=graphene.List(graphene.String))
@@ -300,6 +303,13 @@ class Query(object):
 
         if entry:
             return Summoner.objects.filter(summonerName__icontains=entry)
+
+    @staticmethod
+    def resolve_champion_search(self, info, **kwargs):
+        entry = kwargs.get('entry')
+
+        if entry:
+            return Champion.objects.filter(name__icontains=entry)
 
     @staticmethod
     def resolve_log(self, info, **kwargs):
