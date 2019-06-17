@@ -19,4 +19,4 @@ def activate(request, username, token):
         profile.email_confirmed = True
         profile.save()
 
-        return redirect('https://ally.gg/?email_confirmed=true')
+        return redirect('https://www.ally.gg/?email_confirmed=true')
