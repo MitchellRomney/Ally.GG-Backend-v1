@@ -564,13 +564,13 @@ class Register(graphene.Mutation):
                     mail_subject = 'Welcome to Ally! Let\'s activate your account.'
                     mail_plain = render_to_string('dashboard/email/email_confirmation.txt', {
                         'user': user,
-                        'domain': 'ally.gg',
+                        'domain': 'api.ally.gg',
                         'username': user.username,
                         'token': account_activation_token.make_token(user),
                     })
                     mail_html = render_to_string('dashboard/email/email_confirmation.html', {
                         'user': user,
-                        'domain': 'ally.gg',
+                        'domain': 'api.ally.gg',
                         'username': user.username,
                         'token': account_activation_token.make_token(user),
                     })
