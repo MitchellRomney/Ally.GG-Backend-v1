@@ -4,13 +4,19 @@ from django.utils import timezone
 from graphene_django.types import DjangoObjectType
 from django.contrib.auth.models import User
 from dashboard.models import Player, Match, Summoner, RankedTier, Champion, Item, Rune, SummonerSpell, Team, Profile, \
-    ImprovementLog
+    ImprovementLog, AccessCode
 from django.db.models import Sum
 from dashboard.functions.summoners import add_summoner, update_summoner, get_all_ranked_summoners
 from dashboard.functions.match import fetch_match_list, create_match
 from graphene_django.converter import convert_django_field
 from graphql_jwt.decorators import login_required
 from s3direct.fields import S3DirectField
+from datetime import datetime
+from django.template.loader import render_to_string
+from django.core.mail import send_mail
+from dashboard.functions.users import generate_access_code, account_activation_token
+from django.db import IntegrityError
+
 
 
 @convert_django_field.register(S3DirectField)
@@ -51,6 +57,11 @@ class MatchType(DjangoObjectType):
 class ChampionType(DjangoObjectType):
     class Meta:
         model = Champion
+
+
+class AccessKeyType(DjangoObjectType):
+    class Meta:
+        model = AccessCode
 
 
 class RankedTier(DjangoObjectType):
@@ -268,6 +279,9 @@ class Query(object):
     # Champion Objects
     champion_search = graphene.List(ChampionType, entry=graphene.String())
 
+    # Access Key Objects
+    key = graphene.Field(AccessKeyType, key=graphene.String())
+
     # Summoner Objects
     summoner = graphene.Field(SummonerType, summonerName=graphene.String())
     get_summoners = graphene.List(SummonerType, summonerIds=graphene.List(graphene.String))
@@ -275,6 +289,13 @@ class Query(object):
     latest_updated_summoners = graphene.List(SummonerType)
     top_summoners = graphene.List(SummonerType)
     all_summoners = graphene.List(SummonerType)
+
+    @staticmethod
+    def resolve_key(self, info, **kwargs):
+        key = kwargs.get('key')
+
+        if key:
+            return AccessCode.objects.get(key=key)
 
     @staticmethod
     @login_required
@@ -499,9 +520,101 @@ class UpdateImprovementLog(graphene.Mutation):
         return UpdateImprovementLog(result='Success!')
 
 
+class RegisterInput(graphene.InputObjectType):
+    username = graphene.String(required=True)
+    email = graphene.String(required=True)
+    password = graphene.String(required=True)
+    key = graphene.String(required=True)
+
+
+class Register(graphene.Mutation):
+    class Arguments:
+        input = RegisterInput()
+
+    success = graphene.Boolean()
+    errors = graphene.List(graphene.String)
+
+    @staticmethod
+    def mutate(root, info, input):
+
+        try:
+            access_key = AccessCode.objects.get(key=input.key)
+
+            if access_key.used is False:
+
+                try:
+
+                    # Create the new user.
+                    user = User.objects.create(
+                        username=input.username,
+                        email=input.email,
+                        is_active=True
+                    )
+                    user.set_password(input.password)
+                    user.save()
+
+                    # Deactivate the Access Key used.
+                    access_key.used = True
+                    access_key.archived = True
+                    access_key.user = user
+                    access_key.date_used = datetime.now()
+                    access_key.save()
+
+                    # Send confirmation email.
+                    mail_subject = 'Welcome to Ally! Let\'s activate your account.'
+                    mail_plain = render_to_string('dashboard/email/email_confirmation.txt', {
+                        'user': user,
+                        'domain': 'ally.gg',
+                        'username': user.username,
+                        'token': account_activation_token.make_token(user),
+                    })
+                    mail_html = render_to_string('dashboard/email/email_confirmation.html', {
+                        'user': user,
+                        'domain': 'ally.gg',
+                        'username': user.username,
+                        'token': account_activation_token.make_token(user),
+                    })
+
+                    print('test')
+
+                    send_mail(
+                        mail_subject,  # Email subject.
+                        mail_plain,  # Email plaintext.
+                        'noreply@ally.gg',  # Email 'From' address.
+                        [user.email, ],  # Email 'To' addresses. This must be a list or tuple.
+                        html_message=mail_html,  # Email in HTML.
+                    )
+
+                    print('test2')
+
+                    return Register(success=bool(user.id))
+
+                except IntegrityError:
+                    errors = ["email", "Email already registered."]
+                    return Register(success=False, errors=errors)
+
+            else:
+                errors = ["key", "Access Key has already been used."]
+                return Register(success=False, errors=errors)
+
+        except AccessCode.DoesNotExist:
+            errors = ["key", "Access Key does not exist."]
+            return Register(success=False, errors=errors)
+
+
+class CreateAccessKey(graphene.Mutation):
+    key = graphene.String()
+
+    @staticmethod
+    def mutate(root, info):
+        return CreateAccessKey(key=generate_access_code())
+
+
 class Mutation(graphene.ObjectType):
     create_summoner = CreateSummoner.Field()
     update_summoner = UpdateSummoner.Field()
     fetch_match = FetchMatch.Field()
     fetch_all_ranked_summoners = FetchAllRankedSummoners.Field()
     update_improvement_log = UpdateImprovementLog.Field()
+    register = Register.Field()
+    create_access_key = CreateAccessKey.Field()

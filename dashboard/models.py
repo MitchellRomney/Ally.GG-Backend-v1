@@ -52,6 +52,8 @@ class Profile(models.Model):
     user = models.ForeignKey(User, related_name="Profiles", on_delete=models.CASCADE, blank=False)
     friends = models.ManyToManyField('Profile', related_name='Friends')
 
+    email_confirmed = models.BooleanField(default=False)
+
     archived = models.BooleanField(default=False)
     date_created = models.DateTimeField(auto_now_add=True, blank=False)
     date_modified = models.DateTimeField(auto_now=True, blank=False)
