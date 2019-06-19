@@ -16,7 +16,7 @@ from django.template.loader import render_to_string
 from django.core.mail import send_mail
 from dashboard.functions.users import generate_access_code, account_activation_token
 from django.db import IntegrityError
-
+from dashboard.tasks import task__update_summoner, task__fetch_match
 
 
 @convert_django_field.register(S3DirectField)
@@ -414,7 +414,7 @@ class CreateSummoner(graphene.Mutation):
 
 class UpdateSummoner(graphene.Mutation):
     class Arguments:
-        id = graphene.String()
+        summoner_id = graphene.String()
 
     updated = graphene.Boolean()
     message = graphene.String()
@@ -422,24 +422,25 @@ class UpdateSummoner(graphene.Mutation):
     new_matches = graphene.List(graphene.String)
 
     @staticmethod
-    def mutate(root, info, id):
+    def mutate(root, info, summoner_id):
         new_matches = []
         updated = False
         summoner = None
         message = None
 
-        update_response = update_summoner(id)
+        task__update_summoner.delay(summoner_id)
 
-        if not update_response['isError']:
-            updated = True
-            summoner = update_response['summoner']
-            message = update_response['message']
+        # if not update_response['isError']:
+        # updated = True
+        # summoner = update_response['summoner']
+        # message = update_response['message']
 
-            fetched_matches = fetch_match_list(summoner.summonerId)
+        fetched_matches = fetch_match_list(summoner_id)
 
-            for match in fetched_matches:
-                if Match.objects.filter(gameId=match['gameId']).count() == 0:
-                    new_matches.append(match['gameId'])
+        for match in fetched_matches:
+            if Match.objects.filter(gameId=match['gameId']).count() == 0:
+                task__fetch_match.delay(match['gameId'])
+                # new_matches.append(match['gameId'])
 
         return UpdateSummoner(updated=updated, summoner=summoner, message=message, new_matches=new_matches)
 
@@ -618,3 +619,4 @@ class Mutation(graphene.ObjectType):
     update_improvement_log = UpdateImprovementLog.Field()
     register = Register.Field()
     create_access_key = CreateAccessKey.Field()
+

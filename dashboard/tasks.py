@@ -1,7 +1,7 @@
 from __future__ import absolute_import, unicode_literals
-from celery import task
 from celery.signals import celeryd_init
 from dashboard.functions.general import *
+from dashboard.functions.match import create_match
 from dashboard.functions.game_data import *
 from dynamic_preferences.registries import global_preferences_registry
 from AllyGG.celery import app
@@ -17,57 +17,18 @@ def startup_tasks(sender=None, conf=None, **kwargs):
     update_game_data(get_latest_version())
     print('Ally.GG is ready to go!')
 
-'''
-@task
-def task_update_summoners():
 
-    # Get the oldest Summoner in the database who has never been updated (Above level 30).
-    summoner = Summoner.objects.filter(date_updated=None, summonerLevel__gte=30).order_by('date_created')[:1].get()
+@app.task
+def task__update_summoner(summoner_id):
+    return update_summoner(summoner_id)
 
-    # Update the Summoner
-    try:
-        update_summoner(summoner.summonerId)
-    except TypeError as type_error:  # TypeError is the Riot API encountered an error. Wait 1 second and try again.
-        print(Fore.RED + '[ERROR]: ' + Style.RESET_ALL + str(type_error))
-        time.sleep(1)
-        try:
-            update_summoner(summoner.summonerId)
-        except TypeError:  # If the Riot API is still being difficult, skip this update.
-            return None
-    except KeyError as key_error:  # KeyError is the Riot API encountered an error. Wait 1 second and try again.
-        print(Fore.RED + '[ERROR]: ' + Style.RESET_ALL + str(key_error))
-        time.sleep(1)
-        try:
-            update_summoner(summoner.summonerId)
-        except KeyError:  # If the Riot API is still being difficult, skip this update.
-            return None
 
-    # Grab the latest 10 matches from the Summoner.
-    latest_matches = fetch_match_list(summoner.summonerId)
+@app.task
+def task__fetch_match(game_id):
+    return create_match(game_id)
 
-    # Check if the Riot API failed, if it did then try again. If it still fails, stop the update.
-    if latest_matches is None:
-        latest_matches = fetch_match_list(summoner.summonerId)
-        if latest_matches is None:
-            return None
 
-    # For each of the matches in the match list, if they don't exist add them to the database.
-    for match in latest_matches:
-        if Match.objects.filter(gameId=match['gameId']).count() == 0:
-
-            try:
-                create_match(match['gameId'])
-            except KeyError:  # TypeError is the Riot API encountered an error. Wait 1 second and try again.
-                time.sleep(1)
-                try:
-                    create_match(match['gameId'])
-                except KeyError:  # If the Riot API is still being difficult, skip this update.
-                    return None
-
-    return None
-    '''
-
-@task
+@app.task(bind=True)
 def task_update_version():
     # Get the Ally.GG global settings.
     global_preferences = global_preferences_registry.manager()
@@ -79,7 +40,8 @@ def task_update_version():
     if latest_version != global_preferences['LATEST_PATCH']:
         global_preferences['LATEST_PATCH'] = latest_version
 
-@task
+
+@app.task(bind=True)
 def task_update_stats():
 
     # Get the Ally.GG global settings.
@@ -99,3 +61,8 @@ def task_update_stats():
     global_preferences['stats__UPDATED_SUMMONER_COUNT'] = "{:,}".format(int(Summoner.objects.all().exclude(date_updated=None).count()), 0)
     global_preferences['stats__SUMMONER_COUNT'] = "{:,}".format(int(Summoner.objects.all().count()), 0)
     global_preferences['stats__MATCH_COUNT'] = "{:,}".format(int(Match.objects.all().count()), 0)
+
+
+@app.task(bind=True)
+def debug_task(self):
+    print('Request: {0!r}'.format(self.request))
