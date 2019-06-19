@@ -298,7 +298,6 @@ class Query(object):
             return AccessCode.objects.get(key=key)
 
     @staticmethod
-    @login_required
     def resolve_summoner(self, info, **kwargs):
         summoner_name = kwargs.get('summonerName')
 
@@ -415,6 +414,7 @@ class CreateSummoner(graphene.Mutation):
 class UpdateSummoner(graphene.Mutation):
     class Arguments:
         summoner_id = graphene.String()
+        summoner_name = graphene.String()
 
     updated = graphene.Boolean()
     message = graphene.String()
@@ -422,13 +422,13 @@ class UpdateSummoner(graphene.Mutation):
     new_matches = graphene.List(graphene.String)
 
     @staticmethod
-    def mutate(root, info, summoner_id):
+    def mutate(root, info, summoner_id, summoner_name):
         new_matches = []
         updated = False
         summoner = None
         message = None
 
-        task__update_summoner.delay(summoner_id)
+        task__update_summoner.delay(summoner_id, summoner_name)
 
         # if not update_response['isError']:
         # updated = True
@@ -439,8 +439,7 @@ class UpdateSummoner(graphene.Mutation):
 
         for match in fetched_matches:
             if Match.objects.filter(gameId=match['gameId']).count() == 0:
-                task__fetch_match.delay(match['gameId'])
-                # new_matches.append(match['gameId'])
+                task__fetch_match.delay(match['gameId'], summoner_name, summoner_id)
 
         return UpdateSummoner(updated=updated, summoner=summoner, message=message, new_matches=new_matches)
 
@@ -458,7 +457,7 @@ class FetchMatch(graphene.Mutation):
 
     @staticmethod
     def mutate(root, info, input):
-        create_match(input.gameId)
+        task__fetch_match.delay(input.gameId)
 
         return FetchMatch(player=Player.objects.get(match__gameId=input.gameId, summoner__summonerId=input.summonerId))
 

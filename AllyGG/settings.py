@@ -179,7 +179,18 @@ GRAPHQL_JWT = {
     'JWT_EXPIRATION_DELTA': timedelta(days=7),
 }
 
+# Channels
 ASGI_APPLICATION = 'AllyGG.routing.application'
+
+# Channels settings
+CHANNEL_LAYERS = {
+   "default": {
+       "BACKEND": "channels_redis.core.RedisChannelLayer",
+       "CONFIG": {
+           "hosts": [os.environ.get('REDIS_URL', 'redis://localhost:6379')],
+       },
+   },
+}
 
 if DEBUG:
     EMAIL_HOST = 'localhost'
