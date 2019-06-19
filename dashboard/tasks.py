@@ -28,7 +28,7 @@ def task__fetch_match(game_id):
     return create_match(game_id)
 
 
-@app.task(bind=True)
+@app.task
 def task_update_version():
     # Get the Ally.GG global settings.
     global_preferences = global_preferences_registry.manager()
@@ -41,7 +41,7 @@ def task_update_version():
         global_preferences['LATEST_PATCH'] = latest_version
 
 
-@app.task(bind=True)
+@app.task
 def task_update_stats():
 
     # Get the Ally.GG global settings.
@@ -61,8 +61,3 @@ def task_update_stats():
     global_preferences['stats__UPDATED_SUMMONER_COUNT'] = "{:,}".format(int(Summoner.objects.all().exclude(date_updated=None).count()), 0)
     global_preferences['stats__SUMMONER_COUNT'] = "{:,}".format(int(Summoner.objects.all().count()), 0)
     global_preferences['stats__MATCH_COUNT'] = "{:,}".format(int(Match.objects.all().count()), 0)
-
-
-@app.task(bind=True)
-def debug_task(self):
-    print('Request: {0!r}'.format(self.request))
