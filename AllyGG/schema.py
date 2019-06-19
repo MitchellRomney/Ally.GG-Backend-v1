@@ -25,9 +25,4 @@ class Mutation(dashboard.schema.Mutation, graphene.ObjectType):
     pass
 
 
-class Subscription(dashboard.schema.Subscription, graphene.ObjectType):
-
-    pass
-
-
-schema = graphene.Schema(query=Query, mutation=Mutation, subscription=Subscription)
+schema = graphene.Schema(query=Query, mutation=Mutation)
