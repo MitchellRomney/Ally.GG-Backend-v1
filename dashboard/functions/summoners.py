@@ -94,7 +94,7 @@ def update_summoner(summoner_id):
     summoner.summonerLevel = summoner_info['summonerLevel']
 
     # Fetch the Summoner Ranked information from the Riot API.
-    ranked_info = fetch_riot_api('OC1', 'league', 'v4', 'positions/by-summoner/' + summoner.summonerId)
+    ranked_info = fetch_riot_api('OC1', 'league', 'v4', 'entries/by-summoner/' + summoner.summonerId)
 
     # Iterate through the different Ranked Queues.
     for queue in ranked_info:
@@ -102,7 +102,6 @@ def update_summoner(summoner_id):
         # If the Summoner is ranked in SoloQ, update the SoloQ information.
         if queue['queueType'] == 'RANKED_SOLO_5x5':
             summoner.soloQ_leagueId = queue['leagueId']
-            summoner.soloQ_leagueName = queue['leagueName']
             summoner.soloQ_tier = RankedTier.objects.get(key=queue['tier'])
             summoner.soloQ_hotStreak = queue['hotStreak']
             summoner.soloQ_wins = queue['wins']
@@ -116,7 +115,6 @@ def update_summoner(summoner_id):
         # If the Summoner is ranked in FlexQ, update the FlexQ information.
         elif queue['queueType'] == 'RANKED_FLEX_SR':
             summoner.flexSR_leagueId = queue['leagueId']
-            summoner.flexSR_leagueName = queue['leagueName']
             summoner.flexSR_tier = RankedTier.objects.get(key=queue['tier'])
             summoner.flexSR_hotStreak = queue['hotStreak']
             summoner.flexSR_wins = queue['wins']
@@ -130,7 +128,6 @@ def update_summoner(summoner_id):
         # If the Summoner is ranked in 3v3, update the 3v3 information.
         elif queue['queueType'] == 'RANKED_FLEX_TT':
             summoner.flexTT_leagueId = queue['leagueId']
-            summoner.flexTT_leagueName = queue['leagueName']
             summoner.flexTT_tier = RankedTier.objects.get(key=queue['tier'])
             summoner.flexTT_hotStreak = queue['hotStreak']
             summoner.flexTT_wins = queue['wins']
