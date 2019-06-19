@@ -31,6 +31,7 @@ INSTALLED_APPS = [
     's3direct',
     'dynamic_preferences',
     'graphene_django',
+    'channels',
     'django.contrib.admin',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -177,6 +178,8 @@ GRAPHQL_JWT = {
     'JWT_VERIFY_EXPIRATION': True,
     'JWT_EXPIRATION_DELTA': timedelta(days=7),
 }
+
+ASGI_APPLICATION = 'AllyGG.routing.application'
 
 if DEBUG:
     EMAIL_HOST = 'localhost'
