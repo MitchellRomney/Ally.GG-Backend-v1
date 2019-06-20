@@ -283,7 +283,7 @@ class Query(object):
     key = graphene.Field(AccessKeyType, key=graphene.String())
 
     # Summoner Objects
-    summoner = graphene.Field(SummonerType, summonerName=graphene.String())
+    summoner = graphene.Field(SummonerType, summonerName=graphene.String(), summonerId=graphene.String())
     get_summoners = graphene.List(SummonerType, summonerIds=graphene.List(graphene.String))
     summoner_search = graphene.List(SummonerType, entry=graphene.String())
     latest_updated_summoners = graphene.List(SummonerType)
@@ -300,6 +300,10 @@ class Query(object):
     @staticmethod
     def resolve_summoner(self, info, **kwargs):
         summoner_name = kwargs.get('summonerName')
+        summoner_id = kwargs.get('summonerId')
+
+        if summoner_id:
+            return Summoner.objects.get(summonerId=summoner_id)
 
         if summoner_name:
             return Summoner.objects.get(summonerName__iexact=summoner_name)
@@ -414,34 +418,24 @@ class CreateSummoner(graphene.Mutation):
 class UpdateSummoner(graphene.Mutation):
     class Arguments:
         summoner_id = graphene.String()
-        summoner_name = graphene.String()
+        internal_summoner_id = graphene.String()
 
-    updated = graphene.Boolean()
-    message = graphene.String()
-    summoner = graphene.Field(SummonerType)
-    new_matches = graphene.List(graphene.String)
+    new_matches = graphene.Int()
 
     @staticmethod
-    def mutate(root, info, summoner_id, summoner_name):
-        new_matches = []
-        updated = False
-        summoner = None
-        message = None
+    def mutate(root, info, summoner_id):
+        new_matches = 0
 
-        task__update_summoner.delay(summoner_id, summoner_name)
-
-        # if not update_response['isError']:
-        # updated = True
-        # summoner = update_response['summoner']
-        # message = update_response['message']
+        task__update_summoner.delay(summoner_id)
 
         fetched_matches = fetch_match_list(summoner_id)
 
         for match in fetched_matches:
             if Match.objects.filter(gameId=match['gameId']).count() == 0:
-                task__fetch_match.delay(match['gameId'], summoner_name, summoner_id)
+                new_matches += 1
+                task__fetch_match.delay(match['gameId'], summoner_id)
 
-        return UpdateSummoner(updated=updated, summoner=summoner, message=message, new_matches=new_matches)
+        return UpdateSummoner(new_matches=new_matches)
 
 
 class FetchMatchInput(graphene.InputObjectType):

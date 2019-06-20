@@ -7,7 +7,6 @@ from dynamic_preferences.registries import global_preferences_registry
 from AllyGG.celery import app
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
-from django.core.serializers import serialize
 from AllyGG import schema
 
 
@@ -22,16 +21,63 @@ def startup_tasks(sender=None, conf=None, **kwargs):
 
 
 @app.task
-def task__update_summoner(summoner_id, summoner_name):
+def task__update_summoner(summoner_id):
     update_summoner(summoner_id)
 
-    room_group_name = 'summoner_%s' % summoner_name
+    room_group_name = 'summoner_%s' % summoner_id
+
+    result = schema.schema.execute(
+        '''
+        {{
+          summoner(summonerId: "{summoner_id}") {{
+              summonerId
+              summonerName
+              profileIconId
+              summonerLevel
+              lastUpdated
+              rankedSolo {{
+                tier
+                rank
+                rankNumber
+                lp
+                leagueName
+                wins
+                losses
+                ringValues
+              }}
+              rankedFlex5 {{
+                tier
+                rank
+                rankNumber
+                lp
+                leagueName
+                wins
+                losses
+                ringValues
+              }}
+              rankedFlex3 {{
+                tier
+                rank
+                rankNumber
+                lp
+                leagueName
+                wins
+                losses
+                ringValues
+              }}
+            }}
+        }}
+        '''.format(summoner_id=summoner_id)
+    )
 
     async_to_sync(get_channel_layer().group_send)(
         room_group_name,
         {
             'type': 'celery',
-            'message': 'Summoner Updated!'
+            'message': 'Summoner Updated!',
+            'data': {
+                'summoner': json.dumps(result.data)
+            }
         }
     )
 
@@ -39,10 +85,10 @@ def task__update_summoner(summoner_id, summoner_name):
 
 
 @app.task
-def task__fetch_match(game_id, summoner_name, summoner_id):
+def task__fetch_match(game_id, summoner_id):
     create_match(game_id)
 
-    room_group_name = 'summoner_%s' % summoner_name
+    room_group_name = 'summoner_%s' % summoner_id
 
     result = schema.schema.execute(
         '''

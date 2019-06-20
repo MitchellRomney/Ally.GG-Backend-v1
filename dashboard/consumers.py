@@ -35,8 +35,8 @@ class UserConsumer(WebsocketConsumer):
 
 class SummonerConsumer(WebsocketConsumer):
     def connect(self):
-        self.summoner = self.scope['url_route']['kwargs']['summonerName']
-        self.room_group_name = 'summoner_%s' % self.summoner
+        self.summonerId = self.scope['url_route']['kwargs']['summonerId']
+        self.room_group_name = 'summoner_%s' % self.summonerId
 
         print(self.room_group_name)
 
