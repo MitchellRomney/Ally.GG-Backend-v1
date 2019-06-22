@@ -415,6 +415,28 @@ class CreateSummoner(graphene.Mutation):
         return CreateSummoner(created=created, summoner=summoner, message=message)
 
 
+class UpdateProfile(graphene.Mutation):
+    class Arguments:
+        user_id = graphene.Int()
+        dark_mode = graphene.Boolean()
+
+    updated = graphene.Boolean()
+    profile = graphene.Field(ProfileType)
+
+    @staticmethod
+    def mutate(root, info, user_id, dark_mode):
+        profile = Profile.objects.get(user__id=user_id)
+
+        print(dark_mode)
+
+        if dark_mode is not None:
+            profile.dark_mode = dark_mode
+
+        profile.save()
+
+        return UpdateProfile(updated=True, profile=profile)
+
+
 class UpdateSummoner(graphene.Mutation):
     class Arguments:
         summoner_id = graphene.String()
@@ -612,4 +634,5 @@ class Mutation(graphene.ObjectType):
     update_improvement_log = UpdateImprovementLog.Field()
     register = Register.Field()
     create_access_key = CreateAccessKey.Field()
+    update_profile = UpdateProfile.Field()
 
