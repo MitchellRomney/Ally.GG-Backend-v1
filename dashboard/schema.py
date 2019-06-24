@@ -1,6 +1,5 @@
 import graphene
 import timeago
-import requests
 from django.utils import timezone
 from graphene_django.types import DjangoObjectType
 from django.contrib.auth.models import User
@@ -16,6 +15,7 @@ from django.template.loader import render_to_string
 from django.core.mail import send_mail
 from dashboard.functions.users import generate_access_code, account_activation_token
 from django.db import IntegrityError
+from dynamic_preferences.registries import global_preferences_registry
 from dashboard.tasks import task__update_summoner, task__fetch_match, task__get_ranked
 
 
@@ -635,6 +635,42 @@ class CreateAccessKey(graphene.Mutation):
         return CreateAccessKey(key=generate_access_code())
 
 
+class GetStats(graphene.Mutation):
+    unranked_count = graphene.String()
+    iron_count = graphene.String()
+    bronze_count = graphene.String()
+    silver_count = graphene.String()
+    gold_count = graphene.String()
+    platinum_count = graphene.String()
+    diamond_count = graphene.String()
+    master_count = graphene.String()
+    grandmaster_count = graphene.String()
+    challenger_count = graphene.String()
+    updated_summoner_count = graphene.String()
+    summoner_count = graphene.String()
+    match_count = graphene.String()
+
+    @staticmethod
+    def mutate(root, info):
+        global_preferences = global_preferences_registry.manager()
+
+        return GetStats(
+            unranked_count=global_preferences['stats__UNRANKED_COUNT'],
+            iron_count=global_preferences['stats__IRON_COUNT'],
+            bronze_count=global_preferences['stats__BRONZE_COUNT'],
+            silver_count=global_preferences['stats__SILVER_COUNT'],
+            gold_count=global_preferences['stats__GOLD_COUNT'],
+            platinum_count=global_preferences['stats__PLATINUM_COUNT'],
+            diamond_count=global_preferences['stats__DIAMOND_COUNT'],
+            master_count=global_preferences['stats__MASTER_COUNT'],
+            grandmaster_count=global_preferences['stats__GRANDMASTER_COUNT'],
+            challenger_count=global_preferences['stats__CHALLENGER_COUNT'],
+            updated_summoner_count=global_preferences['stats__UPDATED_SUMMONER_COUNT'],
+            summoner_count=global_preferences['stats__SUMMONER_COUNT'],
+            match_count=global_preferences['stats__MATCH_COUNT']
+        )
+
+
 class Mutation(graphene.ObjectType):
     create_summoner = CreateSummoner.Field()
     update_summoner = UpdateSummoner.Field()
@@ -644,4 +680,4 @@ class Mutation(graphene.ObjectType):
     register = Register.Field()
     create_access_key = CreateAccessKey.Field()
     update_profile = UpdateProfile.Field()
-
+    get_stats = GetStats.Field()
