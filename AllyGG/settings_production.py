@@ -64,12 +64,8 @@ EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_PASSWORD')
 EMAIL_PORT = 587
 
 CELERY_BEAT_SCHEDULE = {
-    'task_update_version': {
-        'task': 'dashboard.tasks.task_update_version',
-        'schedule': crontab(minute='*/1'),
-    },
     'task_update_stats': {
         'task': 'dashboard.tasks.task_update_stats',
-        'schedule': 30,
+        'schedule': crontab(minute='*/5'),
     },
 }

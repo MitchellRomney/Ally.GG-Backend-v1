@@ -5,7 +5,7 @@ import requests
 import json
 
 
-def fetch_riot_api(server, endpoint, version, path, extra=''):
+def fetch_riot_api(server, endpoint, version, path, extra='', session=None):
 
     # Build the URL that will request the data.
     url = 'https://' + server + '.api.riotgames.com/lol/' + endpoint + '/' + version + '/' + path + extra
@@ -19,7 +19,10 @@ def fetch_riot_api(server, endpoint, version, path, extra=''):
     }
 
     # Make the request.
-    response = requests.get(url, headers=headers)
+    if session:
+        response = session.get(url, headers=headers)
+    else:
+        response = requests.get(url, headers=headers)
 
     # Print the Rate Limit and App Limit Counts to keep track of limits.
     # if 'X-Method-Rate-Limit-Count' in response.headers:

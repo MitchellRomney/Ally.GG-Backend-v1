@@ -1,22 +1,22 @@
 import graphene
 import timeago
+import requests
 from django.utils import timezone
 from graphene_django.types import DjangoObjectType
 from django.contrib.auth.models import User
 from dashboard.models import Player, Match, Summoner, RankedTier, Champion, Item, Rune, SummonerSpell, Team, Profile, \
     ImprovementLog, AccessCode
 from django.db.models import Sum
-from dashboard.functions.summoners import add_summoner, update_summoner, get_all_ranked_summoners
-from dashboard.functions.match import fetch_match_list, create_match
+from dashboard.functions.summoners import add_summoner, update_summoner
+from dashboard.functions.match import fetch_match_list
 from graphene_django.converter import convert_django_field
-from graphql_jwt.decorators import login_required
 from s3direct.fields import S3DirectField
 from datetime import datetime
 from django.template.loader import render_to_string
 from django.core.mail import send_mail
 from dashboard.functions.users import generate_access_code, account_activation_token
 from django.db import IntegrityError
-from dashboard.tasks import task__update_summoner, task__fetch_match
+from dashboard.tasks import task__update_summoner, task__fetch_match, task__get_ranked
 
 
 @convert_django_field.register(S3DirectField)
@@ -487,7 +487,16 @@ class FetchAllRankedSummoners(graphene.Mutation):
 
     @staticmethod
     def mutate(root, info, server, queue):
-        get_all_ranked_summoners(server, queue)
+        high_tiers = ['challenger', 'grandmaster', 'master']
+        tiers = ['DIAMOND', 'PLATINUM', 'GOLD', 'SILVER', 'BRONZE', 'IRON']
+        divisions = ['I', 'II', 'III', 'IV']
+
+        for tier in high_tiers:
+            task__get_ranked.delay(server, queue, tier)
+
+        for tier in tiers:
+            for division in divisions:
+                task__get_ranked.delay(server, queue, tier, division)
 
         return FunctionType(success=True)
 
