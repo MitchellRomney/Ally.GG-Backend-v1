@@ -269,9 +269,12 @@ def task_update_stats():
 def task__get_ranked(server, queue, tier, division=None):
     session = requests.Session()
     page = 1
+    total_count = 0
     continue_next = True
 
     while continue_next:
+
+        page_count = 0
 
         if division:
             response = fetch_riot_api(server, 'league', 'v4',
@@ -282,10 +285,8 @@ def task__get_ranked(server, queue, tier, division=None):
             response = fetch_riot_api(server, 'league', 'v4', tier + 'leagues/by-queue/' + queue, session=session)
             summoners = response['entries']
 
-        count = 0
-
         for summoner in summoners:
-            count += 1
+            page_count += 1
 
             try:
                 summoner_obj = Summoner.objects.get(summonerId=summoner['summonerId'])
@@ -350,14 +351,16 @@ def task__get_ranked(server, queue, tier, division=None):
 
             summoner_obj.save()
 
-        if division:
-            print(Fore.YELLOW + str(
-                count) + Style.RESET_ALL + ' Summoners in ' + tier + ' ' + division + ' ' + queue + ' updated.')
-        else:
-            print(Fore.YELLOW + str(
-                count) + Style.RESET_ALL + ' Summoners in ' + tier + ' ' + queue + ' updated.')
+        total_count += page_count
 
-        if count == 205 and division:  # Hit page limit, go to next page.
-            page += 1
+        if division:
+            if page_count == 205:
+                page += 1
+            else:
+                continue_next = False
+                print(Fore.YELLOW + str(
+                    total_count) + Style.RESET_ALL + ' Summoners in ' + tier + ' ' + division + ' ' + queue + ' updated.')
         else:
             continue_next = False
+            print(Fore.YELLOW + str(
+                total_count) + Style.RESET_ALL + ' Summoners in ' + tier + ' ' + queue + ' updated.')
