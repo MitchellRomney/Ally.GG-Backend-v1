@@ -237,6 +237,7 @@ def task_update_stats():
     # Check that we're up to date, if we're not then update our settings.
     if latest_version != global_preferences['LATEST_PATCH']:
         global_preferences['LATEST_PATCH'] = latest_version
+        update_game_data(latest_version)
 
     # Update all stats.
     global_preferences['stats__UNRANKED_COUNT'] = "{:,}".format(

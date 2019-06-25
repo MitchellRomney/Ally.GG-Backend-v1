@@ -25,7 +25,8 @@ CORS_ORIGIN_ALLOW_ALL = False
 CORS_ORIGIN_WHITELIST = (
     'https://www.ally.gg',
     'http://www.ally.gg',
-    'www.ally.gg'
+    'https://ally.gg',
+    'http://ally.gg'
 )
 
 DEBUG = False
