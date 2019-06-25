@@ -26,7 +26,9 @@ CORS_ORIGIN_WHITELIST = (
     'https://www.ally.gg',
     'http://www.ally.gg',
     'https://ally.gg',
-    'http://ally.gg'
+    'http://ally.gg',
+    'www.ally.gg',
+    'ally.gg',
 )
 
 DEBUG = False
