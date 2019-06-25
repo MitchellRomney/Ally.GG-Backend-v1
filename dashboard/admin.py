@@ -66,6 +66,10 @@ class ProfileAdmin(admin.ModelAdmin):
 
     list_display = (
         'user',
+        'premium',
+        'dark_mode',
+        'email',
+        'email_confirmed',
         'date_created',
         'date_modified'
     )
@@ -82,6 +86,10 @@ class ProfileAdmin(admin.ModelAdmin):
     search_fields = (
         'user',
     )
+
+    @staticmethod
+    def email(self):
+        return self.user.email
 
 
 class TeamAdmin(admin.ModelAdmin):
@@ -140,6 +148,7 @@ class MatchAdmin(admin.ModelAdmin):
             [field.name for field in self.opts.local_many_to_many]
         ))
         return readonly_fields
+
 
 class ChampionAdmin(admin.ModelAdmin):
     model = Champion
