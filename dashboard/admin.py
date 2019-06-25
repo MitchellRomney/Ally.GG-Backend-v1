@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.models import Group
+from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from dashboard.models import *
 
 
@@ -240,6 +241,19 @@ class ImprovementLogAdmin(admin.ModelAdmin):
     )
 
 
+class UserAdmin(BaseUserAdmin):
+    list_display = (
+        'username',
+        'email',
+        'last_login',
+        'date_joined',
+    )
+
+
+admin.site.unregister(Group)
+admin.site.unregister(User)
+
+admin.site.register(User, UserAdmin)
 admin.site.register(Profile, ProfileAdmin)
 admin.site.register(Summoner, SummonerAdmin)
 admin.site.register(Match, MatchAdmin)
@@ -253,5 +267,3 @@ admin.site.register(SummonerSpell, SummonerSpellAdmin)
 admin.site.register(RankedTier, RankedTierAdmin)
 admin.site.register(AccessCode, AccessCodeAdmin)
 admin.site.register(ImprovementLog, ImprovementLogAdmin)
-
-admin.site.unregister(Group)
