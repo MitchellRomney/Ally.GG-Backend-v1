@@ -28,14 +28,10 @@ def generate_access_code():
     return unique_id
 
 
-def generate_third_party(summoner):
+def generate_third_party():
 
     # Generate the key.
     unique_id = get_random_string(length=12)
-
-    # Add the key to the Summoner for verification.
-    summoner.thirdParty = unique_id
-    summoner.save()
 
     # Return the generate key.
     return unique_id

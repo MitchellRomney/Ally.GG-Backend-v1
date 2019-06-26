@@ -24,40 +24,45 @@ def fetch_riot_api(server, endpoint, version, path, extra='', session=None):
     else:
         response = requests.get(url, headers=headers)
 
-    # Print the Rate Limit and App Limit Counts to keep track of limits.
-    # if 'X-Method-Rate-Limit-Count' in response.headers:
-    #     print(Fore.MAGENTA + 'App Rate Limit Count: '
-    #           + Style.RESET_ALL + response.headers['X-App-Rate-Limit-Count']
-    #           + Fore.MAGENTA + ' / Method Rate Limit Count: '
-    #           + Style.RESET_ALL + response.headers['X-Method-Rate-Limit-Count'])
-    # elif 'X-App-Rate-Limit-Count' in response.headers:
-    #     print(Fore.MAGENTA + 'App Rate Limit Count: '
-    #           + Style.RESET_ALL + response.headers['X-App-Rate-Limit-Count'])
+    if response.status_code != 404:
+        # Print the Rate Limit and App Limit Counts to keep track of limits.
+        # if 'X-Method-Rate-Limit-Count' in response.headers:
+        #     print(Fore.MAGENTA + 'App Rate Limit Count: '
+        #           + Style.RESET_ALL + response.headers['X-App-Rate-Limit-Count']
+        #           + Fore.MAGENTA + ' / Method Rate Limit Count: '
+        #           + Style.RESET_ALL + response.headers['X-Method-Rate-Limit-Count'])
+        # elif 'X-App-Rate-Limit-Count' in response.headers:
+        #     print(Fore.MAGENTA + 'App Rate Limit Count: '
+        #           + Style.RESET_ALL + response.headers['X-App-Rate-Limit-Count'])
 
-    # Parse the response so it's usable.
-    parsed_response = json.loads(json.dumps(response.json()))
+        # Parse the response so it's usable.
+        parsed_response = json.loads(json.dumps(response.json()))
 
-    # Add the JSON to the Sentry reporting scope, will help if an error pops up later.
-    with configure_scope() as scope:
-        scope.set_extra('JSON', parsed_response)
-
-    if 'status' in parsed_response: # Check if there is an error code of 500, and then try again if so.
-        if parsed_response['status']['status_code'] == 500:
-
-            # Make the request.
-            response = requests.get(url, headers=headers)
-
-            # Parse the response so it's usable.
-            parsed_response = json.loads(json.dumps(response.json()))
-
-    if 'status' in parsed_response:  # If the response is STILL an error, report it.
+        # Add the JSON to the Sentry reporting scope, will help if an error pops up later.
         with configure_scope() as scope:
-            scope.set_extra('Error Response', parsed_response)
-        print(Fore.RED + '[ERROR]: ' + Style.RESET_ALL + parsed_response['status']['message'] + '.')
-        return {'isError': True, 'message': parsed_response['status']['message'], 'ignore': False}
+            scope.set_extra('JSON', parsed_response)
 
-    # Return the API response.
-    return parsed_response
+        if 'status' in parsed_response: # Check if there is an error code of 500, and then try again if so.
+            if parsed_response['status']['status_code'] == 500:
+
+                # Make the request.
+                response = requests.get(url, headers=headers)
+
+                # Parse the response so it's usable.
+                parsed_response = json.loads(json.dumps(response.json()))
+
+        if 'status' in parsed_response:  # If the response is STILL an error, report it.
+            with configure_scope() as scope:
+                scope.set_extra('Error Response', parsed_response)
+            print(Fore.RED + '[ERROR]: ' + Style.RESET_ALL + parsed_response['status']['message'] + '.')
+            return {'isError': True, 'message': parsed_response['status']['message'], 'ignore': False}
+
+        # Return the API response.
+        return parsed_response
+
+    else:
+        # If Riot API returns 404, return None.
+        return None
 
 
 def fetch_ddragon_api(version, method, option1, option2=None, language='en_US', ):

@@ -4,10 +4,12 @@ from django.utils import timezone
 from graphene_django.types import DjangoObjectType
 from django.contrib.auth.models import User
 from dashboard.models import Player, Match, Summoner, RankedTier, Champion, Item, Rune, SummonerSpell, Team, Profile, \
-    ImprovementLog, AccessCode
+    ImprovementLog, AccessCode, ThirdPartyVerification
 from django.db.models import Sum
 from dashboard.functions.summoners import add_summoner, update_summoner
 from dashboard.functions.match import fetch_match_list
+from dashboard.functions.api import fetch_riot_api
+from dashboard.functions.users import generate_third_party
 from graphene_django.converter import convert_django_field
 from s3direct.fields import S3DirectField
 from datetime import datetime
@@ -17,11 +19,17 @@ from dashboard.functions.users import generate_access_code, account_activation_t
 from django.db import IntegrityError
 from dynamic_preferences.registries import global_preferences_registry
 from dashboard.tasks import task__update_summoner, task__fetch_match, task__get_ranked
+from graphql import GraphQLError
 
 
 @convert_django_field.register(S3DirectField)
 def convert_s3_direct_field_to_string(field, registry=None):
     return graphene.String()
+
+
+class ThirdPartyVerificationType(DjangoObjectType):
+    class Meta:
+        model = ThirdPartyVerification
 
 
 class FunctionType(graphene.ObjectType):
@@ -282,6 +290,10 @@ class Query(object):
     # Access Key Objects
     key = graphene.Field(AccessKeyType, key=graphene.String())
 
+    # Third Party Verification Objects
+    third_party = graphene.Field(ThirdPartyVerificationType, summonerName=graphene.String(), userId=graphene.Int(),
+                                 server=graphene.String())
+
     # Summoner Objects
     summoner = graphene.Field(SummonerType, summonerName=graphene.String(), summonerId=graphene.String())
     get_summoners = graphene.List(SummonerType, summonerIds=graphene.List(graphene.String))
@@ -289,6 +301,33 @@ class Query(object):
     latest_updated_summoners = graphene.List(SummonerType)
     top_summoners = graphene.List(SummonerType)
     all_summoners = graphene.List(SummonerType)
+
+    @staticmethod
+    def resolve_third_party(self, info, **kwargs):
+        summoner_name = kwargs.get('summonerName')
+        user_id = kwargs.get('userId')
+        server = kwargs.get('server')
+
+        if summoner_name and user_id and server:
+            try:
+                summoner = Summoner.objects.get(summonerName__iexact=summoner_name, server=server)
+            except Summoner.DoesNotExist:
+                response = add_summoner('summonerName', summoner_name, server)
+
+                if response['summoner']:
+                    summoner = response['summoner']
+                else:
+                    raise GraphQLError(response.message)
+
+            user = Profile.objects.get(user__id=user_id)
+
+            try:
+                third_party_verification = ThirdPartyVerification.objects.get(user=user, summoner=summoner)
+            except ThirdPartyVerification.DoesNotExist:
+                third_party_verification = ThirdPartyVerification.objects.create(user=user, key=generate_third_party(),
+                                                                                 summoner=summoner)
+
+            return third_party_verification
 
     @staticmethod
     def resolve_key(self, info, **kwargs):
@@ -388,6 +427,40 @@ class Query(object):
             return User.objects.get(id=user_id)
         else:
             return User.objects.get(username=username)
+
+
+class VerifySummoner(graphene.Mutation):
+    class Arguments:
+        verification_id = graphene.Int()
+
+    verified = graphene.Boolean()
+    summoner = graphene.Field(SummonerType)
+    profile = graphene.Field(ProfileType)
+
+    @staticmethod
+    def mutate(root, info, verification_id):
+        try:
+            verification = ThirdPartyVerification.objects.get(id=verification_id)
+        except ThirdPartyVerification.DoesNotExist:
+            raise GraphQLError('Verification ID not recognized.')
+
+        profile = Profile.objects.get(id=verification.user.id)
+        summoner = Summoner.objects.get(summonerId=verification.summoner.summonerId)
+
+        riot_tp_code = fetch_riot_api(summoner.server, 'platform', 'v4',
+                                      'third-party-code/by-summoner/' + summoner.summonerId)
+
+        if riot_tp_code == verification.key:
+
+            verification.verified = True
+            verification.save()
+
+            summoner.user_profile = profile
+            summoner.save()
+
+            return VerifySummoner(verified=True, summoner=summoner, profile=profile)
+        else:
+            raise GraphQLError('Verification Key doesn\'t match Summoner Third Party content.')
 
 
 class CreateSummoner(graphene.Mutation):
@@ -681,3 +754,4 @@ class Mutation(graphene.ObjectType):
     create_access_key = CreateAccessKey.Field()
     update_profile = UpdateProfile.Field()
     get_stats = GetStats.Field()
+    verify_summoner = VerifySummoner.Field()

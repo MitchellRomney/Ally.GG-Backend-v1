@@ -318,13 +318,12 @@ class Summoner(models.Model):
     summonerId = models.CharField(max_length=255, primary_key=True, unique=True, blank=False)  # 'ID' sometimes.
     puuid = models.CharField(max_length=255, unique=True, blank=True, null=True)
     accountId = models.CharField(max_length=255, unique=True, blank=True, null=True)
-    thirdParty = models.CharField(max_length=255, blank=True, null=True)
 
     # General
     SERVERS = (
         ('BR1', 'Brazil'),
         ('EUN1', 'EU Nordic & East'),
-        ('EUW1', 'EW West'),
+        ('EUW1', 'EU West'),
         ('JP1', 'Japan'),
         ('KR', 'Korea'),
         ('LA1', 'Latin America North'),
@@ -670,8 +669,7 @@ class Player(models.Model):
 
 class ImprovementLog(models.Model):
     # Relations
-    summoner = models.ForeignKey(Summoner, related_name="summoner_logs", on_delete=models.CASCADE, blank=False,
-                                 null=False)
+    summoner = models.ForeignKey(Summoner, related_name="summoner_logs", on_delete=models.CASCADE, blank=False, null=False)
     match = models.ForeignKey(Match, related_name="match_logs", on_delete=models.CASCADE, blank=False, null=False)
 
     # User Input
@@ -684,3 +682,24 @@ class ImprovementLog(models.Model):
     archived = models.BooleanField(default=False)
     date_created = models.DateTimeField(auto_now_add=True, blank=False)
     date_modified = models.DateTimeField(auto_now=True, blank=False)
+
+    def __str__(self):
+        return 'Log: Match ' + str(self.match.gameId) + ' - ' + self.summoner.summonerName
+
+
+class ThirdPartyVerification(models.Model):
+    # Relations
+    summoner = models.ForeignKey(Summoner, related_name="summoner_verification", on_delete=models.CASCADE, blank=False, null=False)
+    user = models.ForeignKey(Profile, related_name="summoner_verification_user", on_delete=models.CASCADE, blank=False, null=False)
+
+    # Flags
+    key = models.CharField(max_length=255, blank=False, null=False)
+    verified = models.BooleanField(default=False)
+
+    # System
+    archived = models.BooleanField(default=False)
+    date_created = models.DateTimeField(auto_now_add=True, blank=False)
+    date_modified = models.DateTimeField(auto_now=True, blank=False)
+
+    def __str__(self):
+        return self.summoner.summonerName

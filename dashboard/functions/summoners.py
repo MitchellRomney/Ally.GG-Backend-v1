@@ -5,11 +5,11 @@ from django.db import IntegrityError
 from colorama import Fore, Style
 
 
-def add_summoner(method, value):
+def add_summoner(method, value, server='OC1'):
 
     # Fetch Summoner information from the Riot API.
-    summoner_info = fetch_riot_api('OC1', 'summoner', 'v4', 'summoners/' + value) \
-        if method == 'SummonerId' else fetch_riot_api('OC1', 'summoner', 'v4', 'summoners/by-name/' + value)
+    summoner_info = fetch_riot_api(server, 'summoner', 'v4', 'summoners/' + value) \
+        if method == 'SummonerId' else fetch_riot_api(server, 'summoner', 'v4', 'summoners/by-name/' + value)
 
     if 'isError' in summoner_info:
         if summoner_info['isError'] and not summoner_info['ignore']:
@@ -34,7 +34,7 @@ def add_summoner(method, value):
                 accountId=summoner_info['accountId'],
 
                 # General
-                server='OC1',
+                server=server,
                 profileIconId=summoner_info['profileIconId'],
                 summonerLevel=summoner_info['summonerLevel'],
 
@@ -71,7 +71,7 @@ def add_summoner(method, value):
     }
 
 
-def update_summoner(summoner_id):
+def update_summoner(summoner_id, server='OC1'):
 
     # Get the Summoner you're trying to update.
     summoner = Summoner.objects.get(summonerId=summoner_id)
@@ -86,7 +86,7 @@ def update_summoner(summoner_id):
     print(Fore.YELLOW + 'Updating Summoner: ' + Style.RESET_ALL + summoner.summonerName)
 
     # Fetch the Summoner information from the Riot API.
-    summoner_info = fetch_riot_api('OC1', 'summoner', 'v4', 'summoners/' + summoner_id)
+    summoner_info = fetch_riot_api(server, 'summoner', 'v4', 'summoners/' + summoner_id)
 
     # Update basic Summoner information.
     summoner.summonerName = summoner_info['name']
@@ -94,7 +94,7 @@ def update_summoner(summoner_id):
     summoner.summonerLevel = summoner_info['summonerLevel']
 
     # Fetch the Summoner Ranked information from the Riot API.
-    ranked_info = fetch_riot_api('OC1', 'league', 'v4', 'entries/by-summoner/' + summoner.summonerId)
+    ranked_info = fetch_riot_api(server, 'league', 'v4', 'entries/by-summoner/' + summoner.summonerId)
 
     # Iterate through the different Ranked Queues.
     for queue in ranked_info:

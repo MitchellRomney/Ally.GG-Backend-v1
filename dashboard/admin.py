@@ -259,6 +259,30 @@ class UserAdmin(BaseUserAdmin):
     )
 
 
+class ThirdPartyVerificationAdmin(admin.ModelAdmin):
+    model = ThirdPartyVerification
+
+    list_display = (
+        'user',
+        'summoner',
+        'verified',
+        'date_modified',
+        'date_created',
+    )
+
+    list_select_related = (
+        'user',
+        'summoner',
+    )
+
+    readonly_fields = (
+        'summoner',
+        'user',
+        'date_modified',
+        'date_created',
+    )
+
+
 admin.site.unregister(Group)
 admin.site.unregister(User)
 
@@ -276,3 +300,4 @@ admin.site.register(SummonerSpell, SummonerSpellAdmin)
 admin.site.register(RankedTier, RankedTierAdmin)
 admin.site.register(AccessCode, AccessCodeAdmin)
 admin.site.register(ImprovementLog, ImprovementLogAdmin)
+admin.site.register(ThirdPartyVerification, ThirdPartyVerificationAdmin)
