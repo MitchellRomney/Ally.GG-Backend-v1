@@ -20,6 +20,34 @@ from django.db import IntegrityError
 from dynamic_preferences.registries import global_preferences_registry
 from dashboard.tasks import task__update_summoner, task__fetch_match, task__get_ranked
 from graphql import GraphQLError
+from graphene.types import Scalar
+from graphql.language import ast
+from graphene.types.scalars import MIN_INT, MAX_INT
+
+
+class BigInt(Scalar):
+    """
+    BigInt is an extension of the regular Int field
+        that supports Integers bigger than a signed
+        32-bit integer.
+    """
+    @staticmethod
+    def big_to_float(value):
+        num = int(value)
+        if num > MAX_INT or num < MIN_INT:
+            return float(int(num))
+        return num
+
+    serialize = big_to_float
+    parse_value = big_to_float
+
+    @staticmethod
+    def parse_literal(node):
+        if isinstance(node, ast.IntValue):
+            num = int(node.value)
+            if num > MAX_INT or num < MIN_INT:
+                return float(int(num))
+            return num
 
 
 @convert_django_field.register(S3DirectField)
@@ -45,6 +73,7 @@ class MatchType(DjangoObjectType):
     queue = graphene.String()
     timeago = graphene.String()
     game_duration_time = graphene.String()
+    game_id = graphene.Field(BigInt)
 
     class Meta:
         model = Match
@@ -60,6 +89,12 @@ class MatchType(DjangoObjectType):
         duration_minutes = (self.gameDuration - duration_seconds) / 60
         result = str(int(duration_minutes)) + 'm ' + str(duration_seconds) + 's '
         return result
+
+    def resolve_game_id(self, info, **kwargs):
+        num = int(self.gameId)
+        if num > MAX_INT or num < MIN_INT:
+            return float(int(num))
+        return num
 
 
 class ChampionType(DjangoObjectType):
@@ -272,10 +307,11 @@ class Query(object):
     all_matches = graphene.List(MatchType)
 
     # Player Objects
-    player = graphene.Field(PlayerType, summonerId=graphene.String(), gameId=graphene.Int())
+    player = graphene.Field(PlayerType, summonerId=graphene.String(), gameId=graphene.Argument(BigInt), server=graphene.String())
     summoner_players = graphene.List(PlayerType,
                                      summonerName=graphene.String(),
-                                     games=graphene.Int())
+                                     games=graphene.Int(),
+                                     server=graphene.String())
     all_players = graphene.List(PlayerType)
 
     # User / Profile Objects
@@ -295,12 +331,10 @@ class Query(object):
                                  server=graphene.String())
 
     # Summoner Objects
-    summoner = graphene.Field(SummonerType, summonerName=graphene.String(), summonerId=graphene.String())
+    summoner = graphene.Field(SummonerType, summonerName=graphene.String(), summonerId=graphene.String(), server=graphene.String())
     get_summoners = graphene.List(SummonerType, summonerIds=graphene.List(graphene.String))
-    summoner_search = graphene.List(SummonerType, entry=graphene.String())
-    latest_updated_summoners = graphene.List(SummonerType)
-    top_summoners = graphene.List(SummonerType)
-    all_summoners = graphene.List(SummonerType)
+    summoner_search = graphene.List(SummonerType, entry=graphene.String(), server=graphene.String())
+    top_summoners = graphene.List(SummonerType, server=graphene.String())
 
     @staticmethod
     def resolve_third_party(self, info, **kwargs):
@@ -340,19 +374,21 @@ class Query(object):
     def resolve_summoner(self, info, **kwargs):
         summoner_name = kwargs.get('summonerName')
         summoner_id = kwargs.get('summonerId')
+        server = kwargs.get('server')
 
         if summoner_id:
-            return Summoner.objects.get(summonerId=summoner_id)
+            return Summoner.objects.get(summonerId=summoner_id, server=server)
 
         if summoner_name:
-            return Summoner.objects.get(summonerName__iexact=summoner_name)
+            return Summoner.objects.get(summonerName__iexact=summoner_name, server=server)
 
     @staticmethod
     def resolve_player(self, info, **kwargs):
         summoner_id = kwargs.get('summonerId')
         game_id = kwargs.get('gameId')
+        server = kwargs.get('server')
 
-        return Player.objects.get(summoner__summonerId=summoner_id, match__gameId=game_id)
+        return Player.objects.get(summoner__summonerId=summoner_id, match__gameId=int(game_id), summoner__server=server)
 
     @staticmethod
     def resolve_get_summoners(self, info, **kwargs):
@@ -363,9 +399,10 @@ class Query(object):
     @staticmethod
     def resolve_summoner_search(self, info, **kwargs):
         entry = kwargs.get('entry')
+        server = kwargs.get('server')
 
         if entry:
-            return Summoner.objects.filter(summonerName__icontains=entry)
+            return Summoner.objects.filter(summonerName__icontains=entry, server=server)
 
     @staticmethod
     def resolve_champion_search(self, info, **kwargs):
@@ -382,18 +419,10 @@ class Query(object):
         return ImprovementLog.objects.get(summoner__summonerId=summoner_id, match__gameId=game_id)
 
     @staticmethod
-    def resolve_latest_updated_summoners(self, info, **kwargs):
-        return Summoner.objects.order_by('-date_updated').exclude(date_updated=None)[:100]
-
-    @staticmethod
     def resolve_top_summoners(self, info, **kwargs):
-        summoners = Summoner.objects.all()
-        top_summoners = summoners.select_related('soloQ_tier').exclude(soloQ_tier=None)
-        return top_summoners.order_by('soloQ_tier__order', 'soloQ_rank', '-soloQ_leaguePoints')[:100]
+        server = kwargs.get('server')
 
-    @staticmethod
-    def resolve_all_summoners(self, info, **kwargs):
-        return Summoner.objects.all()
+        return Summoner.objects.filter(server=server).order_by('soloQ_tier__order', 'soloQ_rank', '-soloQ_leaguePoints').exclude(soloQ_tier=None)[:100]
 
     @staticmethod
     def resolve_match(self, info, **kwargs):
@@ -406,8 +435,9 @@ class Query(object):
     def resolve_summoner_players(self, info, **kwargs):
         summoner_name = kwargs.get('summonerName')
         games = kwargs.get('games')
+        server = kwargs.get('server')
 
-        summoner = Summoner.objects.get(summonerName__iexact=summoner_name)
+        summoner = Summoner.objects.get(summonerName__iexact=summoner_name, server=server)
         return Player.objects.filter(summoner=summoner).order_by('-match__timestamp').select_related('champion')[:games]
 
     @staticmethod
@@ -513,22 +543,22 @@ class UpdateProfile(graphene.Mutation):
 class UpdateSummoner(graphene.Mutation):
     class Arguments:
         summoner_id = graphene.String()
-        internal_summoner_id = graphene.String()
+        server = graphene.String()
 
     new_matches = graphene.Int()
 
     @staticmethod
-    def mutate(root, info, summoner_id):
+    def mutate(root, info, summoner_id, server):
         new_matches = 0
 
-        task__update_summoner.delay(summoner_id)
+        task__update_summoner.delay(summoner_id, server)
 
-        fetched_matches = fetch_match_list(summoner_id)
+        fetched_matches = fetch_match_list(summoner_id, server)
 
         for match in fetched_matches:
-            if Match.objects.filter(gameId=match['gameId']).count() == 0:
+            if Match.objects.filter(gameId=match['gameId'], platformId=server).count() == 0:
                 new_matches += 1
-                task__fetch_match.delay(match['gameId'], summoner_id)
+                task__fetch_match.delay(match['gameId'], summoner_id, server)
 
         return UpdateSummoner(new_matches=new_matches)
 

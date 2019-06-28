@@ -33,6 +33,8 @@ class SummonerAdmin(admin.ModelAdmin):
 
     list_display = (
         'summonerName',
+        'user_profile',
+        'server',
         'summonerLevel',
         'soloQ_tier',
         'flexTT_tier',
@@ -42,6 +44,7 @@ class SummonerAdmin(admin.ModelAdmin):
     )
 
     list_select_related = (
+        'user_profile',
         'soloQ_tier',
         'flexTT_tier',
         'flexSR_tier',
@@ -49,6 +52,7 @@ class SummonerAdmin(admin.ModelAdmin):
 
     search_fields = (
         'summonerName',
+        'user_profile__user__username',
         'soloQ_tier__name'
     )
 

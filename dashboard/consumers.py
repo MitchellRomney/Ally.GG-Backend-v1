@@ -35,10 +35,11 @@ class UserConsumer(WebsocketConsumer):
 
 class SummonerConsumer(WebsocketConsumer):
     def connect(self):
-        self.summonerId = self.scope['url_route']['kwargs']['summonerId']
-        self.room_group_name = 'summoner_%s' % self.summonerId
 
-        print(self.room_group_name)
+        summoner_id = self.scope['url_route']['kwargs']['summonerId']
+        server = self.scope['url_route']['kwargs']['server']
+
+        self.room_group_name = 'summoner_{0}_{1}'.format(server, summoner_id)
 
         async_to_sync(self.channel_layer.group_add)(
             self.room_group_name,

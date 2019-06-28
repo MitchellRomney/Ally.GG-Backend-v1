@@ -5,12 +5,12 @@ import re
 import pytz
 
 
-def fetch_match_list(summoner_id):
+def fetch_match_list(summoner_id, server='OC1'):
     # Get the Summoner that you're fetching for.
     summoner = Summoner.objects.get(summonerId=summoner_id)
 
     # Get the match list from the Riot API.
-    matches = fetch_riot_api('OC1', 'match', 'v4', 'matchlists/by-account/' + summoner.accountId, '?endIndex=10')
+    matches = fetch_riot_api(server, 'match', 'v4', 'matchlists/by-account/' + summoner.accountId, '?endIndex=10')
 
     # Make sure that the matches actually exist in the response.
     if 'matches' in matches:
@@ -18,13 +18,13 @@ def fetch_match_list(summoner_id):
         return matches['matches']
 
 
-def create_match(game_id):
+def create_match(game_id, server='OC1'):
     # Count variables to check integrity at the end.
     team_count = 0
     player_count = 0
 
     # Fetch the match information from the Riot API.
-    match_data = fetch_riot_api('OC1', 'match', 'v4', 'matches/' + str(game_id))
+    match_data = fetch_riot_api(server, 'match', 'v4', 'matches/' + str(game_id))
 
     # Convert the timestamp into a valid DateTime.
     timestamp = datetime.utcfromtimestamp(match_data['gameCreation'] / 1000.).replace(tzinfo=pytz.UTC)
@@ -94,7 +94,7 @@ def create_match(game_id):
 
                     # Add Summoner to database if it doesn't already exist.
                     if Summoner.objects.filter(summonerId=player_account_info['player']['summonerId']).count() == 0:
-                        add_summoner('SummonerId', player_account_info['player']['summonerId'])
+                        add_summoner('SummonerId', player_account_info['player']['summonerId'], server)
 
                     # Add Summoner to Match.summoners relation field.
                     new_match.summoners.add(

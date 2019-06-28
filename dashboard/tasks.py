@@ -22,15 +22,15 @@ def startup_tasks(sender=None, conf=None, **kwargs):
 
 
 @app.task
-def task__update_summoner(summoner_id):
-    update_summoner(summoner_id)
+def task__update_summoner(summoner_id, server):
+    update_summoner(summoner_id, server)
 
-    room_group_name = 'summoner_%s' % summoner_id
+    room_group_name = 'summoner_{0}_{1}'.format(server, summoner_id)
 
     result = schema.schema.execute(
         '''
         {{
-          summoner(summonerId: "{summoner_id}") {{
+          summoner(summonerId: "{summoner_id}", server: "{server}") {{
               summonerId
               summonerName
               profileIconId
@@ -68,7 +68,7 @@ def task__update_summoner(summoner_id):
               }}
             }}
         }}
-        '''.format(summoner_id=summoner_id)
+        '''.format(summoner_id=summoner_id, server=server)
     )
 
     async_to_sync(get_channel_layer().group_send)(
@@ -86,15 +86,17 @@ def task__update_summoner(summoner_id):
 
 
 @app.task
-def task__fetch_match(game_id, summoner_id):
-    create_match(game_id)
-
-    room_group_name = 'summoner_%s' % summoner_id
+def task__fetch_match(game_id, summoner_id, server):
+    create_match(game_id, server)
+    print(summoner_id)
+    print(game_id)
+    print(server)
+    room_group_name = 'summoner_{0}_{1}'.format(server, summoner_id)
 
     result = schema.schema.execute(
         '''
         {{
-          player(summonerId: "{summoner_id}", gameId: {gameId}) {{
+          player(summonerId: "{summoner_id}", gameId: {gameId}, server: "{server}") {{
             match {{
               gameId
               queue
@@ -209,7 +211,7 @@ def task__fetch_match(game_id, summoner_id):
             }}
           }}
         }}
-        '''.format(summoner_id=summoner_id, gameId=game_id)
+        '''.format(summoner_id=summoner_id, gameId=game_id, server=server)
     )
 
     async_to_sync(get_channel_layer().group_send)(
