@@ -26,7 +26,6 @@ ALLOWED_HOSTS = ['*']
 INSTALLED_APPS = [
     'django.contrib.auth',
     'dashboard',
-    'registration',
     'corsheaders',
     's3direct',
     'dynamic_preferences',
