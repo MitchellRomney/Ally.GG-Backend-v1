@@ -64,3 +64,30 @@ class SummonerConsumer(WebsocketConsumer):
             'message': message,
             'data': data
         }))
+
+
+class AdminConsumer(WebsocketConsumer):
+    def connect(self):
+        async_to_sync(self.channel_layer.group_add)(
+            'admin_panel',
+            self.channel_name
+        )
+
+        self.accept()
+
+    def disconnect(self, close_code):
+        # Leave room group
+        async_to_sync(self.channel_layer.group_discard)(
+            'admin_panel',
+            self.channel_name
+        )
+
+    def celery(self, event):
+        message = event['message']
+        data = event['data'] if 'data' in event else None
+
+        # Send message to WebSocket
+        self.send(text_data=json.dumps({
+            'message': message,
+            'data': data
+        }))

@@ -3,11 +3,12 @@ import timeago
 from django.utils import timezone
 from graphene_django.types import DjangoObjectType
 from django.contrib.auth.models import User
+from django.db.models import Count
 from dashboard.models import Player, Match, Summoner, RankedTier, Champion, Item, Rune, SummonerSpell, Team, Profile, \
     ImprovementLog, AccessCode, ThirdPartyVerification
 from django.db.models import Sum
 from dashboard.functions.summoners import add_summoner, update_summoner
-from dashboard.functions.match import fetch_match_list
+from dashboard.functions.match import fetch_match_list, create_match
 from dashboard.functions.api import fetch_riot_api
 from dashboard.functions.users import generate_third_party
 from graphene_django.converter import convert_django_field
@@ -752,6 +753,7 @@ class GetStats(graphene.Mutation):
     updated_summoner_count = graphene.String()
     summoner_count = graphene.String()
     match_count = graphene.String()
+    latest_patch = graphene.String()
 
     @staticmethod
     def mutate(root, info):
@@ -770,7 +772,67 @@ class GetStats(graphene.Mutation):
             challenger_count=global_preferences['stats__CHALLENGER_COUNT'],
             updated_summoner_count=global_preferences['stats__UPDATED_SUMMONER_COUNT'],
             summoner_count=global_preferences['stats__SUMMONER_COUNT'],
-            match_count=global_preferences['stats__MATCH_COUNT']
+            match_count=global_preferences['stats__MATCH_COUNT'],
+            latest_patch=global_preferences['LATEST_PATCH']
+        )
+
+
+class InitialLoad(graphene.Mutation):
+    class Arguments:
+        userId = graphene.Int()
+
+    user = graphene.Field(UserType)
+    patch = graphene.String()
+
+    @staticmethod
+    def mutate(root, info, userId):
+        global_preferences = global_preferences_registry.manager()
+
+        return InitialLoad(user=User.objects.get(id=userId), patch=global_preferences['LATEST_PATCH'])
+
+
+class FixDataIntegrity(graphene.Mutation):
+    class Arguments:
+        fix = graphene.Boolean()
+
+    broken_ranked_solo = graphene.Int()
+    broken_ranked_flex = graphene.Int()
+    broken_ranked_3v3 = graphene.Int()
+    broken_normal = graphene.Int()
+
+    fixed_ranked_solo = graphene.Int()
+    fixed_ranked_flex = graphene.Int()
+    fixed_ranked_3v3 = graphene.Int()
+    fixed_normal = graphene.Int()
+
+    @staticmethod
+    def mutate(root, info, fix):
+        fixed_solo = None
+        fixed_flex = None
+        fixed_3v3 = None
+        fixed_normal = None
+
+        matches = Match.objects.annotate(num_players=Count('players'))
+        broken_solo = matches.filter(queueId=420).exclude(num_players=10).order_by('date_created')
+        broken_flex = matches.filter(queueId=440).exclude(num_players=10).order_by('date_created')
+        broken_3v3 = matches.filter(queueId=470).exclude(num_players=6).order_by('date_created')
+        broken_normal = matches.filter(queueId__in=[400, 430]).exclude(num_players=10).order_by('date_created')
+
+        if fix:
+            fixed_solo = FixDataIntegrity.fix_matches(broken_solo)
+            fixed_flex = FixDataIntegrity.fix_matches(broken_flex)
+            fixed_3v3 = FixDataIntegrity.fix_matches(broken_3v3)
+            fixed_normal = FixDataIntegrity.fix_matches(broken_normal)
+
+        return FixDataIntegrity(
+            broken_ranked_solo=broken_solo.count(),
+            broken_ranked_flex=broken_flex.count(),
+            broken_ranked_3v3=broken_3v3.count(),
+            broken_normal=broken_normal.count(),
+            fixed_ranked_solo=fixed_solo,
+            fixed_ranked_flex=fixed_flex,
+            fixed_ranked_3v3=fixed_3v3,
+            fixed_normal=fixed_normal,
         )
 
 
@@ -785,3 +847,5 @@ class Mutation(graphene.ObjectType):
     update_profile = UpdateProfile.Field()
     get_stats = GetStats.Field()
     verify_summoner = VerifySummoner.Field()
+    initial_load = InitialLoad.Field()
+    fix_data_integrity = FixDataIntegrity.Field()

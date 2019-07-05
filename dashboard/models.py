@@ -2,7 +2,6 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from s3direct.fields import S3DirectField
 import json
 
 
@@ -315,9 +314,9 @@ class Summoner(models.Model):
     user_profile = models.ForeignKey(Profile, related_name="Summoners", on_delete=models.SET_NULL, null=True,
                                      blank=True)
     summonerName = models.CharField(max_length=255, blank=False)
-    summonerId = models.CharField(max_length=255, primary_key=True, unique=True, blank=False)  # 'ID' sometimes.
+    summonerId = models.CharField(max_length=255, primary_key=True, blank=False)  # 'ID' sometimes.
     puuid = models.CharField(max_length=255, unique=True, blank=True, null=True)
-    accountId = models.CharField(max_length=255, unique=True, blank=True, null=True)
+    accountId = models.CharField(max_length=255, blank=True, null=True)
 
     # General
     SERVERS = (
@@ -390,10 +389,16 @@ class Summoner(models.Model):
     def __unicode__(self):
         return self.summonerName
 
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['summonerId', 'server'], name='Unique SummonerId by Server'),
+            models.UniqueConstraint(fields=['accountId', 'server'], name='Unique AccountId by Server')
+        ]
+
 
 class Match(models.Model):
     # IDs
-    platformId = models.CharField(max_length=255, blank=False)  # Server
+    platformId = models.CharField(max_length=255, blank=False)
     gameId = models.BigIntegerField(blank=False, unique=True)
     QUEUES = (
         (0, 'Custom'),

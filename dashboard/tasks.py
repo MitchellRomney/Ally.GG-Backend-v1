@@ -88,9 +88,7 @@ def task__update_summoner(summoner_id, server):
 @app.task
 def task__fetch_match(game_id, summoner_id, server):
     create_match(game_id, server)
-    print(summoner_id)
-    print(game_id)
-    print(server)
+
     room_group_name = 'summoner_{0}_{1}'.format(server, summoner_id)
 
     result = schema.schema.execute(
@@ -105,6 +103,10 @@ def task__fetch_match(game_id, summoner_id, server):
               timestamp
               players {{
                 participantId
+                champion {{
+                  champId
+                  name
+                }}
                 team {{
                   teamId
                 }}
@@ -292,13 +294,13 @@ def task__get_ranked(server, queue, tier, division=None):
             page_count += 1
 
             try:
-                summoner_obj = Summoner.objects.get(summonerId=summoner['summonerId'])
+                summoner_obj = Summoner.objects.get(summonerId=summoner['summonerId'], server=server)
 
                 summoner_obj.summonerName = summoner['summonerName']
 
             except Summoner.DoesNotExist:
                 # Fetch the Summoner information from the Riot API.
-                summoner_info = fetch_riot_api('OC1', 'summoner', 'v4', 'summoners/' + summoner['summonerId'])
+                summoner_info = fetch_riot_api(server, 'summoner', 'v4', 'summoners/' + summoner['summonerId'])
 
                 summoner_obj = Summoner.objects.create(
                     # Ids
@@ -367,3 +369,31 @@ def task__get_ranked(server, queue, tier, division=None):
             continue_next = False
             print(Fore.YELLOW + str(
                 total_count) + Style.RESET_ALL + ' Summoners in ' + tier + ' ' + queue + ' updated.')
+
+
+@app.task
+def task__fix_matches(match_list, queue):
+    fixed_matches = 0
+
+    for match in match_list:
+        game_id = match.gameId
+        server = match.platformId
+
+        match.delete()
+
+        new_match = create_match(game_id, server)
+
+        if new_match['isError'] is False and new_match['match'] is not None:
+            fixed_matches += 1
+
+    async_to_sync(get_channel_layer().group_send)(
+        'admin_panel',
+        {
+            'type': 'celery',
+            'message': str(fixed_matches) + ' ' + queue + 'matches fixed.',
+            'data': {
+                'queue': queue,
+                'fixed': fixed_matches
+            }
+        }
+    )
