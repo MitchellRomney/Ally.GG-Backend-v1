@@ -5,6 +5,7 @@ from django.contrib.auth import get_user_model
 from graphene_django import DjangoObjectType
 from graphql_jwt.utils import jwt_encode, jwt_payload
 from django.contrib.auth import authenticate, login
+from dynamic_preferences.registries import global_preferences_registry
 
 
 class UserNode(DjangoObjectType):
@@ -33,6 +34,7 @@ class Mutation(dashboard.schema.Mutation, graphene.ObjectType):
 
     class Login(graphene.Mutation):
         user = graphene.Field(UserNode)
+        patch = graphene.String()
 
         class Arguments:
             username = graphene.String()
@@ -40,6 +42,7 @@ class Mutation(dashboard.schema.Mutation, graphene.ObjectType):
 
         @classmethod
         def mutate(cls, root, info, username, password):
+            global_preferences = global_preferences_registry.manager()
             user_model = get_user_model()
 
             user_obj = user_model.objects.get(username__iexact=username)
@@ -53,7 +56,8 @@ class Mutation(dashboard.schema.Mutation, graphene.ObjectType):
                 raise Exception('It seems your account has been disabled')
 
             login(info.context, user)
-            return cls(user=user)
+
+            return cls(user=user, patch=global_preferences['LATEST_PATCH'])
 
     class ObtainJSONWebToken(graphql_jwt.JSONWebTokenMutation):
         user = graphene.Field(dashboard.schema.UserType)

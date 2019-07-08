@@ -32,6 +32,7 @@ class BigInt(Scalar):
         that supports Integers bigger than a signed
         32-bit integer.
     """
+
     @staticmethod
     def big_to_float(value):
         num = int(value)
@@ -101,6 +102,12 @@ class MatchType(DjangoObjectType):
 class ChampionType(DjangoObjectType):
     class Meta:
         model = Champion
+
+
+class TopChampionType(graphene.ObjectType):
+    champion = graphene.Field(ChampionType)
+    games = graphene.Int()
+    winrate = graphene.Int()
 
 
 class AccessKeyType(DjangoObjectType):
@@ -304,11 +311,12 @@ class PlayerType(DjangoObjectType):
 
 class Query(object):
     # Match Objects
-    match = graphene.Field(MatchType, gameId=graphene.Int())
+    match = graphene.Field(MatchType, gameId=graphene.Argument(BigInt), server=graphene.String())
     all_matches = graphene.List(MatchType)
 
     # Player Objects
-    player = graphene.Field(PlayerType, summonerId=graphene.String(), gameId=graphene.Argument(BigInt), server=graphene.String())
+    player = graphene.Field(PlayerType, summonerId=graphene.String(), gameId=graphene.Argument(BigInt),
+                            server=graphene.String())
     summoner_players = graphene.List(PlayerType,
                                      summonerName=graphene.String(),
                                      games=graphene.Int(),
@@ -319,7 +327,7 @@ class Query(object):
     user = graphene.Field(UserType, username=graphene.String(), id=graphene.Int())
 
     # Improvement Log Objects
-    log = graphene.Field(ImprovementLogType, summonerId=graphene.String(), gameId=graphene.Int())
+    log = graphene.Field(ImprovementLogType, summonerId=graphene.String(), gameId=graphene.Argument(BigInt))
 
     # Champion Objects
     champion_search = graphene.List(ChampionType, entry=graphene.String())
@@ -332,7 +340,8 @@ class Query(object):
                                  server=graphene.String())
 
     # Summoner Objects
-    summoner = graphene.Field(SummonerType, summonerName=graphene.String(), summonerId=graphene.String(), server=graphene.String())
+    summoner = graphene.Field(SummonerType, summonerName=graphene.String(), summonerId=graphene.String(),
+                              server=graphene.String())
     get_summoners = graphene.List(SummonerType, summonerIds=graphene.List(graphene.String))
     summoner_search = graphene.List(SummonerType, entry=graphene.String(), server=graphene.String())
     top_summoners = graphene.List(SummonerType, server=graphene.String())
@@ -423,14 +432,16 @@ class Query(object):
     def resolve_top_summoners(self, info, **kwargs):
         server = kwargs.get('server')
 
-        return Summoner.objects.filter(server=server).order_by('soloQ_tier__order', 'soloQ_rank', '-soloQ_leaguePoints').exclude(soloQ_tier=None)[:100]
+        return Summoner.objects.filter(server=server).order_by('soloQ_tier__order', 'soloQ_rank',
+                                                               '-soloQ_leaguePoints').exclude(soloQ_tier=None)[:100]
 
     @staticmethod
     def resolve_match(self, info, **kwargs):
         game_id = kwargs.get('gameId')
+        server = kwargs.get('server')
 
         if game_id:
-            return Match.objects.get(gameId=game_id)
+            return Match.objects.get(gameId=game_id, platformId=server)
 
     @staticmethod
     def resolve_summoner_players(self, info, **kwargs):
@@ -836,6 +847,26 @@ class FixDataIntegrity(graphene.Mutation):
         )
 
 
+class SummonerStats(graphene.Mutation):
+    class Arguments:
+        summoner_name = graphene.String()
+
+    top_champions = graphene.List(TopChampionType)
+
+    @staticmethod
+    def mutate(root, info, summoner_name):
+        summoner = Summoner.objects.get(summonerName=summoner_name)
+        top_champs = []
+
+        count = Player.objects.filter(summoner=summoner).values('champion__key').annotate(
+            champcount=Count('champion')).order_by('-champcount')[:6]
+
+        for champion in count:
+            top_champs.append(TopChampionType(champion=Champion.objects.get(key=champion['champion__key']), games=champion['champcount']))
+
+        return SummonerStats(top_champions=top_champs)
+
+
 class Mutation(graphene.ObjectType):
     create_summoner = CreateSummoner.Field()
     update_summoner = UpdateSummoner.Field()
@@ -849,3 +880,4 @@ class Mutation(graphene.ObjectType):
     verify_summoner = VerifySummoner.Field()
     initial_load = InitialLoad.Field()
     fix_data_integrity = FixDataIntegrity.Field()
+    summoner_stats = SummonerStats.Field()
