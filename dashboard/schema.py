@@ -23,6 +23,7 @@ from dashboard.tasks import task__update_summoner, task__fetch_match, task__get_
 from graphql import GraphQLError
 from graphene.types import Scalar
 from graphql.language import ast
+from django.db.models import Q
 from graphene.types.scalars import MIN_INT, MAX_INT
 
 
@@ -859,10 +860,14 @@ class SummonerStats(graphene.Mutation):
         top_champs = []
 
         count = Player.objects.filter(summoner=summoner).values('champion__key').annotate(
-            champcount=Count('champion')).order_by('-champcount')[:6]
+            champcount=Count('champion'), wins=Count('win', filter=Q(win=True))).order_by('-champcount')[:6]
+
+        print(count)
 
         for champion in count:
-            top_champs.append(TopChampionType(champion=Champion.objects.get(key=champion['champion__key']), games=champion['champcount']))
+            winrate = round((champion['wins'] / champion['champcount']) * 100)
+            top_champs.append(TopChampionType(champion=Champion.objects.get(key=champion['champion__key']),
+                                              games=champion['champcount'], winrate=winrate))
 
         return SummonerStats(top_champions=top_champs)
 
