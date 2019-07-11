@@ -32,6 +32,7 @@ def task__update_summoner(summoner_id, server):
         {{
           summoner(summonerId: "{summoner_id}", server: "{server}") {{
               summonerId
+              server
               summonerName
               profileIconId
               summonerLevel
