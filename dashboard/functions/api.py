@@ -29,7 +29,7 @@ def fetch_riot_api(server, endpoint, version, path, extra='', session=None):
             print(Fore.YELLOW + '[INFO]: ' + Style.RESET_ALL + 'Rate limit hit. Waiting ' + wait
                   + ' seconds until retrying.')
 
-            time.sleep(wait)
+            time.sleep(int(wait))
             response = session.get(url, headers=headers)
 
     else:
@@ -40,8 +40,8 @@ def fetch_riot_api(server, endpoint, version, path, extra='', session=None):
 
             print(Fore.YELLOW + '[INFO]: ' + Style.RESET_ALL + 'Rate limit hit. Waiting ' + wait
                   + ' seconds until retrying.')
-            
-            time.sleep(wait)
+
+            time.sleep(int(wait))
             response = requests.get(url, headers=headers)
 
     if response.status_code != 404:
