@@ -3,6 +3,7 @@ from colorama import Fore, Style
 from sentry_sdk import configure_scope
 import requests
 import json
+import time
 
 
 def fetch_riot_api(server, endpoint, version, path, extra='', session=None):
@@ -21,19 +22,29 @@ def fetch_riot_api(server, endpoint, version, path, extra='', session=None):
     # Make the request.
     if session:
         response = session.get(url, headers=headers)
+
+        while response.status_code == 429:
+            wait = response.headers['Retry-After']
+
+            print(Fore.YELLOW + '[INFO]: ' + Style.RESET_ALL + 'Rate limit hit. Waiting ' + wait
+                  + ' seconds until retrying.')
+
+            time.sleep(wait)
+            response = session.get(url, headers=headers)
+
     else:
         response = requests.get(url, headers=headers)
 
+        while response.status_code == 429:
+            wait = response.headers['Retry-After']
+
+            print(Fore.YELLOW + '[INFO]: ' + Style.RESET_ALL + 'Rate limit hit. Waiting ' + wait
+                  + ' seconds until retrying.')
+            
+            time.sleep(wait)
+            response = requests.get(url, headers=headers)
+
     if response.status_code != 404:
-        # Print the Rate Limit and App Limit Counts to keep track of limits.
-        # if 'X-Method-Rate-Limit-Count' in response.headers:
-        #     print(Fore.MAGENTA + 'App Rate Limit Count: '
-        #           + Style.RESET_ALL + response.headers['X-App-Rate-Limit-Count']
-        #           + Fore.MAGENTA + ' / Method Rate Limit Count: '
-        #           + Style.RESET_ALL + response.headers['X-Method-Rate-Limit-Count'])
-        # elif 'X-App-Rate-Limit-Count' in response.headers:
-        #     print(Fore.MAGENTA + 'App Rate Limit Count: '
-        #           + Style.RESET_ALL + response.headers['X-App-Rate-Limit-Count'])
 
         # Parse the response so it's usable.
         parsed_response = json.loads(json.dumps(response.json()))
