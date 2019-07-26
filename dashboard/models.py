@@ -314,8 +314,8 @@ class Summoner(models.Model):
     user_profile = models.ForeignKey(Profile, related_name="Summoners", on_delete=models.SET_NULL, null=True,
                                      blank=True)
     summonerName = models.CharField(max_length=255, blank=False)
-    summonerId = models.CharField(max_length=255, primary_key=True, blank=False)  # 'ID' sometimes.
-    puuid = models.CharField(max_length=255, unique=True, blank=True, null=True)
+    summonerId = models.CharField(max_length=255, blank=False)  # 'ID' sometimes.
+    puuid = models.CharField(max_length=255, blank=True, null=True)
     accountId = models.CharField(max_length=255, blank=True, null=True)
 
     # General
