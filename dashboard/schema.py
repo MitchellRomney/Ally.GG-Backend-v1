@@ -557,23 +557,29 @@ class UpdateSummoner(graphene.Mutation):
     class Arguments:
         summoner_id = graphene.String()
         server = graphene.String()
+        games = graphene.Int()
 
     new_matches = graphene.Int()
 
     @staticmethod
-    def mutate(root, info, summoner_id, server):
-        new_matches = 0
+    def mutate(root, info, summoner_id, server, games):
 
         task__update_summoner.delay(summoner_id, server)
 
-        fetched_matches = fetch_match_list(summoner_id, server)
+        fetched_matches = fetch_match_list(summoner_id, server, games)
 
-        for match in fetched_matches:
-            if Match.objects.filter(gameId=match['gameId'], platformId=server).count() == 0:
-                new_matches += 1
-                task__fetch_match.delay(match['gameId'], summoner_id, server)
+        existing_matches = list(match['gameId'] for match in Match.objects.filter(
+            summoners__in=[Summoner.objects.get(summonerId=summoner_id, server=server)]).values('gameId'))
 
-        return UpdateSummoner(new_matches=new_matches)
+        fetched_ids = list(match['gameId'] for match in fetched_matches)
+
+        print(fetched_ids)
+        new_matches = list(gameId for gameId in fetched_ids if gameId not in existing_matches)
+
+        for match_id in new_matches:
+            task__fetch_match.delay(match_id, summoner_id, server)
+
+        return UpdateSummoner(new_matches=len(new_matches))
 
 
 class FetchMatchInput(graphene.InputObjectType):

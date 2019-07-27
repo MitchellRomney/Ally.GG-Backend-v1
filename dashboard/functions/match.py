@@ -5,17 +5,38 @@ import re
 import pytz
 
 
-def fetch_match_list(summoner_id, server='OC1'):
+def fetch_match_list(summoner_id, server='OC1', games=-1):
     # Get the Summoner that you're fetching for.
     summoner = Summoner.objects.get(summonerId=summoner_id)
 
+    begin_index = 0
+
+    end_index = games if games != -1 else 100
+
+    total_matches = []
+
     # Get the match list from the Riot API.
-    matches = fetch_riot_api(server, 'match', 'v4', 'matchlists/by-account/' + summoner.accountId, '?endIndex=10')
+    matches = fetch_riot_api(server, 'match', 'v4', 'matchlists/by-account/' + summoner.accountId
+                             + '?season=13&beginIndex=' + str(begin_index) + '&endIndex=' + str(end_index))
 
     # Make sure that the matches actually exist in the response.
     if 'matches' in matches:
-        # Return the list of matches.
-        return matches['matches']
+
+        total_matches.extend(matches['matches'])
+
+        while len(matches['matches']) == 100 and games is -1:
+
+            begin_index += 100
+            end_index += 100
+
+            # Get the match list from the Riot API.
+            matches = fetch_riot_api(server, 'match', 'v4', 'matchlists/by-account/' + summoner.accountId
+                                     + '?season=13&beginIndex=' + str(begin_index) + '&endIndex=' + str(end_index))
+
+            total_matches.extend(matches['matches'])
+
+    # Return the list of matches.
+    return total_matches
 
 
 def create_match(game_id, server='OC1'):

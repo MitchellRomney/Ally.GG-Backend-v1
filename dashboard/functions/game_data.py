@@ -1,4 +1,5 @@
 from dashboard.functions.summoners import *
+from dashboard.functions.general import is_new_version
 from dashboard.models import *
 from colorama import Fore, Style
 
@@ -71,7 +72,7 @@ def check_champions(version):  # Create/Update all champions.
 
         else:  # If champion DOES exist already, update itself.
             existing_champion = Champion.objects.get(key=value['key'])
-            if existing_champion.version != version:
+            if is_new_version(existing_champion.version, version):
 
                 existing_champion.version = value['version']
                 existing_champion.champId = value['id']
@@ -152,7 +153,7 @@ def check_runes(version):  # Create/Update all runes.
                 else:  # If champion DOES exist already, update itself.
                     existing_rune = Rune.objects.get(runeId=rune['id'])
 
-                    if existing_rune.version < version:
+                    if is_new_version(existing_rune.version, version):
                         existing_rune.runeId = rune['id']
                         existing_rune.key = rune['key']
                         existing_rune.icon = rune['icon']
@@ -169,7 +170,7 @@ def check_runes(version):  # Create/Update all runes.
 def check_items(version):  # Create/Update all items.
 
     if Item.objects.filter(itemId=0).count() == 0:
-        Item.objects.create(itemId=0,name="No Item")
+        Item.objects.create(itemId=0, name="No Item")
 
     item_info = fetch_ddragon_api(version, 'data', 'item.json')
     for item, value in item_info['data'].items():
@@ -182,7 +183,7 @@ def check_items(version):  # Create/Update all items.
 
         existing_item = Item.objects.get(itemId=item)
 
-        if existing_item.version < version:
+        if is_new_version(existing_item.version, version):
             existing_item.version = version
             existing_item.itemId = item
             existing_item.name = value['name']
@@ -335,7 +336,7 @@ def check_summoner_spells(version):  # Create/Update all summoner spells.
 
         existing_spell = SummonerSpell.objects.get(key=value['key'])
 
-        if existing_spell.version != version:
+        if is_new_version(existing_spell.version, version):
             existing_spell.version = version
             existing_spell.key = value['key']
             existing_spell.summonerSpellId = value['id']
