@@ -114,7 +114,8 @@ def create_match(game_id, server='OC1'):
                 if player_account_info['player']['accountId'] != '0':
 
                     # Add Summoner to database if it doesn't already exist.
-                    if Summoner.objects.filter(summonerId=player_account_info['player']['summonerId']).count() == 0:
+                    if Summoner.objects.filter(summonerId=player_account_info['player']['summonerId'],
+                                               server=server).count() == 0:
                         add_summoner('SummonerId', player_account_info['player']['summonerId'], server)
 
                     # Add Summoner to Match.summoners relation field.
