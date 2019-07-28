@@ -35,6 +35,8 @@ def fetch_riot_api(server, endpoint, version, path, extra='', session=None):
     else:
         response = requests.get(url, headers=headers)
 
+        attempt = 0
+
         while response.status_code == 429:
             wait = response.headers['Retry-After']
 
@@ -43,6 +45,20 @@ def fetch_riot_api(server, endpoint, version, path, extra='', session=None):
 
             time.sleep(int(wait))
             response = requests.get(url, headers=headers)
+
+        while response.status_code == 500 or response.status_code == 503:
+
+            attempt += 1
+
+            print(Fore.YELLOW + '[INFO]: ' + Style.RESET_ALL + 'Server Unavailable. Trying again. (Attempt '
+                  + str(attempt) + ')')
+
+            time.sleep(1)
+            response = requests.get(url, headers=headers)
+
+            if response.status_code == 500 or response.status_code == 503 and attempt >= 10:
+                print(Fore.RED + '[ERROR]: ' + Style.RESET_ALL + 'Server Unavailable. Max attempt hit, skipping.')
+                return None
 
     if response.status_code != 404:
 

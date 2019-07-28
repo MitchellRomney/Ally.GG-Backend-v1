@@ -119,7 +119,7 @@ def create_match(game_id, server='OC1'):
 
                     # Add Summoner to Match.summoners relation field.
                     new_match.summoners.add(
-                        Summoner.objects.get(summonerId=player_account_info['player']['summonerId']))
+                        Summoner.objects.get(summonerId=player_account_info['player']['summonerId']), server=server)
 
                 # Create the Player.
                 try:
