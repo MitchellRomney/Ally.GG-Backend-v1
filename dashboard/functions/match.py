@@ -350,7 +350,8 @@ def create_player(match, player_team, player_account_info, player_data):
 
     # Add relation to Summoner object if the Player isn't a bot.
     if 'summonerId' in player_account_info['player']:
-        new_player.summoner = Summoner.objects.get(summonerId=player_account_info['player']['summonerId'])
+        new_player.summoner = Summoner.objects.get(summonerId=player_account_info['player']['summonerId'],
+                                                   server=player_account_info['player']['platformId'])
 
     # Get the patch version from the game to fetch missing items & runes.
     patch = re.compile('\d\.\d{1,2}\.').findall(match.gameVersion)[0] + '1'
