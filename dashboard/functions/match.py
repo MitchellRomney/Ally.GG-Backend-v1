@@ -124,7 +124,7 @@ def create_match(game_id, server='OC1'):
 
                 # Create the Player.
                 try:
-                    new_player = create_player(new_match, player_team, player_account_info, player_data)
+                    new_player = create_player(new_match, player_team, player_account_info, player_data, server)
                 except KeyError as key_error:
                     new_match.delete()
                     capture_exception(key_error)
@@ -210,7 +210,7 @@ def create_team(match, team_data):
         return new_team
 
 
-def create_player(match, player_team, player_account_info, player_data):
+def create_player(match, player_team, player_account_info, player_data, server):
     # Build the Player object.
     new_player = Player(
         # Key IDs & Participant Identity
@@ -352,7 +352,7 @@ def create_player(match, player_team, player_account_info, player_data):
     # Add relation to Summoner object if the Player isn't a bot.
     if 'summonerId' in player_account_info['player']:
         new_player.summoner = Summoner.objects.get(summonerId=player_account_info['player']['summonerId'],
-                                                   server=player_account_info['player']['platformId'])
+                                                   server=server)
 
     # Get the patch version from the game to fetch missing items & runes.
     patch = re.compile('\d\.\d{1,2}\.').findall(match.gameVersion)[0] + '1'
