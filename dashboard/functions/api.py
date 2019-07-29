@@ -26,19 +26,22 @@ def fetch_riot_api(server, endpoint, version, path, extra='', session=None):
 
         while response.status_code == 429:
             wait = response.headers['Retry-After']
+            limit_type = response.headers['X-Rate-Limit-Type']
 
-            print(Fore.YELLOW + '[INFO]: ' + Style.RESET_ALL + 'Rate limit hit. Waiting ' + wait
+            print(Fore.YELLOW + '[INFO]: ' + Style.RESET_ALL + limit_type + ' rate limit hit. Waiting ' + wait
                   + ' seconds until retrying.')
 
+            '''
             print(
-                Fore.CYAN + '[DEBUG]: ' + Style.RESET_ALL
+                Fore.CYAN + '\n[DEBUG]: ' + Style.RESET_ALL
                 + 'URL: ' + url
-                + '. \n X-Rate-Limit-Type: ' + response.headers['X-Rate-Limit-Type']
+                + '. \n X-Rate-Limit-Type: ' + limit_type
                 + '. \n X-App-Rate-Limit: ' + response.headers['X-App-Rate-Limit']
                 + '. \n X-App-Rate-Limit-Count: ' + response.headers['X-App-Rate-Limit-Count']
-                + '. \n X-Method_Rate-Limit' + response.headers['X-Method-Rate-Limit']
-                + '. \n X-Method_Rate-Limit-Count' + response.headers['X-Method-Rate-Limit-Count']
+                + '. \n X-Method_Rate-Limit: ' + response.headers['X-Method-Rate-Limit']
+                + '. \n X-Method_Rate-Limit-Count: ' + response.headers['X-Method-Rate-Limit-Count']
             )
+            '''
 
             time.sleep(int(wait))
             response = session.get(url, headers=headers)
@@ -64,19 +67,22 @@ def fetch_riot_api(server, endpoint, version, path, extra='', session=None):
 
         while response.status_code == 429:
             wait = response.headers['Retry-After']
+            limit_type = response.headers['X-Rate-Limit-Type']
 
-            print(Fore.YELLOW + '[INFO]: ' + Style.RESET_ALL + 'Rate limit hit. Waiting ' + wait
+            print(Fore.YELLOW + '[INFO]: ' + Style.RESET_ALL + limit_type + 'rate limit hit. Waiting ' + wait
                   + ' seconds until retrying.')
 
+            '''
             print(
-                Fore.CYAN + '[DEBUG]: ' + Style.RESET_ALL
+                Fore.CYAN + '\n[DEBUG]: ' + Style.RESET_ALL
                 + 'URL: ' + url
-                + '. \n X-Rate-Limit-Type: ' + response.headers['X-Rate-Limit-Type']
+                + '. \n X-Rate-Limit-Type: ' + limit_type
                 + '. \n X-App-Rate-Limit: ' + response.headers['X-App-Rate-Limit']
                 + '. \n X-App-Rate-Limit-Count: ' + response.headers['X-App-Rate-Limit-Count']
                 + '. \n X-Method_Rate-Limit: ' + response.headers['X-Method-Rate-Limit']
                 + '. \n X-Method_Rate-Limit-Count: ' + response.headers['X-Method-Rate-Limit-Count']
             )
+            '''
 
             time.sleep(int(wait))
             response = requests.get(url, headers=headers)
