@@ -21,7 +21,7 @@ def add_summoner(method, value, server='OC1'):
             }
 
     # Search if Summoner already exists in database.
-    existing_summoner = Summoner.objects.filter(summonerId=summoner_info['id'])
+    existing_summoner = Summoner.objects.filter(summonerId=summoner_info['id'], server=server)
 
     # If Summoner doesn't exist, create it.
     if existing_summoner.count() == 0:
