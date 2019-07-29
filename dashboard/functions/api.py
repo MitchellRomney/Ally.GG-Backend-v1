@@ -42,12 +42,11 @@ def fetch_riot_api(server, endpoint, version, path, extra='', session=None):
             print(Fore.YELLOW + '[INFO]: ' + Style.RESET_ALL + 'Rate limit hit. Waiting ' + wait
                   + ' seconds until retrying.')
 
-            print(
-                Fore.CYAN + '[DEBUG]: ' + Style.RESET_ALL
-                + 'URL: ' + url
-                + '. X-App-Rate-Limit-Count: ' + response.headers['X-App-Rate-Limit-Count']
-                + '. X-Method_Rate-Limit-Count' + response.headers['X-Method-Rate-Limit-Count']
-            )
+            print(Fore.CYAN + '[DEBUG]: ' + Style.RESET_ALL + 'URL: ' + url)
+            print(Fore.CYAN + '[DEBUG]: ' + Style.RESET_ALL + 'X-App-Rate-Limit-Count: ' + response.headers[
+                'X-App-Rate-Limit-Count'])
+            print(Fore.CYAN + '[DEBUG]: ' + Style.RESET_ALL + 'X-Method_Rate-Limit-Count' + response.headers[
+                'X-Method-Rate-Limit-Count'])
 
             time.sleep(int(wait))
             response = requests.get(url, headers=headers)
