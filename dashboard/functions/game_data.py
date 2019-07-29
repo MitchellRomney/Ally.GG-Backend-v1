@@ -132,7 +132,7 @@ def check_runes(version):  # Create/Update all runes.
     for tree in runes_info:
         for slot in tree['slots']:
             for rune in slot['runes']:
-                existing_rune = Rune.objects.filter(runeId=rune['id'])
+                existing_rune = Rune.objects.filter(runeId=rune['id'], version=version)
 
                 if existing_rune.count() == 0:  # If rune doesn't exist in database.
 
@@ -178,6 +178,7 @@ def check_items(version):  # Create/Update all items.
         if existing_item.count() == 0:
             Item.objects.create(
                 itemId=item,
+                version=version
             )
             print(Fore.GREEN + 'New item added: ' + Style.RESET_ALL + value['name'])
 

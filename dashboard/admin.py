@@ -52,6 +52,7 @@ class SummonerAdmin(admin.ModelAdmin):
 
     search_fields = (
         'summonerName',
+        'summonerId',
         'user_profile__user__username',
         'soloQ_tier__name'
     )
