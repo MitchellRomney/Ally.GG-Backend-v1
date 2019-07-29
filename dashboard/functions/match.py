@@ -106,6 +106,7 @@ def create_match(game_id, server='OC1'):
 
         summoner_id = player_account_info['player']['summonerId']
         summoner_server = player_account_info['player']['currentPlatformId']
+        summoner_name = player_account_info['player']['summonerName']
 
         for player_data in match_data['participants']:
             if player_data['participantId'] == player_account_info['participantId']:
@@ -120,8 +121,19 @@ def create_match(game_id, server='OC1'):
                     if Summoner.objects.filter(summonerId=summoner_id, server=summoner_server).count() == 0:
                         add_summoner('SummonerId', summoner_id, summoner_server)
 
-                    # Add Summoner to Match.summoners relation field.
-                    new_match.summoners.add(Summoner.objects.get(summonerId=summoner_id, server=summoner_server))
+                    try:
+                        # Add Summoner to Match.summoners relation field.
+                        new_match.summoners.add(Summoner.objects.get(summonerId=summoner_id, server=summoner_server))
+                    except Summoner.DoesNotExist as error:
+                        new_match.delete()
+                        print(
+                            Fore.RED + '[ERROR]: '
+                            + Style.RESET_ALL + 'Summoner not found. '
+                            + 'SummonerID: ' + summoner_id
+                            + ' | Server: ' + summoner_server
+                            + ' | SummonerName: ' + summoner_name
+                        )
+                        return {'isError': True, 'errorMessage': '{0}'.format(error), 'ignore': True}
 
                 # Create the Player.
                 try:

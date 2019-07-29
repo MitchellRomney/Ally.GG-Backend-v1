@@ -329,7 +329,7 @@ def check_summoner_spells(version):  # Create/Update all summoner spells.
     for spell, value in summoner_spell_info['data'].items():
         existing_spell = SummonerSpell.objects.filter(key=value['key'])
         if existing_spell.count() == 0:
-            existing_spell = SummonerSpell(key=value['key'])
+            existing_spell = SummonerSpell(key=value['key'], version=version)
             existing_spell.save()
 
             print(Fore.GREEN + 'New spell added: ' + Style.RESET_ALL + value['name'])
