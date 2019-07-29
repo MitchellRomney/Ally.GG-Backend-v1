@@ -74,8 +74,8 @@ def fetch_riot_api(server, endpoint, version, path, extra='', session=None):
                 + '. \n X-Rate-Limit-Type: ' + response.headers['X-Rate-Limit-Type']
                 + '. \n X-App-Rate-Limit: ' + response.headers['X-App-Rate-Limit']
                 + '. \n X-App-Rate-Limit-Count: ' + response.headers['X-App-Rate-Limit-Count']
-                + '. \n X-Method_Rate-Limit' + response.headers['X-Method-Rate-Limit']
-                + '. \n X-Method_Rate-Limit-Count' + response.headers['X-Method-Rate-Limit-Count']
+                + '. \n X-Method_Rate-Limit: ' + response.headers['X-Method-Rate-Limit']
+                + '. \n X-Method_Rate-Limit-Count: ' + response.headers['X-Method-Rate-Limit-Count']
             )
 
             time.sleep(int(wait))
