@@ -7,7 +7,7 @@ import pytz
 
 def fetch_match_list(summoner_id, server='OC1', games=-1):
     # Get the Summoner that you're fetching for.
-    summoner = Summoner.objects.get(summonerId=summoner_id)
+    summoner = Summoner.objects.get(summonerId=summoner_id, server=server)
 
     begin_index = 0
 
@@ -120,7 +120,8 @@ def create_match(game_id, server='OC1'):
 
                     # Add Summoner to Match.summoners relation field.
                     new_match.summoners.add(
-                        Summoner.objects.get(summonerId=player_account_info['player']['summonerId'], server=server))
+                        Summoner.objects.get(summonerId=player_account_info['player']['summonerId'],
+                                             server=player_account_info['player']['currentPlatformId']))
 
                 # Create the Player.
                 try:
@@ -352,7 +353,7 @@ def create_player(match, player_team, player_account_info, player_data, server):
     # Add relation to Summoner object if the Player isn't a bot.
     if 'summonerId' in player_account_info['player']:
         new_player.summoner = Summoner.objects.get(summonerId=player_account_info['player']['summonerId'],
-                                                   server=server)
+                                                   server=player_account_info['player']['currentPlatformId'])
 
     # Get the patch version from the game to fetch missing items & runes.
     patch = re.compile('\d\.\d{1,2}\.').findall(match.gameVersion)[0] + '1'

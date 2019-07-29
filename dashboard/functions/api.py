@@ -7,7 +7,6 @@ import time
 
 
 def fetch_riot_api(server, endpoint, version, path, extra='', session=None):
-
     # Build the URL that will request the data.
     url = 'https://' + server + '.api.riotgames.com/lol/' + endpoint + '/' + version + '/' + path + extra
 
@@ -43,6 +42,13 @@ def fetch_riot_api(server, endpoint, version, path, extra='', session=None):
             print(Fore.YELLOW + '[INFO]: ' + Style.RESET_ALL + 'Rate limit hit. Waiting ' + wait
                   + ' seconds until retrying.')
 
+            print(
+                Fore.CYAN + '[DEBUG]: ' + Style.RESET_ALL
+                + 'URL: ' + url
+                + '. X-App-Rate-Limit-Count: ' + response.headers['X-App-Rate-Limit-Count']
+                + '. X-Method_Rate-Limit-Count' + response.headers['X-Method-Rate-Limit-Count']
+            )
+
             time.sleep(int(wait))
             response = requests.get(url, headers=headers)
 
@@ -69,9 +75,8 @@ def fetch_riot_api(server, endpoint, version, path, extra='', session=None):
         with configure_scope() as scope:
             scope.set_extra('JSON', parsed_response)
 
-        if 'status' in parsed_response: # Check if there is an error code of 500, and then try again if so.
+        if 'status' in parsed_response:  # Check if there is an error code of 500, and then try again if so.
             if parsed_response['status']['status_code'] == 500:
-
                 # Make the request.
                 response = requests.get(url, headers=headers)
 
