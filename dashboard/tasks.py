@@ -360,10 +360,10 @@ def get_league_entries(server, queue, tier, division=None, page=1, total_count=0
             page += 1
             get_league_entries.delay(server, queue, tier, division, page, total_count)
         else:
-            print(Fore.MAGENTA + '[' + server + '] ' + Fore.YELLOW + str(
+            print(Fore.GREEN + '[' + server + '] ' + Fore.YELLOW + str(
                 total_count) + Style.RESET_ALL + ' Summoners in ' + tier + ' ' + division + ' ' + queue + ' updated.')
     else:
-        print(Fore.MAGENTA + '[' + server + '] ' + Fore.YELLOW + str(
+        print(Fore.GREEN + '[' + server + '] ' + Fore.YELLOW + str(
             total_count) + Style.RESET_ALL + ' Summoners in ' + tier + ' ' + queue + ' updated.')
 
 

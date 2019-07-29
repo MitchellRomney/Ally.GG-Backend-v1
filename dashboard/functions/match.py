@@ -25,7 +25,6 @@ def fetch_match_list(summoner_id, server='OC1', games=-1):
         total_matches.extend(matches['matches'])
 
         while len(matches['matches']) == 100 and games is -1:
-
             begin_index += 100
             end_index += 100
 
@@ -105,8 +104,12 @@ def create_match(game_id, server='OC1'):
         red_team = Team.objects.get(match=new_match, teamId=200)
         player_team = blue_team if player_account_info['participantId'] <= 5 else red_team
 
+        summoner_id = player_account_info['player']['summonerId']
+        summoner_server = player_account_info['player']['currentPlatformId']
+
         for player_data in match_data['participants']:
             if player_data['participantId'] == player_account_info['participantId']:
+
                 # Add to the player count.
                 player_count += 1
 
@@ -114,18 +117,15 @@ def create_match(game_id, server='OC1'):
                 if player_account_info['player']['accountId'] != '0':
 
                     # Add Summoner to database if it doesn't already exist.
-                    if Summoner.objects.filter(summonerId=player_account_info['player']['summonerId'],
-                                               server=server).count() == 0:
-                        add_summoner('SummonerId', player_account_info['player']['summonerId'], server)
+                    if Summoner.objects.filter(summonerId=summoner_id, server=summoner_server).count() == 0:
+                        add_summoner('SummonerId', summoner_id, summoner_server)
 
                     # Add Summoner to Match.summoners relation field.
-                    new_match.summoners.add(
-                        Summoner.objects.get(summonerId=player_account_info['player']['summonerId'],
-                                             server=player_account_info['player']['currentPlatformId']))
+                    new_match.summoners.add(Summoner.objects.get(summonerId=summoner_id, server=summoner_server))
 
                 # Create the Player.
                 try:
-                    new_player = create_player(new_match, player_team, player_account_info, player_data, server)
+                    new_player = create_player(new_match, player_team, player_account_info, player_data)
                 except KeyError as key_error:
                     new_match.delete()
                     capture_exception(key_error)
@@ -211,7 +211,11 @@ def create_team(match, team_data):
         return new_team
 
 
-def create_player(match, player_team, player_account_info, player_data, server):
+def create_player(match, player_team, player_account_info, player_data):
+
+    summoner_id = player_account_info['player']['summonerId']
+    summoner_server = player_account_info['player']['currentPlatformId']
+
     # Build the Player object.
     new_player = Player(
         # Key IDs & Participant Identity
@@ -224,8 +228,6 @@ def create_player(match, player_team, player_account_info, player_data, server):
         team=player_team,
 
         # General Player Information
-        spell1Id=SummonerSpell.objects.get(key=player_data['spell1Id']),
-        spell2Id=SummonerSpell.objects.get(key=player_data['spell2Id']),
         champion=Champion.objects.get(key=player_data['championId']),
 
         # Minions
@@ -352,8 +354,7 @@ def create_player(match, player_team, player_account_info, player_data, server):
 
     # Add relation to Summoner object if the Player isn't a bot.
     if 'summonerId' in player_account_info['player']:
-        new_player.summoner = Summoner.objects.get(summonerId=player_account_info['player']['summonerId'],
-                                                   server=player_account_info['player']['currentPlatformId'])
+        new_player.summoner = Summoner.objects.get(summonerId=summoner_id, server=summoner_server)
 
     # Get the patch version from the game to fetch missing items & runes.
     patch = re.compile('\d\.\d{1,2}\.').findall(match.gameVersion)[0] + '1'
@@ -376,6 +377,14 @@ def create_player(match, player_team, player_account_info, player_data, server):
     new_player.item4 = Item.objects.get(itemId=player_data['stats']['item4'])
     new_player.item5 = Item.objects.get(itemId=player_data['stats']['item5'])
     new_player.item6 = Item.objects.get(itemId=player_data['stats']['item6'])
+
+    if SummonerSpell.objects.filter(key=player_data['spell1Id']).count() == 0 \
+            or SummonerSpell.objects.filter(key=player_data['spell2Id']).count() == 0:
+        check_summoner_spells(patch)
+
+    # Add all items to the player object.
+    new_player.spell1Id = Item.objects.get(itemId=player_data['spell1Id'])
+    new_player.spell2Id = Item.objects.get(itemId=player_data['spell2Id'])
 
     # Check all Runes if they exist in the data, and if they exist in the database. Then add to Player.
     if 'perk0' in player_data['stats']:

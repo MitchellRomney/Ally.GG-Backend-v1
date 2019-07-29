@@ -8,7 +8,7 @@ from dashboard.models import Player, Match, Summoner, RankedTier, Champion, Item
     ImprovementLog, AccessCode, ThirdPartyVerification
 from django.db.models import Sum
 from dashboard.functions.summoners import add_summoner, update_summoner
-from dashboard.functions.match import fetch_match_list, create_match
+from dashboard.functions.match import fetch_match_list
 from dashboard.functions.api import fetch_riot_api
 from dashboard.functions.users import generate_third_party
 from graphene_django.converter import convert_django_field
