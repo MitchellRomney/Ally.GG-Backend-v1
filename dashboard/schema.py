@@ -19,7 +19,7 @@ from django.core.mail import send_mail
 from dashboard.functions.users import generate_access_code, account_activation_token
 from django.db import IntegrityError
 from dynamic_preferences.registries import global_preferences_registry
-from dashboard.tasks import task__update_summoner, task__fetch_match, task__get_ranked
+from dashboard.tasks import task__update_summoner, task__fetch_match, get_league_entries
 from graphql import GraphQLError
 from graphene.types import Scalar
 from graphql.language import ast
@@ -614,11 +614,11 @@ class FetchAllRankedSummoners(graphene.Mutation):
         divisions = ['I', 'II', 'III', 'IV']
 
         for tier in high_tiers:
-            task__get_ranked.delay(server, queue, tier)
+            get_league_entries.delay(server, queue, tier)
 
         for tier in tiers:
             for division in divisions:
-                task__get_ranked.delay(server, queue, tier, division)
+                get_league_entries.delay(server, queue, tier, division)
 
         return FunctionType(success=True)
 

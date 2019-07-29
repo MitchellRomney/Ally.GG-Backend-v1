@@ -24,99 +24,89 @@ def fetch_riot_api(server, endpoint, version, path, extra='', session=None):
 
         attempt = 0
 
-        while response.status_code == 429:
-            wait = response.headers['Retry-After']
-            limit_type = response.headers['X-Rate-Limit-Type']
+        while response.status_code == 500 or response.status_code == 503 or response.status_code == 429:
+            if response.status_code == 429:
+                wait = response.headers['Retry-After']
+                limit_type = response.headers['X-Rate-Limit-Type']
 
-            print(Fore.YELLOW + '[INFO]: ' + Style.RESET_ALL + limit_type + ' rate limit hit. Waiting ' + wait
-                  + ' seconds until retrying.')
+                print(Fore.YELLOW + '[INFO]: ' + Style.RESET_ALL + limit_type + ' rate limit hit. Waiting ' + wait
+                      + ' seconds until retrying.')
 
-            '''
-            print(
-                Fore.CYAN + '\n[DEBUG]: ' + Style.RESET_ALL
-                + 'URL: ' + url
-                + '. \n X-Rate-Limit-Type: ' + limit_type
-                + '. \n X-App-Rate-Limit: ' + response.headers['X-App-Rate-Limit']
-                + '. \n X-App-Rate-Limit-Count: ' + response.headers['X-App-Rate-Limit-Count']
-                + '. \n X-Method_Rate-Limit: ' + response.headers['X-Method-Rate-Limit']
-                + '. \n X-Method_Rate-Limit-Count: ' + response.headers['X-Method-Rate-Limit-Count']
-            )
-            '''
+                '''
+                print(
+                    Fore.CYAN + '\n[DEBUG]: ' + Style.RESET_ALL
+                    + 'URL: ' + url
+                    + '. \n X-Rate-Limit-Type: ' + limit_type
+                    + '. \n X-App-Rate-Limit: ' + response.headers['X-App-Rate-Limit']
+                    + '. \n X-App-Rate-Limit-Count: ' + response.headers['X-App-Rate-Limit-Count']
+                    + '. \n X-Method_Rate-Limit: ' + response.headers['X-Method-Rate-Limit']
+                    + '. \n X-Method_Rate-Limit-Count: ' + response.headers['X-Method-Rate-Limit-Count']
+                )
+                '''
 
-            time.sleep(int(wait))
-            response = session.get(url, headers=headers)
+                time.sleep(int(wait))
+                response = session.get(url, headers=headers)
 
-        while response.status_code == 500 or response.status_code == 503:
+            else:
 
-            attempt += 1
+                attempt += 1
 
-            print(Fore.YELLOW + '[INFO]: ' + Style.RESET_ALL + 'Server Unavailable. Trying again. (Attempt '
-                  + str(attempt) + ')')
+                print(Fore.YELLOW + '[INFO]: ' + Style.RESET_ALL + 'Server Unavailable. Trying again. (Attempt '
+                      + str(attempt) + ')')
 
-            time.sleep(1)
-            response = session.get(url, headers=headers)
+                time.sleep(1)
+                response = session.get(url, headers=headers)
 
-            if response.status_code == 500 or response.status_code == 503 and attempt >= 10:
-                print(Fore.RED + '[ERROR]: ' + Style.RESET_ALL + 'Server Unavailable. Max attempt hit, skipping.')
-                return None
+                if response.status_code == 500 or response.status_code == 503 and attempt >= 10:
+                    print(Fore.RED + '[ERROR]: ' + Style.RESET_ALL + 'Server Unavailable. Max attempt hit, skipping.')
+                    return None
 
     else:
         response = requests.get(url, headers=headers)
 
         attempt = 0
 
-        while response.status_code == 429:
-            wait = response.headers['Retry-After']
-            limit_type = response.headers['X-Rate-Limit-Type']
+        while response.status_code == 500 or response.status_code == 503 or response.status_code == 429:
+            if response.status_code == 429:
+                wait = response.headers['Retry-After']
+                limit_type = response.headers['X-Rate-Limit-Type']
 
-            print(Fore.YELLOW + '[INFO]: ' + Style.RESET_ALL + limit_type + 'rate limit hit. Waiting ' + wait
-                  + ' seconds until retrying.')
+                print(Fore.YELLOW + '[INFO]: ' + Style.RESET_ALL + limit_type + ' rate limit hit. Waiting ' + wait
+                      + ' seconds until retrying.')
 
-            '''
-            print(
-                Fore.CYAN + '\n[DEBUG]: ' + Style.RESET_ALL
-                + 'URL: ' + url
-                + '. \n X-Rate-Limit-Type: ' + limit_type
-                + '. \n X-App-Rate-Limit: ' + response.headers['X-App-Rate-Limit']
-                + '. \n X-App-Rate-Limit-Count: ' + response.headers['X-App-Rate-Limit-Count']
-                + '. \n X-Method_Rate-Limit: ' + response.headers['X-Method-Rate-Limit']
-                + '. \n X-Method_Rate-Limit-Count: ' + response.headers['X-Method-Rate-Limit-Count']
-            )
-            '''
+                '''
+                print(
+                    Fore.CYAN + '\n[DEBUG]: ' + Style.RESET_ALL
+                    + 'URL: ' + url
+                    + '. \n X-Rate-Limit-Type: ' + limit_type
+                    + '. \n X-App-Rate-Limit: ' + response.headers['X-App-Rate-Limit']
+                    + '. \n X-App-Rate-Limit-Count: ' + response.headers['X-App-Rate-Limit-Count']
+                    + '. \n X-Method_Rate-Limit: ' + response.headers['X-Method-Rate-Limit']
+                    + '. \n X-Method_Rate-Limit-Count: ' + response.headers['X-Method-Rate-Limit-Count']
+                )
+                '''
 
-            time.sleep(int(wait))
-            response = requests.get(url, headers=headers)
+                time.sleep(int(wait))
+                response = requests.get(url, headers=headers)
 
-        while response.status_code == 500 or response.status_code == 503:
+            else:
 
-            attempt += 1
+                attempt += 1
 
-            print(Fore.YELLOW + '[INFO]: ' + Style.RESET_ALL + 'Server Unavailable. Trying again. (Attempt '
-                  + str(attempt) + ')')
+                print(Fore.YELLOW + '[INFO]: ' + Style.RESET_ALL + 'Server Unavailable. Trying again. (Attempt '
+                      + str(attempt) + ')')
 
-            time.sleep(1)
-            response = requests.get(url, headers=headers)
+                time.sleep(1)
+                response = requests.get(url, headers=headers)
 
-            if response.status_code == 500 or response.status_code == 503 and attempt >= 10:
-                print(Fore.RED + '[ERROR]: ' + Style.RESET_ALL + 'Server Unavailable. Max attempt hit, skipping.')
-                return None
+                if response.status_code == 500 or response.status_code == 503 and attempt >= 10:
+                    print(Fore.RED + '[ERROR]: ' + Style.RESET_ALL + 'Server Unavailable. Max attempt hit, skipping.')
+                    return None
 
     if response.status_code != 404:
 
         # Parse the response so it's usable.
         parsed_response = json.loads(json.dumps(response.json()))
-
-        # Add the JSON to the Sentry reporting scope, will help if an error pops up later.
-        with configure_scope() as scope:
-            scope.set_extra('JSON', parsed_response)
-
-        if 'status' in parsed_response:  # Check if there is an error code of 500, and then try again if so.
-            if parsed_response['status']['status_code'] == 500:
-                # Make the request.
-                response = requests.get(url, headers=headers)
-
-                # Parse the response so it's usable.
-                parsed_response = json.loads(json.dumps(response.json()))
 
         if 'status' in parsed_response:  # If the response is STILL an error, report it.
             with configure_scope() as scope:
