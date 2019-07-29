@@ -383,8 +383,8 @@ def create_player(match, player_team, player_account_info, player_data):
         check_summoner_spells(patch)
 
     # Add all items to the player object.
-    new_player.spell1Id = Item.objects.get(itemId=player_data['spell1Id'])
-    new_player.spell2Id = Item.objects.get(itemId=player_data['spell2Id'])
+    new_player.spell1Id = SummonerSpell.objects.get(key=player_data['spell1Id'])
+    new_player.spell2Id = SummonerSpell.objects.get(key=player_data['spell2Id'])
 
     # Check all Runes if they exist in the data, and if they exist in the database. Then add to Player.
     if 'perk0' in player_data['stats']:
