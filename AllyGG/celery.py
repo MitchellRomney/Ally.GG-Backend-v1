@@ -16,4 +16,4 @@ app.config_from_object('django.conf:settings', namespace='CELERY')
 # Load task modules from all registered Django app configs.
 app.autodiscover_tasks(['dashboard',])
 
-app.control.rate_limit('dashboard.tasks.get_league_entries', '5/s')
+app.control.rate_limit('dashboard.tasks.get_league_entries', '2/s')
