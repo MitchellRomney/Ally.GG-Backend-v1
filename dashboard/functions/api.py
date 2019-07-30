@@ -10,9 +10,6 @@ def fetch_riot_api(server, endpoint, version, path, extra='', session=None):
     # Build the URL that will request the data.
     url = 'https://' + server + '.api.riotgames.com/lol/' + endpoint + '/' + version + '/' + path + extra
 
-    # Print the URL, so it can be easily accessed if necessary.
-    # print(Fore.MAGENTA + '[RIOT API]: ' + Style.RESET_ALL + url)
-
     # Add the Riot API Key to the header of the request for authentication.
     headers = {
         'X-Riot-Token': settings.RIOT_API_KEY,
@@ -123,17 +120,12 @@ def fetch_riot_api(server, endpoint, version, path, extra='', session=None):
 
 
 def fetch_ddragon_api(version, method, option1, option2=None, language='en_US', ):
-    # Depending on the values given, adjust the target variable to accommodate.
-    target = ''
-    if option2:
-        target += '/' + str(option2)
+
+    target = '/' + str(option2) if option2 else ''
 
     # Build the URL that will request the data.
     url = 'https://ddragon.leagueoflegends.com/cdn/' + version + '/' + method + '/' + language + '/' \
           + option1 + target
-
-    # Print the URL, so it can be easily accessed if necessary.
-    print(Fore.MAGENTA + '[DDRAGON API]: ' + Style.RESET_ALL + url)
 
     # Add the Riot API Key to the header of the request for authentication.
     headers = {
@@ -142,11 +134,3 @@ def fetch_ddragon_api(version, method, option1, option2=None, language='en_US', 
 
     # Return the response from the API.
     return json.loads(json.dumps(requests.get(url, headers=headers).json()))
-
-
-def fetch_chatkit_api(endpoint, value=None):
-    instance_id = '5969cdbc-1582-40fa-a851-5aa8bcc6993f'
-    url = 'https://us1.pusherplatform.io/services/chatkit_token_provider/chatkit/v3/' + instance_id + '/' \
-          + endpoint + '/' + value
-    print(Fore.MAGENTA + '[ChatKit API]: ' + Style.RESET_ALL + url)
-    return json.loads(json.dumps(requests.get(url).json()))
