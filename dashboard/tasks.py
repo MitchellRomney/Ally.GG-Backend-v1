@@ -232,7 +232,7 @@ def task__fetch_match(game_id, summoner_id, server):
     return True
 
 
-@app.task
+@app.task(rate_limit="2/s")
 def task_update_stats():
     # Get the Ally.GG global settings.
     global_preferences = global_preferences_registry.manager()
