@@ -24,6 +24,7 @@ DEBUG = True
 ALLOWED_HOSTS = ['*']
 
 INSTALLED_APPS = [
+    'scout_apm.django',
     'django.contrib.auth',
     'dashboard',
     'corsheaders',
@@ -199,3 +200,8 @@ if DEBUG:
     EMAIL_HOST_PASSWORD = ''
     EMAIL_USE_TLS = False
     DEFAULT_FROM_EMAIL = 'testing@example.com'
+
+# Scout settings
+SCOUT_MONITOR = True
+SCOUT_KEY = "Rx55tdJheJQ2widZ9kOx"
+SCOUT_NAME = "AllyGG"
