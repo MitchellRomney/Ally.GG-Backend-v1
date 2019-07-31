@@ -185,7 +185,7 @@ ASGI_APPLICATION = 'AllyGG.routing.application'
 # Channels settings
 CHANNEL_LAYERS = {
    "default": {
-       "BACKEND": "asgi_rabbitmq.RabbitmqChannelLayer",
+       "BACKEND": "channels_rabbitmq.core.RabbitmqChannelLayer",
        "CONFIG": {
            "hosts": [os.environ.get('CLOUDAMQP_URL', 'redis://localhost:6379')],
        },
