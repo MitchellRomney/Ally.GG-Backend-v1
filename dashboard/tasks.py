@@ -1,6 +1,5 @@
 from __future__ import absolute_import, unicode_literals
 from celery.signals import celeryd_init
-from celery.result import allow_join_result
 from dashboard.functions.general import *
 from dashboard.functions.match import create_match
 from dashboard.functions.game_data import *
