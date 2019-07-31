@@ -26,20 +26,17 @@ def fetch_riot_api(server, endpoint, version, path, extra='', session=None):
                 wait = response.headers['Retry-After']
                 limit_type = response.headers['X-Rate-Limit-Type']
 
-                print(Fore.YELLOW + '[INFO]: ' + Style.RESET_ALL + limit_type + ' rate limit hit. Waiting ' + wait
-                      + ' seconds until retrying.')
+                if limit_type == 'application':
+                    limit_info = 'Limit: ' + response.headers['X-App-Rate-Limit'] \
+                                 + '. Count: ' + response.headers['X-App-Rate-Limit-Count']
+                else:
+                    limit_info = 'Limit: ' + response.headers['X-Method-Rate-Limit'] \
+                                 + '. Count: ' + response.headers['X-Method-Rate-Limit-Count']
 
-                '''
-                print(
-                    Fore.CYAN + '\n[DEBUG]: ' + Style.RESET_ALL
-                    + 'URL: ' + url
-                    + '. \n X-Rate-Limit-Type: ' + limit_type
-                    + '. \n X-App-Rate-Limit: ' + response.headers['X-App-Rate-Limit']
-                    + '. \n X-App-Rate-Limit-Count: ' + response.headers['X-App-Rate-Limit-Count']
-                    + '. \n X-Method_Rate-Limit: ' + response.headers['X-Method-Rate-Limit']
-                    + '. \n X-Method_Rate-Limit-Count: ' + response.headers['X-Method-Rate-Limit-Count']
-                )
-                '''
+                print(Fore.YELLOW + '[INFO]: ' + Style.RESET_ALL
+                      + limit_type.capitalize() + ' rate limit hit. [' + endpoint + '/' + version + '/' + path + '] '
+                      + limit_info
+                      + ' | Waiting ' + wait + ' seconds until retrying.')
 
                 time.sleep(int(wait))
                 response = session.get(url, headers=headers)
@@ -68,20 +65,17 @@ def fetch_riot_api(server, endpoint, version, path, extra='', session=None):
                 wait = response.headers['Retry-After']
                 limit_type = response.headers['X-Rate-Limit-Type']
 
-                print(Fore.YELLOW + '[INFO]: ' + Style.RESET_ALL + limit_type + ' rate limit hit. Waiting ' + wait
-                      + ' seconds until retrying.')
+                if limit_type == 'application':
+                    limit_info = 'Limit: ' + response.headers['X-App-Rate-Limit'] \
+                                 + '. Count: ' + response.headers['X-App-Rate-Limit-Count']
+                else:
+                    limit_info = 'Limit: ' + response.headers['X-Method-Rate-Limit'] \
+                                 + '. Count: ' + response.headers['X-Method-Rate-Limit-Count']
 
-                '''
-                print(
-                    Fore.CYAN + '\n[DEBUG]: ' + Style.RESET_ALL
-                    + 'URL: ' + url
-                    + '. \n X-Rate-Limit-Type: ' + limit_type
-                    + '. \n X-App-Rate-Limit: ' + response.headers['X-App-Rate-Limit']
-                    + '. \n X-App-Rate-Limit-Count: ' + response.headers['X-App-Rate-Limit-Count']
-                    + '. \n X-Method_Rate-Limit: ' + response.headers['X-Method-Rate-Limit']
-                    + '. \n X-Method_Rate-Limit-Count: ' + response.headers['X-Method-Rate-Limit-Count']
-                )
-                '''
+                print(Fore.YELLOW + '[INFO]: ' + Style.RESET_ALL
+                      + limit_type.capitalize() + ' rate limit hit. [' + endpoint + '/' + version + '/' + path + '] '
+                      + limit_info
+                      + ' | Waiting ' + wait + ' seconds until retrying.')
 
                 time.sleep(int(wait))
                 response = requests.get(url, headers=headers)
@@ -120,7 +114,6 @@ def fetch_riot_api(server, endpoint, version, path, extra='', session=None):
 
 
 def fetch_ddragon_api(version, method, option1, option2=None, language='en_US', ):
-
     target = '/' + str(option2) if option2 else ''
 
     # Build the URL that will request the data.
