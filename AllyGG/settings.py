@@ -201,7 +201,4 @@ if DEBUG:
     EMAIL_USE_TLS = False
     DEFAULT_FROM_EMAIL = 'testing@example.com'
 
-# Scout settings
-SCOUT_MONITOR = True
-SCOUT_KEY = "Rx55tdJheJQ2widZ9kOx"
 SCOUT_NAME = "AllyGG"
