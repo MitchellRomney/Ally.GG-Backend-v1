@@ -88,7 +88,11 @@ def task__update_summoner(summoner_id, server):
 
 @app.task
 def task__fetch_match(game_id, summoner_id, server):
-    create_match(game_id, server)
+    result = create_match(game_id, server)
+
+    if result['isError']:
+      print(Fore.RED + '[ERROR]: ' + Style.RESET_ALL + result['errorMessage'])
+      return
 
     room_group_name = 'summoner_{0}_{1}'.format(server, summoner_id)
 

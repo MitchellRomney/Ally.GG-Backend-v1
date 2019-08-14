@@ -1,4 +1,5 @@
 from dashboard.functions.summoners import *
+from dashboard.functions.api import *
 from dashboard.functions.general import is_new_version
 from dashboard.models import *
 from colorama import Fore, Style

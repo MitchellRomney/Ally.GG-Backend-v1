@@ -100,6 +100,17 @@ class ProfileAdmin(admin.ModelAdmin):
 class TeamAdmin(admin.ModelAdmin):
     model = Team
 
+    list_display = (
+        'teamId',
+        'match',
+        'date_created',
+    )
+
+    list_select_related = (
+        'match',
+    )
+
+
 
 class PlayerAdmin(admin.ModelAdmin):
     model = Player

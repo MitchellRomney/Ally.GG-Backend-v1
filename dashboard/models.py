@@ -532,6 +532,10 @@ class Team(models.Model):
     dominionVictoryScore = models.BigIntegerField(blank=False)
     vilemawKills = models.BigIntegerField(blank=False)
 
+    # System
+    date_created = models.DateTimeField(auto_now_add=True, blank=False)
+    date_modified = models.DateTimeField(auto_now=True, blank=False)
+
     def __str__(self):
         team = 'Blue' if self.teamId == 100 else 'Red'
         return str(self.match) + ' - Team: ' + team
@@ -541,7 +545,6 @@ class Player(models.Model):
     # Participant Identity
     match = models.ForeignKey(Match, related_name='Players', on_delete=models.CASCADE, blank=False)
     summoner = models.ForeignKey(Summoner, related_name='Players', on_delete=models.SET_NULL, blank=True, null=True)
-    currentPlatformId = models.CharField(max_length=255, blank=False)
     platformId = models.CharField(max_length=255, blank=False)
     matchHistoryUri = models.CharField(max_length=255, blank=False)
     participantId = models.BigIntegerField(blank=False)

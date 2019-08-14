@@ -232,7 +232,6 @@ def create_player(match, player_team, player_account_info, player_data):
     new_player = Player(
         # Key IDs & Participant Identity
         match=Match.objects.get(gameId=match.gameId),
-        currentPlatformId=player_account_info['player']['currentPlatformId'],
         platformId=player_account_info['player']['platformId'],
         matchHistoryUri=player_account_info['player']['matchHistoryUri'],
         participantId=player_account_info['participantId'],
