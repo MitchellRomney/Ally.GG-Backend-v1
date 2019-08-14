@@ -4,6 +4,7 @@ celerybeat-schedule.db
 *.psd
 .idea
 AllyGG/.env
+*.code-workspace
 
 ### Django ###
 *.log

@@ -118,7 +118,7 @@ STATIC_ROOT = 'staticfiles'
 LOGIN_REDIRECT_URL = "home"
 LOGOUT_REDIRECT_URL = "home"
 
-CELERY_BROKER_URL = os.environ.get('CLOUDAMQP_URL', 'redis://localhost:6379')
+CELERY_BROKER_URL = os.environ.get('REDIS_URL', 'redis://localhost:6379')
 CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_IGNORE_RESULT = True
 CELERY_RESULT_SERIALIZER = 'json'
