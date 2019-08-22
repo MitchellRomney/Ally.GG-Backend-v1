@@ -67,6 +67,14 @@ class FunctionType(graphene.ObjectType):
     success = graphene.Boolean()
 
 
+class RecentStatType(graphene.ObjectType):
+    statistic = graphene.String()
+    icon = graphene.String()
+    value = graphene.Float()
+    growth = graphene.Float()
+    scope = graphene.String()
+
+
 class ImprovementLogType(DjangoObjectType):
     class Meta:
         model = ImprovementLog
@@ -282,10 +290,10 @@ class PlayerType(DjangoObjectType):
             return round(self.kills + self.assists, 2)
 
     def resolve_cs_pmin(self, info, **kwargs):
-        if self.totalMinionsKilled != 0:
+        if (self.totalMinionsKilled + self.neutralMinionsKilled) != 0:
             duration_seconds = self.match.gameDuration % 60
             duration_minutes = (self.match.gameDuration - duration_seconds) / 60
-            return round(self.totalMinionsKilled / (duration_minutes + (duration_seconds / 60)), 1)
+            return round((self.totalMinionsKilled + self.neutralMinionsKilled) / (duration_minutes + (duration_seconds / 60)), 1)
         else:
             return 0.0
 
@@ -563,7 +571,6 @@ class UpdateSummoner(graphene.Mutation):
 
     @staticmethod
     def mutate(root, info, summoner_id, server, games):
-
         task__update_summoner.delay(summoner_id, server)
 
         fetched_matches = fetch_match_list(summoner_id, server, games)
@@ -878,6 +885,105 @@ class SummonerStats(graphene.Mutation):
         return SummonerStats(top_champions=top_champs)
 
 
+class HomeStats(graphene.Mutation):
+    class Arguments:
+        summoner_name = graphene.String()
+        server = graphene.String()
+        games = graphene.Int()
+
+    average_kda = graphene.Field(RecentStatType)
+    average_cs = graphene.Field(RecentStatType)
+    average_vision = graphene.Field(RecentStatType)
+    winrate = graphene.Field(RecentStatType)
+
+    @staticmethod
+    def mutate(root, info, summoner_name, server, games):
+        summoner = Summoner.objects.get(summonerName=summoner_name, server=server)
+        scope = Player.objects.filter(summoner=summoner).order_by('-match__timestamp')[:games]
+
+        kills = 0
+        deaths = 0
+        assists = 0
+
+        total_avg_cs = 0.0
+
+        average_vision = 0
+
+        wins = 0
+
+        for player in scope:
+            kills += player.kills
+            deaths += player.deaths
+            assists += player.assists
+
+            if (player.totalMinionsKilled + player.neutralMinionsKilled) != 0:
+                duration_seconds = player.match.gameDuration % 60
+                duration_minutes = (player.match.gameDuration - duration_seconds) / 60
+                total_avg_cs += round((player.totalMinionsKilled + player.neutralMinionsKilled) / (
+                            duration_minutes + (duration_seconds / 60)), 1)
+
+            average_vision += player.visionScore
+
+            wins += 1 if player.win else 0
+
+        if deaths != 0:
+            average = (kills + assists) / deaths
+            total_kda = round(average, 2)
+        else:
+            total_kda = round(kills + assists, 2)
+
+        prev_scope = Player.objects.filter(summoner=summoner).order_by('-match__timestamp')[games:(games * 2)]
+
+        prev_kills = 0
+        prev_deaths = 0
+        prev_assists = 0
+
+        prev_total_avg_cs = 0.0
+
+        prev_average_vision = 0
+
+        prev_wins = 0
+
+        for player in prev_scope:
+            prev_kills += player.kills
+            prev_deaths += player.deaths
+            prev_assists += player.assists
+
+            if (player.totalMinionsKilled + player.neutralMinionsKilled) != 0:
+                duration_seconds = player.match.gameDuration % 60
+                duration_minutes = (player.match.gameDuration - duration_seconds) / 60
+                prev_total_avg_cs += round((player.totalMinionsKilled + player.neutralMinionsKilled) / (
+                        duration_minutes + (duration_seconds / 60)), 1)
+
+            prev_average_vision += player.visionScore
+
+            prev_wins += 1 if player.win else 0
+
+        if prev_deaths != 0:
+            average = (prev_kills + prev_assists) / prev_deaths
+            prev_total_kda = round(average, 2)
+        else:
+            prev_total_kda = round(prev_kills + prev_assists, 2)
+
+        average_kda = RecentStatType(statistic='Average KDA', scope='Past 20 games',
+                                     growth=round(total_kda - prev_total_kda, 2),
+                                     value=total_kda, icon='skull-crossbones')
+
+        cs_pmin = RecentStatType(statistic='CS Per Minute', scope='Past 20 games',
+                                 growth=round((total_avg_cs - prev_total_avg_cs) / games, 1),
+                                 value=round(total_avg_cs / games, 1), icon='coins')
+
+        average_vision = RecentStatType(statistic='Average Vision Score', scope='Past 20 games',
+                                        growth=round((average_vision - prev_average_vision) / games, 1),
+                                        value=round(average_vision / games, 1), icon='eye')
+
+        winrate = RecentStatType(statistic='Winrate', scope='Past 20 games',
+                                 growth=round(((prev_wins / games) * 100) - ((wins / games) * 100), 0),
+                                 value=round((wins / games) * 100, 0), icon='medal')
+
+        return HomeStats(average_kda=average_kda, average_cs=cs_pmin, average_vision=average_vision, winrate=winrate)
+
+
 class Mutation(graphene.ObjectType):
     create_summoner = CreateSummoner.Field()
     update_summoner = UpdateSummoner.Field()
@@ -892,3 +998,4 @@ class Mutation(graphene.ObjectType):
     initial_load = InitialLoad.Field()
     fix_data_integrity = FixDataIntegrity.Field()
     summoner_stats = SummonerStats.Field()
+    home_stats = HomeStats.Field()
