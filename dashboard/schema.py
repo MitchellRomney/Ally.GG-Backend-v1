@@ -293,7 +293,8 @@ class PlayerType(DjangoObjectType):
         if (self.totalMinionsKilled + self.neutralMinionsKilled) != 0:
             duration_seconds = self.match.gameDuration % 60
             duration_minutes = (self.match.gameDuration - duration_seconds) / 60
-            return round((self.totalMinionsKilled + self.neutralMinionsKilled) / (duration_minutes + (duration_seconds / 60)), 1)
+            return round(
+                (self.totalMinionsKilled + self.neutralMinionsKilled) / (duration_minutes + (duration_seconds / 60)), 1)
         else:
             return 0.0
 
@@ -920,7 +921,7 @@ class HomeStats(graphene.Mutation):
                 duration_seconds = player.match.gameDuration % 60
                 duration_minutes = (player.match.gameDuration - duration_seconds) / 60
                 total_avg_cs += round((player.totalMinionsKilled + player.neutralMinionsKilled) / (
-                            duration_minutes + (duration_seconds / 60)), 1)
+                        duration_minutes + (duration_seconds / 60)), 1)
 
             average_vision += player.visionScore
 
@@ -954,6 +955,8 @@ class HomeStats(graphene.Mutation):
                 duration_minutes = (player.match.gameDuration - duration_seconds) / 60
                 prev_total_avg_cs += round((player.totalMinionsKilled + player.neutralMinionsKilled) / (
                         duration_minutes + (duration_seconds / 60)), 1)
+                print(round((player.totalMinionsKilled + player.neutralMinionsKilled) / (
+                        duration_minutes + (duration_seconds / 60)), 1))
 
             prev_average_vision += player.visionScore
 
@@ -964,6 +967,9 @@ class HomeStats(graphene.Mutation):
             prev_total_kda = round(average, 2)
         else:
             prev_total_kda = round(prev_kills + prev_assists, 2)
+
+        # Debug
+        print(prev_total_avg_cs / games)
 
         average_kda = RecentStatType(statistic='Average KDA', scope='Past 20 games',
                                      growth=round(total_kda - prev_total_kda, 2),

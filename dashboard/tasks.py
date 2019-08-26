@@ -171,6 +171,7 @@ def task__fetch_match(game_id, summoner_id, server):
             champLevel
             killParticipation
             totalMinionsKilled
+            neutralMinionsKilled
             csPmin
             item0 {{
               itemId
