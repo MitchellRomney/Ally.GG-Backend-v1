@@ -13,6 +13,7 @@ import requests
 
 @celeryd_init.connect
 def startup_tasks(sender=None, conf=None, **kwargs):
+
     # Clean out old queue
     app.control.purge()
 
@@ -91,8 +92,8 @@ def task__fetch_match(game_id, summoner_id, server):
     result = create_match(game_id, server)
 
     if result['isError']:
-      print(Fore.RED + '[ERROR]: ' + Style.RESET_ALL + result['errorMessage'])
-      return
+        print(Fore.RED + '[ERROR]: ' + Style.RESET_ALL + result['errorMessage'])
+        return
 
     room_group_name = 'summoner_{0}_{1}'.format(server, summoner_id)
 
@@ -301,7 +302,8 @@ def get_league_entries(server, queue, tier, division=None, page=1, total_count=0
 
         except Summoner.DoesNotExist:
             # Fetch the Summoner information from the Riot API.
-            summoner_info = fetch_riot_api(server, 'summoner', 'v4', 'summoners/' + summoner['summonerId'], session=session)
+            summoner_info = fetch_riot_api(server, 'summoner', 'v4', 'summoners/' + summoner['summonerId'],
+                                           session=session)
 
             summoner_obj = Summoner.objects.create(
                 # Ids

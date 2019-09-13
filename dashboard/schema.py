@@ -518,17 +518,18 @@ class VerifySummoner(graphene.Mutation):
 class CreateSummoner(graphene.Mutation):
     class Arguments:
         summonerName = graphene.String()
+        server = graphene.String()
 
     created = graphene.Boolean()
     message = graphene.String()
     summoner = graphene.Field(SummonerType)
 
     @staticmethod
-    def mutate(root, info, summonerName):
+    def mutate(root, info, summonerName, server):
         created = False
         summoner = None
 
-        add_response = add_summoner('summonerName', summonerName)
+        add_response = add_summoner('summonerName', summonerName, server)
         message = add_response['message']
 
         if not add_response['isError']:
