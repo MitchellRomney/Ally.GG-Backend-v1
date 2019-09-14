@@ -22,14 +22,12 @@ ALLOWED_HOSTS = [
 
 CORS_ORIGIN_ALLOW_ALL = False
 
-CORS_ORIGIN_WHITELIST = (
+CORS_ORIGIN_WHITELIST = [
     'https://www.ally.gg',
     'http://www.ally.gg',
     'https://ally.gg',
     'http://ally.gg',
-    'www.ally.gg',
-    'ally.gg',
-)
+]
 
 DEBUG = False
 

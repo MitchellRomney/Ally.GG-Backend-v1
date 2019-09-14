@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from s3direct.fields import S3DirectField
 import json
 
 
@@ -51,6 +52,8 @@ class Profile(models.Model):
     # Relations
     user = models.ForeignKey(User, related_name="Profiles", on_delete=models.CASCADE, blank=False)
     friends = models.ManyToManyField('Profile', related_name='Friends')
+
+    avatar = S3DirectField(dest='avatars', null=True, blank=True)
 
     # User Preferences
     dark_mode = models.BooleanField(default=False)

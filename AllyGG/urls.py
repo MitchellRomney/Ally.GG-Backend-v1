@@ -1,5 +1,5 @@
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 from django.conf.urls import url
 from django.conf.urls.static import static
 from django.views.generic import RedirectView
@@ -11,11 +11,9 @@ from . import views
 
 urlpatterns = [
                   path('admin/', admin.site.urls),
-
                   path('', RedirectView.as_view(url='https://www.ally.gg')),
-
                   path('activate/<username>/<token>', views.activate, name='activate'),
-
                   url(r'^graphql', csrf_exempt(GraphQLView.as_view(graphiql=True, schema=schema))),
+                  path('s3direct/', include('s3direct.urls')),
 
               ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

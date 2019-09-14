@@ -27,8 +27,6 @@ INSTALLED_APPS = [
     'scout_apm.django',
     'django.contrib.auth',
     'dashboard',
-    'corsheaders',
-    's3direct',
     'dynamic_preferences',
     'graphene_django',
     'channels',
@@ -37,6 +35,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'corsheaders',
+    's3direct',
 ]
 
 MIDDLEWARE = [
@@ -150,9 +150,9 @@ DYNAMIC_PREFERENCES = {
 
 CORS_ORIGIN_ALLOW_ALL = False
 
-CORS_ORIGIN_WHITELIST = (
-    'localhost:8080'
-)
+CORS_ORIGIN_WHITELIST = [
+    'http://localhost:8080',
+]
 
 CORS_ALLOW_HEADERS = [
     'accept',
@@ -191,6 +191,17 @@ CHANNEL_LAYERS = {
            "hosts": [os.environ.get('REDIS_URL', 'redis://localhost:6379')],
        },
    },
+}
+
+AWS_ACCESS_KEY_ID = env('AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = env('AWS_SECRET_ACCESS_KEY')
+AWS_STORAGE_BUCKET_NAME = env('S3_BUCKET_NAME')
+AWS_S3_REGION_NAME = 'ap-southeast-2'
+AWS_S3_ENDPOINT_URL = 'https://s3-ap-southeast-2.amazonaws.com'
+S3DIRECT_DESTINATIONS = {
+    'avatars': {
+        'key': 'uploads/avatars',
+    },
 }
 
 if DEBUG:
